@@ -1,0 +1,7 @@
+tunnel: a340f48f-00f0-43c6-9e86-4efbf31db6c6
+credentials-file: /Users/elksong/.cloudflared/a340f48f-00f0-43c6-9e86-4efbf31db6c6.json
+
+ingress:
+  - hostname: trip.elk-web.com
+    service: http://localhost:8000
+  - service: http_status:404

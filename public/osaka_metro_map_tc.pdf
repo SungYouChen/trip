@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<!--[if lt IE 9]><html class="ie8" lang="zh-TW"><![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html lang="zh-TW">
+<!--<![endif]-->
+<head>
+<!-- 2019/06/12 16:40:03(for htdocs) -->
+<!-- 2019/05/20 15:05:01(for htdocs) -->
+<!-- 2016/05/30 15:00:01(for htdocs) -->
+<meta charset="utf-8" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta name="MobileOptimized" content="320" />
+<title>西日本旅客鐵道株式會社 - 找不到網頁</title>
+<meta name="keywords" content="JR 西日本,西日本 JR,鐵道,新幹線,西日本旅客鐵道株式會社">
+<meta name="description" content="西日本旅客鐵道株式會社">
+<link rel="stylesheet" href="/global/common/css/reset.css" />
+<link rel="stylesheet" href="/global/common/css/common.css" media="all" />
+<link rel="stylesheet" href="/global/common/css/error.css" media="all" />
+<link rel="stylesheet" href="/global/common/css/print.css" type="text/css" media="print" />
+<!--[if IE]>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta http-equiv="cleartype" content="on" />
+	<![endif]-->
+<script src="/global/common/js/jquery.min.js"></script>
+<!--[if lt IE 9]>
+		<link href="/global/common/css/ie8.css" rel="stylesheet"/>
+		<script src="/global/common/js/html5shiv.min.js"></script>
+		<script src="/global/common/js/IE9.js"></script>
+		<script src="/global/common/js/respond.min.js"></script>
+		<script src="/global/common/js/IE8.js"></script>
+	<![endif]-->
+<script src="/global/common/js/common.js"></script>
+<script src="/global/common/js/ua.js"></script>
+<script type="text/javascript">	
+	$(function(){
+		if(_ua.Mobile){
+			var style = '<link rel="stylesheet" href="/global/common/css/mobile.css"><link rel="stylesheet" href="/global/common/css/error.mobile.css">';
+    	$('head link:last').after(style);
+		}
+	});
+	</script>
+<!--for isearch device=responsive -->
+<!-- analyze-tag-start -->
+<script type="text/javascript" src="/common/js/analyze_tag.js"></script>
+<!-- analyze-tag-end -->
+</head>
+<body id="page_home">
+<div id="wrapper"> 
+  
+<!--for isearch noindex start -->
+<header id="header" class="role-header">
+  <div class="header container clearfix">
+    <div class="logo">
+      <h1><a href="/global/tc/"><img src="/global/common/images/logo_pc.png" alt="WESTJR" class="md"><img src="/global/common/images/logo_sp.png" alt="WESTJR" class="sm"></a></h1>
+    </div>
+    <div class="header_r clearfix">
+      <div class="lang_global">
+        <ul class="md">
+          <li><a href="/global/en/" class="trans">English</a></li>
+          <li><a href="/global/tc/" class="trans">繁體中文</a></li>
+          <li><a href="/global/sc/" class="trans">簡体中文</a></li>
+          <li><a href="/global/kr/" class="trans">한국어</a></li>
+          <li><a href="/global/th/" class="trans">ภาษาไทย</a></li>
+          <li><a href="/" class="trans">日本語</a></li>
+        </ul>
+        <div class="language_header sm"> <a href="#" class="btn_menu_lang sm">語言</a>
+          <div class="lang_menu box_fixed">
+            <div class="box_heading clearfix sm">
+              <div class="label"> 語言選單</div>
+              <a href="#" class="btn_close">關閉</a></div>
+            <nav id="nav" class="sm">
+              <ul class="lang_nav">
+                <li><a href="/global/en/"><span>English</span></a></li>
+                <li><a href="/global/tc/"><span>繁體中文</span></a></li>
+                <li><a href="/global/sc/"><span>簡体中文</span></a></li>
+                <li><a href="/global/kr/"><span>한국어</span></a></li>
+                <li><a href="/global/th/"><span>ภาษาไทย</span></a></li>
+                <li><a href="/"><span>日本語</span></a></li>
+              </ul>
+            </nav>
+            <!-- End #nav -->
+            <div class="box_footer clearfix sm"><a href="#" class="btn_close">關閉</a></div>
+          </div>
+        </div>
+      </div>
+      <!-- end .lang_global --> 
+      
+      <a href="#" class="btn_menu sm"><img src="/global/tc/common/images/btn_menu.png" alt=" "></a>
+      <div class="global_menu box_fixed">
+        <div class="box_heading clearfix sm">
+          <div class="label"><i><img src="/global/common/images/ico_menu.png" alt=" " /></i> 內容選單</div>
+          <a href="#" class="btn_close">關閉</a></div>
+        <nav id="nav">
+          <ul>
+			<li class="top sm"><a href="/global/tc/" class="trans"><span>HOME</span></a></li>
+            <li class="home" id="nav_home"> <a href="/travel-information/tc/"><span>旅行資訊</span></a>
+              <div class="mega_submenu w1">
+                <div class="inner_submenu">
+                  <div class="rows upper clearfix">
+                    <div class="span4">
+                      <div class="wrapp_content">
+                        <h3 class="sm"><a href="/travel-information/tc/" class="trans">首頁</a></h3>
+                        <h3><a href="/travel-information/tc/explore-west-japan/" class="trans">探索西日本</a></h3>
+                        <ul>
+                          <li><a href="/travel-information/tc/explore-west-japan/#destinations" class="trans">目的地</a></li>
+                          <li><a href="/travel-information/tc/explore-west-japan/#things-to-do" class="trans">遊覽行程</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="span4 middle">
+                      <div class="wrapp_content">
+                        <h3><a href="/travel-information/tc/plan-your-trip/" class="trans">規劃旅程</a></h3>
+						<ul>
+                          <li><a href="/travel-information/tc/plan-your-trip/routes-schedule/" class="trans">路線圖・時刻表</a></li>
+                          <li><a href="https://www.westjr.co.jp/global/en/travel_support/" class="trans">Travel Support by JR-WEST</a></li>
+						<li><a href="https://faq-support.westjr.co.jp/hc/zh-tw" class="trans" target="_blank">FAQ<i class="extend"><img src="/global/common/images/ico_window02.png" alt=""></i></a></li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="span4">
+                      <div class="wrapp_content">
+                        <h3><a href="/travel-information/tc/tickets-passes/" class="trans">車票與周遊券</a></h3>
+						<ul>
+                          <li><a href="/travel-information/tc/tickets-passes/route-search/" class="trans">Search for Tickets</a></li>
+                          <li><a href="/travel-information/tc/tickets-passes/jrwest-rail-pass/" class="trans">JR西日本鐵路周遊券</a></li>
+						<li><a href="/travel-information/tc/tickets-passes/other/" class="trans">其他鐵路周遊券</a></li>
+						  <li><a href="/travel-information/tc/tickets-passes/oneway/" class="trans">單程車票</a></li>
+                          <li><a href="/global/tc/ticket/westqr/" class="trans">WEST QR</a></li>
+						<li><a href="https://www.westjr.co.jp/global/tc/howto/icoca/" class="trans">ICOCA卡</a></li>
+						  <li><a href="https://www.westjr.co.jp/global/tc/ticket/overview/" class="trans">線上預約</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- end .rows -->
+                  <div class="rows odd clearfix">
+                    <div class="span4">
+                      <div class="wrapp_content">
+                        <h3><a href="/travel-information/tc/train-usage-guide/" class="trans">列車使用指南</a></h3>
+						<ul>
+						  <li><a href="/travel-information/tc/train-usage-guide/trains/" class="trans">列車資訊</a></li>
+                          <li><a href="/travel-information/tc/train-usage-guide/luggage/" class="trans">特大行李</a></li>
+                         <li><a href="/travel-information/tc/train-usage-guide/wifi/" class="trans">Wi-Fi</a></li>
+                          <li><a href="/travel-information/tc/train-usage-guide/accessibility/" class="trans">無障礙資訊</a></li>
+						<li><a href="/travel-information/tc/train-usage-guide/howto/" class="trans">搭乘JR西日本的方法</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="span4 middle">
+                      <div class="wrapp_content">
+                        <h3><a href="/travel-information/tc/services-offers/" class="trans">服務和優惠資訊</a></h3>
+                        <ul>
+                         <li><a href="/travel-information/tc/services-offers/shops-restaurants/" class="trans">商店和餐廳</a></li>
+						<li><a href="/travel-information/tc/services-offers/local-experiences/" class="trans">西日本在地體驗</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="span4">
+                      <div class="wrapp_content">
+                      </div>
+                    </div>
+                  </div>
+                  <!-- end .rows --> 
+                </div>
+                <!-- end .inner_submenu --> 
+              </div>
+              <!-- End .mega_submenu --> 
+            </li>
+            <li id="nav_about"><a href="/global/tc/about-us/"><span>關於我們</span></a>
+              <div class="mega_submenu w2">
+                <div class="column">
+                  <h3 class="sm"><a href="/global/tc/about-us/" class="trans">首頁</a></h3>
+                  <ul>
+                    <li class="pc_ico"><a href="/global/tc/about-us/railway-operations" class="trans">鐵路業務</a></li>
+                    <li class="pc_ico"><a href="/global/tc/about-us/wide-ranging-group-operations/" class="trans">廣泛的集團業務</a></li>
+                    <li class="pc_ico"><a href="/global/tc/about-us/overview/" class="trans">企業概況</a></li>
+                    <li class="pc_ico"><a href="/global/tc/about-us/organization/" class="trans">企業組織</a></li>
+                    <li class="pc_ico"><a href="/global/tc/about-us/history/" class="trans">發展歷程</a></li>
+                    <li class="pc_ico"><a href="/global/tc/about-us/csr/" class="trans">企業社會責任</a></li>
+                    <li class="pc_ico"><a href="/global/tc/about-us/jr-west-in-motion/" class="trans">行動中的 JR 西日本</a></li>
+                  </ul>
+                </div>
+              </div>
+            </li>
+            <li id="nav_business"><a href="/global/tc/procurement/"><span class="nolist">業務用 <small>(材料採購)</small></span></a></li>
+            <li id="nav_ir"><a href="/global/tc/ir/"><span class="nolist">投資者關係</span></a></li>
+          </ul>
+        </nav>
+        <!-- End #nav -->
+        <div class="box_footer clearfix sm"><a href="#" class="btn_close">關閉</a></div>
+      </div>
+      <!-- End .global_menu --> 
+      
+      <a href="#" class="btn_showSearch"><img src="/global/common/images/btn_search_pc.png" class="md" alt="Show Search"><img src="/global/common/images/ico_search_sp.png" class="sm" alt="Show Search"></a> </div>
+    <!-- End .header_r --> 
+  </div>
+  <!-- End .header -->
+  
+  <div id="search_global" class="box_fixed">
+    <div class="container search_wrap">
+      <div class="box_heading clearfix sm">
+        <div class="label"><i><img src="/global/common/images/ico_search.png" alt="Search"></i> 搜尋</div>
+        <a href="#" class="btn_close">關閉</a> </div>
+      <form name="search_form" action="https://srh.westjr.co.jp/" method="GET" onsubmit="return mysearch_global(this);">
+        <div class="clearfix"> <span class="icon md"><img src="/global/common/images/btn_search_pc.png" alt="Search"></span>
+          <input class="searchTxt searchBox" type="text" value="" name="kw" title="搜尋...">
+          <input type="hidden" name="ie" value="u">
+          <input type="hidden" name="domain" value="tc">
+          <input class="submit_button" type="submit" value="搜尋" />
+        </div>
+      </form>
+      <div class="box_footer clearfix sm"><a href="#" class="btn_close">關閉</a></div>
+    </div>
+  </div>
+  <!-- End #search_global --> 
+  
+</header>
+<!--for isearch noindex end -->
+<!-- End #header -->
+
+  
+  <div id="main" class="role-main">
+    <div class="main_heading">
+      <div class="breadcrumb">
+        <div class="container">
+          <h3><a href="/global/tc/" class="trans"><i class="ico_home"><img src="/global/common/images/ico_home.png" alt="首頁"></i>首頁</a> <span><img src="/global/common/images/arrow05.png" alt=" "></span> 找不到網頁 </h3>
+        </div>
+      </div>
+      <!-- End .breadcrumb -->
+      <!--<div class="page_title">
+        <div class="head_ttl container">
+          <h1>找不到網頁</h1>
+        </div>
+      </div>-->
+      <!-- End .page_title --> 
+    </div>
+    <!-- End .main_heading -->
+    
+    <div class="container">
+      <div class="panel_default">
+        <div class="panel_heading">
+          <h2 class="panel_title">找不到網頁</h2>
+        </div>
+        <!-- End .panel_heading -->
+        <div class="panel_body">
+          <div class="error">
+            <div class="errorTxt">
+              <p>非常抱歉。<br>
+                您搜尋的網頁被刪除或名字被變更，可能暫時無法使用。<br>
+                即使重新整理瀏覽器的網頁內容，也顯示此網頁的情況下，請從首頁或網站地圖搜尋您要找的內容，或者使用網頁右上方的網站內搜尋。</p>
+            </div>
+            <div class="errorUrlBox">
+              <dl>
+                <dt><span>JR西日本首頁從此處連結</span></dt>
+                <dd><a href="/global/tc/">https://www.westjr.co.jp/global/tc/</a></dd>
+              </dl>
+            </div>
+          </div>
+          <!-- End .error --> 
+        </div>
+        <!-- End .panel_body --> 
+      </div>
+      <!-- End .panel_default --> 
+      
+    </div>
+  </div>
+  <!-- End #main --> 
+  
+  
+<!--for isearch noindex start -->
+<footer class="role-footer" id="footer"> <a href="#" class="trans page_top" id="to_top"><img src="/global/common/images/to_top.png" alt="回頁首"></a>
+  <div class="footer_top">
+    <div class="footerBox"> <a href="#" class="btn_collapse btn_tc md"><span>打開網站地圖</span></a> <a href="#" class="page_top sm"><span>回頁首</span></a> </div>
+  </div>
+  <div class="btn_menu_bot sm"><a href="#" class="btn_menu"><span>內容選單</span></a></div>
+  
+  <!-- End .footer_top -->
+  
+  <div class="sitemap md" id="sitemap">
+    <div class="container wrapp">
+      <div class="span3">
+        <h4>旅行資訊</h4>
+        <ul>
+          <li><a href="/travel-information/tc/explore-west-japan/" class="trans">探索西日本</a>
+            <ul>
+              <li><a href="/travel-information/tc/explore-west-japan/#destinations" class="trans">目的地</a></li>
+			<li><a href="/travel-information/tc/explore-west-japan/#things-to-do" class="trans">遊覽行程</a></li>
+            </ul>
+          </li>
+          <li><a href="/travel-information/tc/plan-your-trip/" class="trans">規劃旅程</a>
+			  <ul>
+				<li><a href="/travel-information/tc/plan-your-trip/routes-schedule/" class="trans">路線圖・時刻表</a></li>
+                <li><a href="https://www.westjr.co.jp/global/en/travel_support/" class="trans">Travel Support by JR-WEST</a></li>
+				<li><a href="https://faq-support.westjr.co.jp/hc/zh-tw" class="trans" target="_blank">FAQ<i class="extend"><img src="/global/common/images/ico_window03.png" alt=""></i></a></li></ul>
+          </li>
+          <li><a href="/travel-information/tc/tickets-passes/" class="trans">車票與周遊券</a></li>
+			<ul>
+            <li><a href="/travel-information/tc/tickets-passes/route-search/" class="trans">Search for Tickets</a></li>
+            <li><a href="/travel-information/tc/tickets-passes/jrwest-rail-pass/" class="trans">JR西日本鐵路周遊券</a></li>
+			<li><a href="/travel-information/tc/tickets-passes/other/" class="trans">其他鐵路周遊券</a></li>
+			<li><a href="/travel-information/tc/tickets-passes/oneway/" class="trans">單程車票</a></li>
+            <li><a href="/global/tc/ticket/westqr/" class="trans">WEST QR</a></li>
+			<li><a href="https://www.westjr.co.jp/global/tc/howto/icoca/" class="trans">ICOCA卡</a></li>
+			<li><a href="https://www.westjr.co.jp/global/tc/ticket/overview/" class="trans">線上預約</a></li>
+            </ul>
+          <li><a href="/travel-information/tc/train-usage-guide/" class="trans">列車使用指南</a></li>
+			<ul>
+			<li><a href="/travel-information/tc/train-usage-guide/trains/" class="trans">列車資訊</a></li>
+            <li><a href="/travel-information/tc/train-usage-guide/luggage/" class="trans">特大行李</a></li>
+            <li><a href="/travel-information/tc/train-usage-guide/wifi/" class="trans">Wi-Fi</a></li>
+            <li><a href="/travel-information/tc/train-usage-guide/accessibility/" class="trans">無障礙資訊</a></li>
+			<li><a href="/travel-information/tc/train-usage-guide/howto/" class="trans">搭乘JR西日本的方法</a></li>
+            </ul>
+          <li><a href="/travel-information/tc/services-offers/" class="trans">服務和優惠資訊</a>
+            <ul>
+            <li><a href="/travel-information/tc/services-offers/shops-restaurants/" class="trans">商店和餐廳</a></li>
+			<li><a href="/travel-information/tc/services-offers/local-experiences/" class="trans">西日本在地體驗</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <!-- End .span3 -->
+      
+      <div class="span3">
+        <h4>關於我們</h4>
+        <ul>
+          <li><a href="/global/tc/about-us/railway-operations" class="trans">鐵路業務</a></li>
+          <li><a href="/global/tc/about-us/wide-ranging-group-operations/" class="trans">廣泛的集團業務</a></li>
+          <li><a href="/global/tc/about-us/overview/" class="trans">企業概況</a></li>
+          <li><a href="/global/tc/about-us/organization/" class="trans">企業組織</a></li>
+          <li><a href="/global/tc/about-us/history/" class="trans">發展歷程</a></li>
+          <li><a href="/global/tc/about-us/csr/" class="trans">企業社會責任</a></li>
+          <li><a href="/global/tc/about-us/jr-west-in-motion/" class="trans">行動中的 JR 西日本</a></li>
+        </ul>
+      </div>
+      <!-- End .span3 -->
+      
+      <div class="span3">
+        <h4>業務用<small>(材料採購)</small></h4>
+      </div>
+      <!-- End .span3 -->
+      
+      <div class="span3">
+        <h4>投資者關係</h4>
+      </div>
+      <!-- End .span 3 --> 
+    </div>
+    <!-- End .wrapp --> 
+  </div>
+  <!-- End #sitemap -->
+  
+  <div class="footer_bot">
+    <div class="container">
+      <div class="banner_bot md">
+        <ul class="clearfix">
+          <li><a href="/global/tc/howto/" class="trans"><img src="/global/tc/common/images/bnr_howto_jr.jpg" alt="搭乘JR西日本的方法"></a></li>
+          <li><a href="/global/tc/ticket/" class="trans"><img src="/global/tc/common/images/bnr_jrwest_pass.jpg" alt="JR西日本鐵路周遊券"></a></li>
+          <li><a href="/global/tc/wifi/" class="trans"><img src="/global/tc/common/images/bnr_wifi.jpg" alt="JR-WEST Free Wi-Fi Service"></a></li>
+          <li><a href="http://www.kyotorailwaymuseum.jp/tc/" data-gtm-act="banner" data-gtm-cat="click" data-gtm-lab="tc_error-footer_bnr_kyotorailwaymuseum" onclick="javascript:ga('send', 'event', 'click', 'banner', 'tc_error-footer_bnr_kyotorailwaymuseum');" target="_blank" class="trans"><img src="/global/tc/common/images/bnr_kyotorailwaymuseum.jpg" alt="京都鐵道博物館"></a></li>
+          <li><a href="http://www.everythingfrom.jp/language/zh-TW" data-gtm-act="banner" data-gtm-cat="click" data-gtm-lab="tc_error-footer_everythingfrom_tc" onclick="javascript:ga('send', 'event', 'click', 'banner', 'tc_error-footer_everythingfrom_tc');" target="_blank" class="trans"><img src="/global/tc/common/images/everythingfrom_en.jpg" alt="EVERYTHING FROM.JP"></a></li>
+          <li><a href="/global/tc/travel/shopping/" target="_blank" class="trans"><img src="/global/tc/common/images/bnr_shopping.jpg" alt="西日本購物和美食導覽"></a></li>
+
+        </ul>
+      </div>
+      <div class="clearfix">
+        <div class="terms_policy">
+          <ul>
+            <li><a href="/global/tc/terms-of-use/" class="trans">使用條款</a></li>
+            <li><a href="/global/tc/privacy/" class="trans">有關個人資料保護方面</a></li>
+            <li><a href="/global/tc/support/inquiry/" class="trans">詢問、意見</a></li>
+          </ul>
+        </div>
+        <div class="language sm">
+          <ul>
+            <li><a href="/global/en/" class="trans">English</a></li>
+            <li><a href="/global/tc/" class="trans">繁體中文</a></li>
+            <li><a href="/global/sc/" class="trans">簡体中文</a></li>
+            <li><a href="/global/kr/" class="trans">한국어</a></li>
+            <li><a href="/global/th/" class="trans">ภาษาไทย</a></li>
+            <li><a href="/" class="trans">日本語</a></li>
+          </ul>
+        </div>
+        <div class="copyright">Copyright &copy; WEST JAPAN RAILWAY COMPANY all rights reserved.</div>
+      </div>
+    </div>
+  </div>
+  <!-- End .footer_bot --> 
+</footer>
+<!--for isearch noindex end -->
+<script type="text/javascript" src="https://cache.dga.jp/s/westjr2/search_tool_n3.js"></script>
+ 
+  
+</div>
+<!-- End #wrapper -->
+</body>
+</html>
