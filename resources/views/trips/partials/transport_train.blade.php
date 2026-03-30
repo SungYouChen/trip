@@ -16,75 +16,75 @@
     <!-- Departure Ticket -->
     <div class="p-8 group/item hover:bg-white/40 transition-all duration-300">
         <div class="flex justify-between items-start mb-6">
-            <span class="px-3 py-1.5 bg-amber-50 text-amber-600 rounded-lg border border-amber-100 text-[10px] font-black uppercase tracking-[0.2em] shadow-sm">
+            <span class="px-3 py-1.5 bg-muji-base text-muji-oak rounded-lg border border-muji-edge text-[10px] font-black uppercase tracking-[0.2em] shadow-muji-sm">
                 {{ $theme['label_out'] }}
             </span>
             <div class="text-right">
-                <p class="text-[9px] font-black text-gray-400 mb-0.5 uppercase tracking-widest">Entry Date</p>
-                <span class="text-sm font-black text-gray-900 font-mono">{{ $flightInfo['outbound']['date'] }}</span>
+                <p class="text-[9px] font-black text-muji-ash mb-0.5 uppercase tracking-widest">出發日期 Date</p>
+                <span class="text-sm font-black text-muji-ink font-mono">{{ $flightInfo['outbound']['date'] }}</span>
             </div>
         </div>
 
-        <div class="flex items-center justify-between gap-4 py-4 border-y border-dashed border-gray-100">
+        <div class="flex items-center justify-between gap-4 py-4 border-y border-dashed border-muji-edge">
             <div class="flex-1">
-                <p class="text-[10px] font-black text-gray-300 uppercase mb-1">From</p>
-                <p class="text-2xl font-black text-gray-800 tracking-tight">{{ $parts[0] }}</p>
+                <p class="text-[10px] font-black text-muji-ash uppercase mb-1">出發地 From</p>
+                <p class="text-2xl font-black text-muji-ink tracking-tight">{{ $parts[0] }}</p>
             </div>
-            <div class="text-amber-200 opacity-50 shrink-0">
+            <div class="text-muji-wheat opacity-50 shrink-0">
                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 5l7 7-7 7M5 5l7 7-7 7" /></svg>
             </div>
             <div class="flex-1 text-right">
-                <p class="text-[10px] font-black text-gray-300 uppercase mb-1">To</p>
-                <p class="text-2xl font-black text-gray-800 tracking-tight">{{ $parts[1] ?: '--' }}</p>
+                <p class="text-[10px] font-black text-muji-ash uppercase mb-1">目的地 To</p>
+                <p class="text-2xl font-black text-muji-ink tracking-tight">{{ $parts[1] ?: '--' }}</p>
             </div>
         </div>
 
-        <div class="mt-6 flex items-center justify-between px-4 py-3 bg-gray-50 rounded-2xl border border-gray-100">
+        <div class="mt-6 flex items-center justify-between px-4 py-3 bg-muji-base/50 rounded-2xl border border-muji-edge">
             <div class="flex flex-col">
-                <span class="text-[9px] font-black text-gray-400 uppercase mb-0.5">Train No. / Seat</span>
-                <span class="text-sm font-black text-indigo-600 font-mono">{{ $flightInfo['train_no'] ?? 'Unassigned' }} / {{ $flightInfo['train_seat'] ?? '--' }}</span>
+                <span class="text-[9px] font-black text-muji-ash uppercase mb-0.5">車次 / 座位 No./Seat</span>
+                <span class="text-sm font-black text-muji-oak font-mono">{{ $flightInfo['train_no'] ?? 'Unassigned' }} / {{ $flightInfo['train_seat'] ?? '--' }}</span>
             </div>
             <div class="text-right flex flex-col">
-                <span class="text-[9px] font-black text-gray-400 uppercase mb-0.5">Dep. Time</span>
-                <span class="text-lg font-black text-gray-900 font-mono">{{ $flightInfo['outbound']['time'] ?: 'TBA' }}</span>
+                <span class="text-[9px] font-black text-muji-ash uppercase mb-0.5">出發時間 Time</span>
+                <span class="text-lg font-black text-muji-ink font-mono">{{ $flightInfo['outbound']['time'] ?: 'TBA' }}</span>
             </div>
         </div>
     </div>
 
     <!-- Return Ticket -->
-    <div class="p-8 group/item hover:bg-white/40 transition-all duration-300">
+    <div class="p-8 group/item hover:bg-muji-wheat/5 transition-all duration-300">
         <div class="flex justify-between items-start mb-6">
-            <span class="px-3 py-1.5 bg-gray-100 text-gray-500 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] shadow-sm">
+            <span class="px-3 py-1.5 bg-muji-base text-muji-ash rounded-lg border border-muji-edge text-[10px] font-black uppercase tracking-[0.2em] shadow-muji-sm">
                 {{ $theme['label_in'] }}
             </span>
             <div class="text-right">
-                <p class="text-[9px] font-black text-gray-400 mb-0.5 uppercase tracking-widest">Return Date</p>
-                <span class="text-sm font-black text-gray-900 font-mono">{{ $flightInfo['inbound']['date'] }}</span>
+                <p class="text-[9px] font-black text-muji-ash mb-0.5 uppercase tracking-widest">回程日期 Date</p>
+                <span class="text-sm font-black text-muji-ink font-mono">{{ $flightInfo['inbound']['date'] }}</span>
             </div>
         </div>
 
-        <div class="flex items-center justify-between gap-4 py-4 border-y border-dashed border-gray-100">
+        <div class="flex items-center justify-between gap-4 py-4 border-y border-dashed border-muji-edge">
             <div class="flex-1">
-                <p class="text-[10px] font-black text-gray-300 uppercase mb-1">From</p>
-                <p class="text-2xl font-black text-gray-800 tracking-tight">{{ $partsIn[0] }}</p>
+                <p class="text-[10px] font-black text-muji-ash uppercase mb-1">返程起點 From</p>
+                <p class="text-2xl font-black text-muji-ink tracking-tight">{{ $partsIn[0] }}</p>
             </div>
-            <div class="text-gray-200 opacity-50 shrink-0 rotate-180">
+            <div class="text-muji-wheat opacity-50 shrink-0 rotate-180">
                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 5l7 7-7 7M5 5l7 7-7 7" /></svg>
             </div>
             <div class="flex-1 text-right">
-                <p class="text-[10px] font-black text-gray-300 uppercase mb-1">To</p>
-                <p class="text-2xl font-black text-gray-800 tracking-tight">{{ $partsIn[1] ?: '--' }}</p>
+                <p class="text-[10px] font-black text-muji-ash uppercase mb-1">返程終點 To</p>
+                <p class="text-2xl font-black text-muji-ink tracking-tight">{{ $partsIn[1] ?: '--' }}</p>
             </div>
         </div>
 
-        <div class="mt-6 flex items-center justify-between px-4 py-3 bg-gray-50 rounded-2xl border border-gray-100">
+        <div class="mt-6 flex items-center justify-between px-4 py-3 bg-muji-base/50 rounded-2xl border border-muji-edge">
             <div class="flex flex-col">
-                <span class="text-[9px] font-black text-gray-400 uppercase mb-0.5">Return Info</span>
-                <span class="text-sm font-black text-gray-600 font-mono">{{ $flightInfo['train_no'] ?? '--' }}</span>
+                <span class="text-[9px] font-black text-muji-ash uppercase mb-0.5">回程資訊 Info</span>
+                <span class="text-sm font-black text-muji-ash font-mono">{{ $flightInfo['train_no'] ?? '--' }}</span>
             </div>
             <div class="text-right flex flex-col">
-                <span class="text-[9px] font-black text-gray-400 uppercase mb-0.5">Dep. Time</span>
-                <span class="text-lg font-black text-gray-900 font-mono">{{ $flightInfo['inbound']['time'] ?: 'TBA' }}</span>
+                <span class="text-[9px] font-black text-muji-ash uppercase mb-0.5">發車時間 Time</span>
+                <span class="text-lg font-black text-muji-ink font-mono">{{ $flightInfo['inbound']['time'] ?: 'TBA' }}</span>
             </div>
         </div>
     </div>

@@ -1,0 +1,108 @@
+@php
+$isShared = $isShared ?? false;
+$flightInfo = $flightInfo ?? [
+'transport_type' => 'flight',
+'airline' => '',
+'price' => '',
+'baggage' => '',
+'outbound' => ['date' => '', 'time' => '', 'route' => ''],
+'inbound' => ['date' => '', 'time' => '', 'route' => '']
+];
+$hasFlight = !empty($flightInfo['airline']) || !empty($flightInfo['outbound']['route']);
+$transportType = $flightInfo['transport_type'] ?? 'flight';
+
+$themes = [
+    'flight' => [
+        'color' => 'muji-oak',
+        'gradient' => 'from-muji-wheat/5 to-muji-base/5',
+        'border' => 'border-muji-edge',
+        'text' => 'text-muji-oak',
+        'bg_light' => 'bg-muji-base',
+        'label_out' => '去程',
+        'label_in' => '回程',
+        'icon_mid' => '<svg class="w-5 h-5 rotate-90" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" /></svg>'
+    ],
+    'train' => [
+        'color' => 'muji-oak',
+        'gradient' => 'from-muji-wheat/5 to-muji-base/5',
+        'border' => 'border-muji-edge',
+        'text' => 'text-muji-oak',
+        'bg_light' => 'bg-muji-base',
+        'label_out' => '車次/去程',
+        'label_in' => '返程/回程',
+        'icon_mid' => '<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" /></svg>'
+    ],
+    'bus' => [
+        'color' => 'muji-oak',
+        'gradient' => 'from-muji-wheat/5 to-muji-base/5',
+        'border' => 'border-muji-edge',
+        'text' => 'text-muji-oak',
+        'bg_light' => 'bg-muji-base',
+        'label_out' => '發車/去程',
+        'label_in' => '返程/回程',
+        'icon_mid' => '<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>'
+    ],
+    'car' => [
+        'color' => 'muji-oak',
+        'gradient' => 'from-muji-wheat/5 to-muji-base/5',
+        'border' => 'border-muji-edge',
+        'text' => 'text-muji-oak',
+        'bg_light' => 'bg-muji-base',
+        'label_out' => '取車與地點',
+        'label_in' => '還車與地點',
+        'icon_mid' => '<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>'
+    ],
+    'ship' => [
+        'color' => 'muji-oak',
+        'gradient' => 'from-muji-wheat/5 to-muji-base/5',
+        'border' => 'border-muji-edge',
+        'text' => 'text-muji-oak',
+        'bg_light' => 'bg-muji-base',
+        'label_out' => '啟航與碼頭',
+        'label_in' => '返航與行程',
+        'icon_mid' => '<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4M4 12l8-8m-8 8l8 8" /></svg>'
+    ]
+];
+$theme = $themes[$transportType] ?? $themes['flight'];
+@endphp
+@extends('layout')
+
+@section('content')
+<div class="mb-12 relative max-w-4xl mx-auto px-4 group">
+    <!-- Header Content: Centered Title -->
+    <div class="text-center pt-2">
+        <h2 class="text-3xl font-black text-muji-ink sm:text-5xl leading-tight px-16">
+            {{ $trip->name }}
+        </h2>
+    </div>
+    
+    @if(!$isShared && auth()->check())
+    <!-- Management Tools: Absolute Top-Right -->
+    <div class="absolute -top-1 right-0 sm:right-4 flex items-center gap-1.5 p-1.5 bg-white/40 backdrop-blur-md rounded-2xl border border-muji-edge shadow-muji-sm z-20">
+        <!-- Settings Gear -->
+        <button onclick="safeOpenModal('tripSettingsModal')" class="p-2.5 text-muji-ash hover:text-muji-oak hover:bg-white rounded-xl transition-all tooltip tooltip-bottom" data-tip="編輯旅程設計與匯率">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+        </button>
+
+        <!-- Privacy Toggle -->
+        <form action="{{ route('trip.toggle_share', ['user' => $trip->user, 'trip' => $trip]) }}" method="POST" class="inline m-0">
+            @csrf
+            <button type="submit" class="p-2.5 transition-all rounded-xl hover:bg-white tooltip tooltip-bottom {{ $trip->is_public ? 'text-muji-oak' : 'text-muji-ash opacity-60' }}" data-tip="{{ $trip->is_public ? '已分享 (點擊隱私)' : '未分享 (點擊公開)' }}">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+            </button>
+        </form>
+    </div>
+    @endif
+</div>
+
+@if(!$isShared && $trip->is_public)
+<div class="mt-2 mb-4 bg-muji-base p-2 rounded-xl flex items-center justify-between gap-3 border border-muji-edge max-w-sm mx-auto overflow-hidden shadow-muji-sm">
+    <span id="shareLink" class="text-[10px] text-muji-oak font-mono truncate flex-1 font-bold">{{ route('trip.index_shared', ['token' => $trip->share_token]) }}</span>
+    <button onclick="copyShareLink()" class="bg-muji-oak text-white text-[10px] px-3 py-1 rounded-lg hover:opacity-80 transition-colors font-black whitespace-nowrap">複製連結</button>
+</div>
+@endif

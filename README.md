@@ -1,6 +1,6 @@
-# 🇯🇵 Elk & Winnie's Honeymoon Trip to Japan (2025-2026)
+# 🇯🇵 Elk Trip Planner (2025-2026)
 
-這是您的蜜月旅行行程網站專案。
+這是行程網站專案。
 
 ## 🌐 您的專屬網站
 - **永久網址**: [https://trip.elk-web.com](https://trip.elk-web.com)
@@ -12,7 +12,7 @@
 1. **打開終端機 (Terminal)**
 2. **進入資料夾** (如果您還沒進入)：
    ```bash
-   cd ~/Desktop/project/Japan1141228-1150108
+   cd ~/Desktop/project/trip
    ```
 3. **執行啟動腳本**：
    ```bash

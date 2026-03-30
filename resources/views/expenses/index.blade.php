@@ -8,29 +8,28 @@
                 ? route('trip.index_shared', ['token' => $trip->share_token])
                 : route('trip.show', ['user' => $trip->user, 'trip' => $trip]);
         @endphp
-        <a href="{{ $exReturnLink }}" class="inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors gap-1">
+        <a href="{{ $exReturnLink }}" class="inline-flex items-center text-sm font-black text-muji-oak hover:underline transition-all gap-1">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7 7-7" /></svg>
-            返回 
-            <!-- {{ $trip->name }} -->
+            返回
         </a>
     </div>
 
-    <div class="mb-8 flex items-center justify-between">
+    <div class="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <h1 class="text-3xl font-extrabold text-gray-900">總花費</h1>
-            <!-- <p class="text-gray-500 mt-1">{{ $trip->name }}</p> -->
+            <h1 class="text-3xl font-black text-muji-ink tracking-tight">總花費</h1>
+            <p class="text-muji-ash mt-1 font-medium italic opacity-60">數據僅供參考，以實際扣款為準</p>
         </div>
-        <div class="text-right">
-            <span class="text-4xl font-bold text-indigo-600">{{ $trip->base_currency }} {{ number_format($totalBase) }}</span>
-            <p class="text-sm font-medium text-gray-500">約合 {{ $trip->target_currency }} {{ number_format($totalTarget) }}</p>
+        <div class="text-right bg-muji-base/50 p-4 rounded-2xl border border-muji-edge shadow-muji-sm">
+            <span class="text-4xl font-black text-muji-oak">{{ $trip->base_currency }} {{ number_format($totalBase) }}</span>
+            <p class="text-[10px] font-black text-muji-ash uppercase tracking-widest mt-1">約合 {{ $trip->target_currency }} {{ number_format($totalTarget) }}</p>
         </div>
     </div>
 
     <!-- Category Breakdown -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         @foreach($byCategory as $cat => $amount)
-            <div class="bg-white/40 backdrop-blur-md p-4 rounded-xl shadow-sm border border-white/20">
-                <p class="text-sm text-gray-400 uppercase font-semibold">
+            <div class="muji-card p-4 rounded-2xl border border-muji-edge shadow-muji-sm bg-white/60">
+                <p class="text-[10px] text-muji-ash uppercase font-black tracking-widest mb-2">
                     @if($cat == 'Food') 飲食
                     @elseif($cat == 'Transport') 交通
                     @elseif($cat == 'Shopping') 購物
@@ -38,35 +37,37 @@
                     @else 其他
                     @endif
                 </p>
-                <p class="text-lg font-bold text-gray-800">{{ $trip->base_currency }} {{ number_format($amount) }}</p>
+                <p class="text-xl font-black text-muji-ink">{{ $trip->base_currency }} {{ number_format($amount) }}</p>
             </div>
         @endforeach
     </div>
 
     @if(count($externalCosts) > 0)
     <!-- External Costs -->
-    <div class="bg-indigo-50/40 backdrop-blur-md rounded-2xl p-6 mb-8 border border-white/20 shadow-sm">
-        <h2 class="text-lg font-bold text-indigo-900 mb-4 flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    <div class="bg-muji-base/40 backdrop-blur-sm rounded-3xl p-8 mb-8 border border-muji-edge shadow-muji">
+        <h2 class="text-xl font-black text-muji-ink mb-6 flex items-center gap-3">
+            <svg class="w-6 h-6 text-muji-oak" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             機票與住宿 (外部預訂)
         </h2>
-        <div class="space-y-3 mb-4">
+        <div class="space-y-4 mb-6">
             @foreach($externalCosts as $cost)
-                <div class="flex justify-between items-center bg-white/40 p-3 rounded-lg border border-white/10 mb-2">
-                    <span class="font-medium text-indigo-800">{{ $cost['name'] }}</span>
-                    <span class="font-mono text-indigo-600 font-bold">{{ $cost['raw'] }}</span>
+                <div class="flex justify-between items-center bg-white/60 p-4 rounded-xl border border-muji-edge shadow-muji-sm">
+                    <span class="font-black text-muji-ink">{{ $cost['name'] }}</span>
+                    <span class="font-mono text-muji-oak font-black text-lg">{{ $cost['raw'] }}</span>
                 </div>
             @endforeach
         </div>
-        <div class="border-t border-indigo-200 pt-3 flex flex-wrap gap-4 mt-2">
-            <span class="text-sm font-semibold text-indigo-800">各幣別加總：</span>
-            @foreach($externalTotals as $currency => $amount)
-                <span class="text-indigo-900 font-bold font-mono bg-indigo-100 px-3 py-1 rounded-full">
-                    {{ $currency }} {{ number_format($amount) }}
-                </span>
-            @endforeach
+        <div class="border-t border-muji-edge pt-4 flex flex-wrap gap-4 mt-2">
+            <span class="text-xs font-black text-muji-ash uppercase tracking-widest">各幣別加總 Total by Currency：</span>
+            <div class="flex flex-wrap gap-2">
+                @foreach($externalTotals as $currency => $amount)
+                    <span class="text-muji-ink font-black font-mono bg-muji-wheat px-4 py-1.5 rounded-full border border-muji-edge shadow-muji-sm text-sm">
+                        {{ $currency }} {{ number_format($amount) }}
+                    </span>
+                @endforeach
+            </div>
         </div>
     </div>
     @endif
@@ -78,43 +79,42 @@
             <h2 class="text-lg font-bold text-gray-900">帳單紀錄明細</h2>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-4 p-4">
-            @forelse($expenses as $expense)
-                <div class="bg-white/40 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-sm hover:shadow-md transition-shadow relative group">
-                    <div class="flex justify-between items-start mb-2">
-                        <div class="flex items-center gap-2">
-                            <span class="text-2xl">
-                                @if($expense->category == 'Food') 🍔
-                                @elseif($expense->category == 'Transport') 🚇
-                                @elseif($expense->category == 'Shopping') 🛍️
-                                @elseif($expense->category == 'Accommodation') 🏨
-                                @else 💸
-                                @endif
-                            </span>
-                            <div>
-                                <p class="font-bold text-gray-900">{{ $expense->description }}</p>
-                                <p class="text-xs text-gray-500">{{ $expense->date->format('Y-m-d') }}</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <span class="font-mono font-bold text-lg {{ $expense->is_base_currency ? 'text-indigo-600' : 'text-gray-900' }}">
-                                {{ $expense->is_base_currency ? $trip->base_currency : $trip->target_currency }} {{ number_format($expense->amount) }}
-                            </span>
-                            @if(!$expense->is_base_currency)
-                                <p class="text-xs text-gray-400">約 {{ $trip->base_currency }} {{ number_format($expense->amount * $trip->exchange_rate) }}</p>
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-100">
-                        <span class="text-xs font-semibold px-2 py-1 rounded bg-gray-100 text-gray-600">
-                            @if($expense->category == 'Food') 飲食
-                            @elseif($expense->category == 'Transport') 交通
-                            @elseif($expense->category == 'Shopping') 購物
-                            @elseif($expense->category == 'Accommodation') 住宿
-                            @else 其他
-                            @endif
-                        </span>
+                        <div class="grid md:grid-cols-2 gap-4 p-4 mt-2">
+                            @forelse($expenses as $expense)
+                                <div class="muji-card p-5 rounded-2xl border border-muji-edge shadow-muji-sm bg-white/60 hover:shadow-muji transition-all relative group">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="flex items-center gap-3">
+                                            <span class="w-10 h-10 bg-muji-base rounded-xl flex items-center justify-center text-xl shadow-muji-sm">
+                                                @if($expense->category == 'Food') 🍔
+                                                @elseif($expense->category == 'Transport') 🚇
+                                                @elseif($expense->category == 'Shopping') 🛍️
+                                                @elseif($expense->category == 'Accommodation') 🏨
+                                                @else 💸
+                                                @endif
+                                            </span>
+                                            <div>
+                                                <p class="font-black text-muji-ink">{{ $expense->description }}</p>
+                                                <p class="text-[10px] font-black text-muji-ash uppercase tracking-widest mt-1">{{ $expense->date->format('Y/m/d') }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <span class="font-mono font-black text-lg {{ $expense->is_base_currency ? 'text-muji-oak' : 'text-muji-ink' }}">
+                                                {{ $expense->is_base_currency ? $trip->base_currency : $trip->target_currency }} {{ number_format($expense->amount) }}
+                                            </span>
+                                            @if(!$expense->is_base_currency)
+                                                <p class="text-[10px] text-muji-ash font-medium italic">≈ {{ $trip->base_currency }} {{ number_format($expense->amount * $trip->exchange_rate) }}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between items-center pt-4 border-t border-muji-edge">
+                                        <span class="text-[10px] font-black px-2.5 py-1 rounded-lg bg-muji-base/50 text-muji-oak border border-muji-edge uppercase tracking-widest">
+                                            @if($expense->category == 'Food') 飲食
+                                            @elseif($expense->category == 'Transport') 交通
+                                            @elseif($expense->category == 'Shopping') 購物
+                                            @elseif($expense->category == 'Accommodation') 住宿
+                                            @else 其他
+                                            @endif
+                                        </span>
 
                         @if(!$isShared)
                             <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">

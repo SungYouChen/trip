@@ -18,17 +18,16 @@ $expensesToShow = $showArchived
     ? route('trip.index_shared', ['token' => $trip->share_token])
     : route('trip.show', ['user' => $trip->user, 'trip' => $trip]);
     @endphp
-    <a href="{{ $returnLink }}" class="inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors gap-1">
+    <a href="{{ $returnLink }}" class="inline-flex items-center text-sm font-medium text-muji-oak hover:underline transition-colors gap-1">
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7 7-7" />
         </svg>
         返回
-        <!-- {{ $trip->name }} -->
     </a>
 
     @if(!$isShared)
     @auth
-    <a href="{{ request()->fullUrlWithQuery(['archived' => $showArchived ? '0' : '1']) }}" class="flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-full border transition-all {{ $showArchived ? 'bg-red-50 text-red-600 border-red-200' : 'bg-white/10 text-gray-400 border-white/20 hover:bg-white/20' }}">
+    <a href="{{ request()->fullUrlWithQuery(['archived' => $showArchived ? '0' : '1']) }}" class="flex items-center gap-2 text-xs font-black px-3 py-1.5 rounded-full border border-muji-edge transition-all {{ $showArchived ? 'bg-muji-base text-muji-oak' : 'bg-muji-base/50 text-muji-ash hover:bg-muji-wheat/20' }}">
         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2l1-12M10 12v4m4-4v4" />
         </svg>
@@ -41,20 +40,19 @@ $expensesToShow = $showArchived
 <div class="mb-8">
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-            <span class="inline-block px-3 py-1 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-700 mb-2">
+        <div>
+            <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-muji-wheat text-muji-oak mb-2">
                 {{ $day['date'] }} ({{ $day['day'] }})
             </span>
             <div class="flex items-center gap-3 @auth cursor-pointer hover:opacity-80 transition-all @endauth" @auth onclick="safeOpenModal('daySummaryEditModal')" @endauth>
-                <h1 class="text-3xl font-extrabold text-gray-900">{{ $day['title'] }}</h1>
-                @if(!$isShared)
-                @endif
+                <h1 class="text-3xl font-black text-muji-ink">{{ $day['title'] }}</h1>
             </div>
             @if($day['summary'])
-            <p class="text-lg text-gray-500 mt-1">{{ $day['summary'] }}</p>
+            <p class="text-lg text-muji-ash mt-1">{{ $day['summary'] }}</p>
             @endif
         </div>
         <div class="text-right">
-            <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-600 uppercase">{{ $day['location'] }}</span>
+            <span class="text-2xl font-black text-muji-oak uppercase tracking-widest">{{ $day['location'] }}</span>
         </div>
     </div>
 </div>
@@ -63,12 +61,12 @@ $expensesToShow = $showArchived
     <!-- Sidebar Info -->
     <div class="lg:col-span-1 space-y-6">
         @if($day['accommodation'])
-        <div class="bg-white/40 backdrop-blur-md rounded-2xl p-6 shadow-sm border border-white/20">
+        <div class="muji-card p-6 border-muji-edge">
             <div class="flex justify-between items-start mb-3">
-                <h3 class="text-gray-400 text-xs font-bold uppercase tracking-wider">住宿資訊</h3>
+                <h3 class="text-muji-ash text-[10px] font-bold uppercase tracking-widest">住宿資訊</h3>
                 @if(!$isShared)
                 @auth
-                <button type="button" onclick="safeOpenModal('daySummaryEditModal')" class="p-1 text-indigo-400 hover:text-indigo-600 transition-colors" title="編輯住宿與日誌">
+                <button type="button" onclick="safeOpenModal('daySummaryEditModal')" class="p-1 text-muji-oak hover:opacity-70 transition-colors" title="編輯住宿與日誌">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                     </svg>
@@ -76,8 +74,8 @@ $expensesToShow = $showArchived
                 @endauth
                 @endif
             </div>
-            <h2 class="text-xl font-bold text-indigo-600 mb-2">{{ $day['accommodation']['name'] }}</h2>
-            <div class="flex items-start gap-2 text-gray-600 mb-4 cursor-pointer hover:text-indigo-500 transition-colors" onclick="openMap('{{ addslashes($day['accommodation']['address']) }}')">
+            <h2 class="text-xl font-bold text-muji-ink mb-2">{{ $day['accommodation']['name'] }}</h2>
+            <div class="flex items-start gap-2 text-muji-ash mb-4 cursor-pointer hover:text-muji-oak transition-colors" onclick="openMap('{{ addslashes($day['accommodation']['address']) }}')">
                 <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -85,19 +83,19 @@ $expensesToShow = $showArchived
                 <span class="text-sm leading-relaxed">{{ $day['accommodation']['address'] }}</span>
             </div>
             <div class="space-y-2 text-sm">
-                <div class="flex justify-between border-b border-gray-50 pb-2">
-                    <span class="text-gray-400">入住 Check-in</span>
-                    <span class="font-medium text-gray-700">{{ $day['accommodation']['check_in'] ?? '15:00' }}</span>
+                <div class="flex justify-between border-b border-muji-edge pb-2">
+                    <span class="text-muji-ash font-bold">入住時間</span>
+                    <span class="font-black text-muji-ink">{{ $day['accommodation']['check_in'] ?? '15:00' }}</span>
                 </div>
                 @if(isset($day['accommodation']['price']))
-                <div class="flex justify-between border-b border-gray-50 pb-2">
-                    <span class="text-gray-400">價格 Price</span>
-                    <span class="font-medium text-gray-700">{{ $day['accommodation']['price'] }}</span>
+                <div class="flex justify-between border-b border-muji-edge pb-2">
+                    <span class="text-muji-ash font-bold">預訂價格</span>
+                    <span class="font-black text-muji-ink">{{ $day['accommodation']['price'] }}</span>
                 </div>
                 @endif
                 @if(isset($day['accommodation']['note']))
                 <div class="pt-2">
-                    <p class="text-gray-500 italic">{{ $day['accommodation']['note'] }}</p>
+                    <p class="text-muji-ash italic font-medium">{{ $day['accommodation']['note'] }}</p>
                 </div>
                 @endif
             </div>
@@ -107,12 +105,12 @@ $expensesToShow = $showArchived
 
     <!-- Main Timeline -->
     <div class="lg:col-span-2">
-        <div class="bg-white/40 backdrop-blur-md rounded-2xl p-6 shadow-sm border border-white/20">
+        <div class="muji-card p-6 border-muji-edge">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-gray-400 text-xs font-bold uppercase tracking-wider">每日行程 (Timeline)</h3>
+                <h3 class="text-muji-ash text-[10px] font-bold uppercase tracking-widest">每日行程</h3>
                 @if(!$isShared)
                 @auth
-                <button type="button" onclick="openEventModal()" class="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-full hover:bg-indigo-100 transition-all border border-indigo-100/50 shadow-sm active:scale-95">
+                <button type="button" onclick="openEventModal()" class="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 bg-muji-wheat text-muji-oak rounded-full hover:opacity-80 transition-all border border-muji-edge shadow-muji-sm active:scale-95">
                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                     </svg>
@@ -121,7 +119,7 @@ $expensesToShow = $showArchived
                 @endauth
                 @endif
             </div>
-            <div class="relative pl-8 border-l-2 border-indigo-100 space-y-10">
+            <div class="relative pl-8 border-l border-muji-edge space-y-10">
                 @php
                 $now = \Carbon\Carbon::now('Asia/Tokyo');
                 $today = $now->format('Y-m-d');
@@ -191,23 +189,23 @@ $expensesToShow = $showArchived
                     // Horizontally center on the border-l-2 (at -32px from content, -16px from container edge)
                     // Dot width is 20px, so -16 - 10 = -26px
                     if ($isArchived) {
-                    $dotClass .= ' bg-slate-300 border-slate-100 -left-[24px] ';
-                    $textClass .= ' text-slate-400';
-                    $titleClass .= ' font-bold text-slate-400';
+                        $dotClass .= ' bg-muji-ash border-muji-edge -left-[20px] ';
+                        $textClass .= ' text-muji-ash';
+                        $titleClass .= ' font-black text-muji-ash';
                     } elseif ($status === 'past') {
-                    $containerClass .= ' opacity-40 grayscale';
-                    $dotClass .= ' bg-slate-100 border-slate-200 -left-[24px] ';
-                    $textClass .= ' text-slate-400';
-                    $titleClass .= ' font-bold text-slate-400';
+                        $containerClass .= ' opacity-40 grayscale';
+                        $dotClass .= ' bg-muji-base border-muji-edge -left-[20px] ';
+                        $textClass .= ' text-muji-ash';
+                        $titleClass .= ' font-black text-muji-ink';
                     } elseif ($status === 'present') {
-                    $containerClass .= ' scale-[1.01]';
-                    $dotClass .= ' bg-slate-800 border-slate-200 -left-[24px] ';
-                    $textClass .= ' text-slate-900 font-bold';
-                    $titleClass .= ' font-bold text-slate-900';
+                        $containerClass .= ' bg-muji-wheat/10 scale-[1.02] shadow-muji ring-1 ring-muji-oak';
+                        $dotClass .= ' bg-muji-oak border-white shadow-[0_0_0_4px_rgba(156,140,124,0.1)] -left-[20px] scale-125';
+                        $textClass .= ' text-muji-oak font-black';
+                        $titleClass .= ' font-black text-muji-ink';
                     } else {
-                    $dotClass .= ' bg-white border-slate-200 group-hover:border-slate-800 -left-[24px] ';
-                    $textClass .= ' text-slate-500 group-hover:text-slate-900';
-                    $titleClass .= ' font-medium text-slate-600 group-hover:text-slate-900';
+                        $dotClass .= ' bg-muji-paper border-muji-edge -left-[20px] ';
+                        $textClass .= ' text-muji-ash';
+                        $titleClass .= ' font-black text-muji-ink group-hover:text-muji-oak transition-colors';
                     }
                     @endphp
                     <div class="{{ $containerClass }}">
@@ -219,7 +217,7 @@ $expensesToShow = $showArchived
                             <div class="{{ $contentClass }}">
                                 <div class="flex items-center justify-between gap-4">
                                     <h4 class="{{ $titleClass }}">
-                                        <button onclick="openMap('{{ addslashes($event['map_query'] ?? $event['activity']) }}')" class="hover:underline decoration-indigo-300 decoration-2 text-left">
+                                        <button onclick="openMap('{{ addslashes($event['map_query'] ?? $event['activity']) }}')" class="hover:underline decoration-muji-wheat decoration-2 text-left">
                                             {{ $event['activity'] }}
                                         </button>
                                         @if($isArchived)
@@ -254,7 +252,7 @@ $expensesToShow = $showArchived
                                         @else
                                         @php $eventDelFormId = 'del-event-' . $event['id']; @endphp
                                         <div class="flex items-center gap-1">
-                                            <button onclick="openEventModal({{ json_encode($event) }})" class="tooltip tooltip-bottom p-1 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors" data-tip="編輯">
+                                            <button onclick="openEventModal({{ json_encode($event) }})" class="tooltip tooltip-bottom p-1 text-muji-ash hover:text-muji-oak hover:bg-muji-base rounded transition-colors" data-tip="編輯">
                                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                                 </svg>
@@ -278,11 +276,11 @@ $expensesToShow = $showArchived
                                 @if(isset($event['sub_activities']) && is_array($event['sub_activities']))
                                 <ul class="mt-2 space-y-1">
                                     @foreach($event['sub_activities'] as $sub)
-                                    <li class="flex items-center gap-2 text-gray-600 text-sm">
-                                        <svg class="w-3 h-3 text-indigo-300" fill="currentColor" viewBox="0 0 20 20">
+                                    <li class="flex items-center gap-2 text-muji-ash text-sm">
+                                        <svg class="w-3 h-3 text-muji-wheat" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                                         </svg>
-                                        <button onclick="openMap('{{ addslashes($sub) }}')" class="hover:text-indigo-600 hover:underline text-left">
+                                        <button onclick="openMap('{{ addslashes($sub) }}')" class="hover:text-muji-oak hover:underline text-left">
                                             {{ $sub }}
                                         </button>
                                     </li>
@@ -291,7 +289,7 @@ $expensesToShow = $showArchived
                                 @endif
 
                                 @if($event['note'])
-                                <div class="text-sm text-gray-500 mt-2 bg-gray-50/80 p-2 rounded border border-gray-100 inline-block">
+                                <div class="text-sm text-muji-ash mt-2 bg-muji-base/50 p-2 rounded border border-muji-edge inline-block italic font-medium">
                                     {{ $event['note'] }}
                                 </div>
                                 @endif
@@ -303,10 +301,10 @@ $expensesToShow = $showArchived
         </div>
 
         @if(isset($expenses) && $expenses->isNotEmpty())
-        <div class="mt-8 pt-8 border-t border-gray-100">
-            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center justify-between">
+        <div class="mt-8 pt-8 border-t border-muji-edge">
+            <h3 class="text-xl font-black text-muji-ink mb-4 flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                    <svg class="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="w-5 h-5 text-muji-oak" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     @php
@@ -318,13 +316,13 @@ $expensesToShow = $showArchived
                     @endphp
                     {{ $showArchived ? '已封存花費' : '今日花費' }}
                     @if(!$showArchived)
-                    <span class="text-xs font-normal text-gray-400 ml-2 hidden sm:inline">(約 {{ $trip->base_currency }} {{ number_format($dayTotalBase) }})</span>
+                    <span class="text-[10px] font-black text-muji-ash ml-2 hidden sm:inline tracking-widest uppercase">(約 {{ $trip->base_currency }} {{ number_format($dayTotalBase) }})</span>
                     @endif
                 </div>
 
                 @if(!$isShared)
                 @auth
-                <button onclick="openExpenseModalWithDate('{{ $currentDate }}')" class="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-full hover:bg-indigo-100 transition-all border border-indigo-100/50 shadow-sm active:scale-95">
+                <button onclick="openExpenseModalWithDate('{{ $currentDate }}')" class="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 bg-muji-paper text-muji-oak rounded-full hover:bg-muji-base transition-all border border-muji-edge shadow-muji-sm active:scale-95">
                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                     </svg>
@@ -335,14 +333,14 @@ $expensesToShow = $showArchived
             </h3>
 
             @if($expensesToShow->isEmpty())
-            <div class="text-center py-12 bg-gray-50/50 rounded-2xl border-2 border-dashed border-gray-100">
-                <p class="text-gray-400">目前沒有{{ $showArchived ? '封存的' : '' }}項目</p>
+            <div class="text-center py-12 bg-muji-base/30 rounded-2xl border-2 border-dashed border-muji-edge">
+                <p class="text-muji-ash font-medium italic">目前沒有{{ $showArchived ? '封存的' : '' }}項目</p>
             </div>
             @else
             <div class="grid md:grid-cols-2 gap-4">
                 @foreach($expensesToShow as $expense)
                 @php $exIsTrashed = $expense->trashed(); @endphp
-                <div class="bg-white/40 backdrop-blur-md p-4 rounded-xl border {{ $exIsTrashed ? 'border-dashed border-red-300 bg-red-50/30 grayscale opacity-70' : 'border-white/20' }} shadow-sm hover:shadow-md transition-shadow relative group">
+                <div class="muji-card p-4 border border-muji-edge hover:shadow-muji transition-shadow relative group">
                     <div class="flex justify-between items-start mb-2">
                         <div class="flex items-center gap-2">
                             @if($exIsTrashed)
@@ -351,8 +349,8 @@ $expensesToShow = $showArchived
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg>
                             </span>
-                            @else
-                            <span class="p-1.5 bg-slate-50 text-slate-600 rounded-lg">
+                             @else
+                            <span class="p-1.5 bg-muji-base text-muji-oak rounded-lg shadow-muji-sm">
                                 @php
                                 $icons = [
                                 'food' => 'M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5',
@@ -367,14 +365,14 @@ $expensesToShow = $showArchived
                             </span>
                             @endif
                             <div>
-                                <h4 class="font-bold {{ $exIsTrashed ? 'text-red-700' : 'text-gray-900' }}">{{ $expense->description }}</h4>
-                                <p class="text-xs text-gray-400 capitalize">{{ $expense->category }}</p>
+                                <h4 class="font-black {{ $exIsTrashed ? 'text-red-800 underline' : 'text-muji-ink' }}">{{ $expense->description }}</h4>
+                                <p class="text-[10px] text-muji-ash capitalize font-black tracking-widest">{{ $expense->category }}</p>
                             </div>
                         </div>
                         <div class="text-right">
-                            <div class="font-bold {{ $exIsTrashed ? 'text-red-600' : 'text-gray-900' }}">{{ $expense->currency }} {{ number_format($expense->amount) }}</div>
+                            <div class="font-black {{ $exIsTrashed ? 'text-red-600' : 'text-muji-ink' }}">{{ $expense->currency }} {{ number_format($expense->amount) }}</div>
                             @if(!$expense->is_base_currency)
-                            <p class="text-[10px] text-gray-400">≈ {{ $trip->base_currency }} {{ number_format($expense->amount * $trip->exchange_rate) }}</p>
+                            <p class="text-[10px] text-muji-ash font-medium italic">≈ {{ $trip->base_currency }} {{ number_format($expense->amount * $trip->exchange_rate) }}</p>
                             @endif
                         </div>
                     </div>
@@ -438,17 +436,17 @@ $expensesToShow = $showArchived
             <div class="px-8 py-10 overflow-y-auto custom-scrollbar scroll-smooth">
                 <div class="flex justify-between items-start mb-10">
                     <div class="flex items-center gap-4">
-                        <div class="p-3 bg-indigo-50 rounded-2xl text-indigo-600 shadow-sm">
+                        <div class="p-3 bg-muji-base rounded-2xl text-muji-oak shadow-muji-sm">
                             <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
                         </div>
-                        <div class="flex flex-col border-l-2 border-indigo-100 pl-4">
-                            <h3 class="text-2xl font-black text-gray-900 leading-tight">編輯日誌摘要</h3>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mt-1">完善您的每日旅程日誌</p>
+                        <div class="flex flex-col border-l-2 border-muji-edge pl-4">
+                            <h3 class="text-2xl font-black text-muji-ink leading-tight">編輯日誌摘要</h3>
+                            <p class="text-[10px] font-bold text-muji-ash uppercase tracking-[0.2em] mt-1">完善您的每日旅程日誌</p>
                         </div>
                     </div>
-                    <button onclick="safeCloseModal('daySummaryEditModal')" class="text-gray-300 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100 transition-all">
+                    <button onclick="safeCloseModal('daySummaryEditModal')" class="text-muji-ash hover:text-muji-ink p-2 rounded-full hover:bg-muji-base transition-all">
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -459,38 +457,38 @@ $expensesToShow = $showArchived
                     @method('PUT')
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">今日主題</label>
-                            <input type="text" name="title" value="{{ $day['title'] }}" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500">
+                            <label class="block text-sm font-bold text-muji-ash mb-2">今日主題</label>
+                            <input type="text" name="title" value="{{ $day['title'] }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl focus:ring-2 focus:ring-muji-oak text-muji-ink shadow-muji-sm">
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">所在城市/區域</label>
-                            <input type="text" name="location" value="{{ $day['location'] == $trip->name ? '' : $day['location'] }}" placeholder="例如: Osaka" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500">
+                            <label class="block text-sm font-bold text-muji-ash mb-2">所在城市/區域</label>
+                            <input type="text" name="location" value="{{ $day['location'] == $trip->name ? '' : $day['location'] }}" placeholder="例如: Osaka" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl focus:ring-2 focus:ring-muji-oak text-muji-ink shadow-muji-sm">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">今日摘要</label>
-                        <textarea name="summary" rows="2" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500">{{ $day['summary'] }}</textarea>
+                        <label class="block text-sm font-bold text-muji-ash mb-2">今日摘要</label>
+                        <textarea name="summary" rows="2" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl focus:ring-2 focus:ring-muji-oak text-muji-ink shadow-muji-sm">{{ $day['summary'] }}</textarea>
                     </div>
-                    <div class="pt-6 border-t border-gray-100 mt-6">
-                        <h4 class="text-xs font-black text-indigo-600 uppercase tracking-[0.2em] flex items-center gap-2 mb-4 bg-indigo-50/50 self-start px-3 py-1.5 rounded-lg border border-indigo-100">
+                    <div class="pt-6 border-t border-muji-edge mt-6">
+                        <h4 class="text-xs font-black text-muji-oak uppercase tracking-[0.2em] flex items-center gap-2 mb-4 bg-muji-base/50 self-start px-3 py-1.5 rounded-lg border border-muji-edge">
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                             </svg>
-                            住宿資訊 Accommodation
+                            住宿資訊
                         </h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="sm:col-span-2">
-                                <label class="block text-sm font-bold text-gray-700 mb-2">飯店名稱 Name</label>
-                                <input type="text" name="hotel_name" value="{{ $day['accommodation']['name'] ?? '' }}" class="w-full px-4 py-2 border border-gray-200 rounded-xl">
+                                <label class="block text-sm font-bold text-muji-ash mb-2">飯店名稱</label>
+                                <input type="text" name="hotel_name" value="{{ $day['accommodation']['name'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink focus:ring-2 focus:ring-muji-oak transition-all">
                             </div>
                             <div class="sm:col-span-2">
-                                <label class="block text-sm font-bold text-gray-700 mb-2">飯店地址 Address</label>
-                                <input type="text" name="hotel_address" value="{{ $day['accommodation']['address'] ?? '' }}" class="w-full px-4 py-2 border border-gray-200 rounded-xl">
+                                <label class="block text-sm font-bold text-muji-ash mb-2">飯店地址</label>
+                                <input type="text" name="hotel_address" value="{{ $day['accommodation']['address'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink focus:ring-2 focus:ring-muji-oak transition-all">
                             </div>
                             <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">預訂價格 Price</label>
-                                <div class="flex relative rounded-xl border border-gray-200 overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 bg-white shadow-sm transition-all">
-                                    <select name="hotel_currency" class="bg-gray-50/80 border-0 border-r border-gray-200 px-3 py-2 text-gray-700 font-semibold text-sm focus:ring-0 cursor-pointer outline-none appearance-none hover:bg-gray-100 transition-colors">
+                                <label class="block text-sm font-bold text-muji-ash mb-2">預訂價格</label>
+                                <div class="flex relative rounded-xl border border-muji-edge overflow-hidden focus-within:ring-2 focus-within:ring-muji-oak bg-white shadow-muji-sm transition-all">
+                                    <select name="hotel_currency" class="bg-muji-base border-0 border-r border-muji-edge px-3 py-3 text-muji-ink font-black text-xs focus:ring-0 cursor-pointer appearance-none">
                                         @php
                                         $rawPrice = $day['accommodation']['price'] ?? '';
                                         preg_match('/^([^\d]+)?([\d,.]+)/u', $rawPrice, $m);
@@ -500,22 +498,22 @@ $expensesToShow = $showArchived
                                         <option value="{{ $trip->base_currency }}" {{ $savedCurrency==$trip->base_currency ? 'selected' : '' }}>{{ $trip->base_currency }}</option>
                                         <option value="{{ $trip->target_currency }}" {{ $savedCurrency==$trip->target_currency ? 'selected' : '' }}>{{ $trip->target_currency }}</option>
                                     </select>
-                                    <input type="number" step="0.01" name="hotel_price_num" value="{{ $savedNum }}" class="flex-1 w-full border-0 bg-transparent focus:ring-0 px-4 py-2 outline-none font-mono text-gray-900" placeholder="16092">
+                                    <input type="number" step="0.01" name="hotel_price_num" value="{{ $savedNum }}" class="flex-1 w-full border-0 bg-transparent focus:ring-0 px-4 py-3 outline-none font-mono text-muji-ink font-black" placeholder="16092">
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">入住時間 (Check-in)</label>
-                                <input type="time" name="hotel_checkin" value="{{ $day['accommodation']['check_in'] ?? '' }}" class="w-full px-4 py-2 border border-gray-200 rounded-xl">
+                                <label class="block text-sm font-bold text-muji-ash mb-2">入住時間</label>
+                                <input type="time" name="hotel_checkin" value="{{ $day['accommodation']['check_in'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink focus:ring-2 focus:ring-muji-oak">
                             </div>
                             <div class="sm:col-span-2">
-                                <label class="block text-sm font-bold text-gray-700 mb-2">住宿備註 Notes</label>
-                                <input type="text" name="hotel_note" value="{{ $day['accommodation']['note'] ?? '' }}" class="w-full px-4 py-2 border border-gray-200 rounded-xl" placeholder="例如: 4晚">
-                            </div> {{-- note --}}
+                                <label class="block text-sm font-bold text-muji-ash mb-2">住宿備註</label>
+                                <input type="text" name="hotel_note" value="{{ $day['accommodation']['note'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink focus:ring-2 focus:ring-muji-oak" placeholder="例如: 4晚">
+                            </div>
                         </div> {{-- End of grid from line 481 --}}
                     </div> {{-- End of pt-6 border-t from line 474 (CRITICAL FIX) --}}
-                    <div class="pt-6 mt-8 border-t border-gray-100 flex gap-4">
-                        <button type="button" onclick="safeCloseModal('daySummaryEditModal')" class="flex-1 px-6 py-4 bg-gray-100 text-gray-700 font-black rounded-2xl hover:bg-gray-200 transition-colors">取消</button>
-                        <button type="submit" class="flex-1 px-6 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 shadow-xl hover:shadow-indigo-200 transition-all active:scale-95">儲存回饋</button>
+                    <div class="pt-6 mt-8 border-t border-muji-edge flex gap-4">
+                        <button type="button" onclick="safeCloseModal('daySummaryEditModal')" class="flex-1 px-6 py-4 bg-muji-base text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-wheat/20 transition-colors">取消</button>
+                        <button type="submit" class="flex-1 px-6 py-4 bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 shadow-muji transition-all active:scale-95">儲存變更</button>
                     </div>
                 </form>
             </div> {{-- px-8 --}}
@@ -531,17 +529,17 @@ $expensesToShow = $showArchived
             <div class="px-8 py-10 overflow-y-auto custom-scrollbar scroll-smooth">
                 <div class="flex justify-between items-start mb-10">
                     <div class="flex items-center gap-4">
-                        <div class="p-3 bg-indigo-50 rounded-2xl text-indigo-600 shadow-sm">
+                        <div class="p-3 bg-muji-base rounded-2xl text-muji-oak shadow-muji-sm">
                             <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <div class="flex flex-col border-l-2 border-indigo-100 pl-4">
-                            <h3 id="eventModalTitle" class="text-2xl font-black text-gray-900 leading-tight">行程活動</h3>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mt-1">規劃您的行程細節</p>
+                        <div class="flex flex-col border-l-2 border-muji-edge pl-4">
+                            <h3 id="eventModalTitle" class="text-2xl font-black text-muji-ink leading-tight">行程活動</h3>
+                            <p class="text-[10px] font-bold text-muji-ash uppercase tracking-[0.2em] mt-1">規劃您的行程細節</p>
                         </div>
                     </div>
-                    <button onclick="safeCloseModal('eventDetailsModal')" class="text-gray-300 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100 transition-all">
+                    <button onclick="safeCloseModal('eventDetailsModal')" class="text-muji-ash hover:text-muji-ink p-2 rounded-full hover:bg-muji-base transition-all">
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -552,29 +550,29 @@ $expensesToShow = $showArchived
                     <div id="eventMethod"></div>
                     <div class="space-y-6">
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">活動時間 (例如: 09:00 - 10:30)</label>
-                            <input type="text" name="time" id="event_time" required class="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 shadow-sm focus:ring-2 focus:ring-indigo-500 transition-all font-medium">
+                            <label class="block text-sm font-bold text-muji-ash mb-2">活動時間 (例如: 09:00 - 10:30)</label>
+                            <input type="text" name="time" id="event_time" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">活動名稱 / 地點 Activity / Location</label>
-                            <input type="text" name="activity" id="event_activity" required class="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 shadow-sm focus:ring-2 focus:ring-indigo-500 transition-all font-medium">
+                            <label class="block text-sm font-bold text-muji-ash mb-2">活動名稱 / 地點</label>
+                            <input type="text" name="activity" id="event_activity" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">子目的地 / 細節 (逗號隔開) Sub-activities</label>
-                            <input type="text" name="sub_activities" id="event_subs" placeholder="例如: 買藥妝, 吃拉麵" class="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 shadow-sm focus:ring-2 focus:ring-indigo-500 transition-all font-medium">
+                            <label class="block text-sm font-bold text-muji-ash mb-2">細分目的地 (逗號隔開)</label>
+                            <input type="text" name="sub_activities" id="event_subs" placeholder="例如: 買藥妝, 吃拉麵" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">行程備註 / 說明 Note</label>
-                            <textarea name="note" id="event_note" rows="2" class="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 shadow-sm focus:ring-2 focus:ring-indigo-500 transition-all font-medium"></textarea>
+                            <label class="block text-sm font-bold text-muji-ash mb-2">行程備註 / 說明</label>
+                            <textarea name="note" id="event_note" rows="2" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium"></textarea>
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">地圖關鍵字 (遺漏時將使用活動名稱)</label>
-                            <input type="text" name="map_query" id="event_map" placeholder="若不同於活動名稱，請填寫" class="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 shadow-sm focus:ring-2 focus:ring-indigo-500 transition-all font-medium">
+                            <label class="block text-sm font-bold text-muji-ash mb-2">地圖關鍵字 (若不同於活動名稱)</label>
+                            <input type="text" name="map_query" id="event_map" placeholder="請填寫地標名稱" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
                         </div>
                     </div>
-                    <div class="flex gap-4 pt-6 mt-8 border-t border-gray-100">
-                        <button type="button" onclick="safeCloseModal('eventDetailsModal')" class="flex-1 px-6 py-4 bg-gray-100 text-gray-700 font-black rounded-2xl hover:bg-gray-200 transition-colors text-center">取消 Cancel</button>
-                        <button type="submit" class="flex-1 px-6 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 shadow-xl hover:shadow-indigo-200 transition-all active:scale-95 text-center">儲存活動 Save Event</button>
+                    <div class="flex gap-4 pt-6 mt-8 border-t border-muji-edge">
+                        <button type="button" onclick="safeCloseModal('eventDetailsModal')" class="flex-1 px-6 py-4 bg-muji-base text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-wheat/20 transition-colors text-center">取消</button>
+                        <button type="submit" class="flex-1 px-6 py-4 bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 shadow-muji transition-all active:scale-95 text-center">儲存活動</button>
                     </div>
                 </form>
             </div>

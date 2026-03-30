@@ -66,14 +66,26 @@ class TripController extends Controller
             'name' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
-            'cover_image' => 'nullable|string',
             'base_currency' => 'required|string|max:10',
             'target_currency' => 'required|string|max:10',
             'exchange_rate' => 'required|numeric|min:0.0001',
             'transport_type' => 'nullable|string|in:flight,train,bus,car,ship',
         ]);
 
+        // Validate image separately to give more control
+        if ($request->hasFile('cover_image')) {
+            $imageValidated = $request->validate([
+                'cover_image' => 'image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            ]);
+        }
+
+        $coverPath = null;
+        if ($request->hasFile('cover_image') && $request->file('cover_image')->isValid()) {
+            $coverPath = $request->file('cover_image')->store('covers', 'public');
+        }
+
         $validated['user_id'] = auth()->id();
+        $validated['cover_image'] = $coverPath;
         $validated['flight_info'] = [
             'transport_type' => $request->transport_type ?? 'flight',
             'airline' => '',
@@ -82,6 +94,7 @@ class TripController extends Controller
             'outbound' => ['date' => '', 'time' => '', 'route' => ''],
             'inbound' => ['date' => '', 'time' => '', 'route' => '']
         ];
+        
         $trip = Trip::create($validated);
 
         // Auto-generate days
@@ -212,7 +225,7 @@ class TripController extends Controller
             'base_currency' => 'required|string|max:10',
             'target_currency' => 'required|string|max:10',
             'exchange_rate' => 'required|numeric|min:0.0001',
-            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
             'transport_type' => 'nullable|string|in:flight,train,bus,car,ship',
         ]);
 

@@ -2,24 +2,23 @@
 
 @section('content')
 <div class="min-h-[70vh] flex flex-col items-center justify-center text-center px-4">
-    <div class="mb-8 w-24 h-24 rounded-full bg-gradient-to-br from-indigo-400 to-purple-300 flex items-center justify-center shadow-lg mx-auto">
-        <img src="/icon_logo.png" alt="Logo" class="w-16 h-16 object-contain">
+    <div class="mb-10 w-32 h-32 rounded-3xl bg-muji-base flex items-center justify-center shadow-muji border border-muji-edge mx-auto transform -rotate-3 hover:rotate-0 transition-transform duration-500">
+        <img src="/icon_logo.png" alt="Logo" class="w-20 h-20 object-contain grayscale opacity-80">
     </div>
     
-    <h1 class="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-6 drop-shadow-sm">
-        歡迎使用 Trip Planner
+    <h1 class="text-5xl md:text-7xl font-black text-muji-ink tracking-tighter mb-8 bg-muji-base/50 px-6 py-2 rounded-2xl border border-muji-edge/30 backdrop-blur-sm">
+        旅程 <span class="text-muji-oak underline decoration-muji-wheat/50 underline-offset-[12px]">足跡</span>
     </h1>
     
-    <p class="text-lg md:text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-        開始規劃您的下一趟旅程！登入以管理您的行程表、花費紀錄與代辦事項。
+    <p class="text-lg md:text-xl text-muji-ash mb-12 max-w-2xl mx-auto leading-relaxed font-medium italic opacity-80">
+        規劃下一次的冒險，或是重溫美好的回憶。<br>登入以紀錄您的足跡、管理預算與行程。
     </p>
 
-    <button onclick="openLoginModal()" class="group relative px-8 py-4 bg-indigo-600 text-white font-bold rounded-full overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-        <div class="absolute inset-0 bg-white/20 group-hover:translate-x-full -translate-x-full transition-transform duration-500 ease-in-out skew-x-12"></div>
-        <span class="flex items-center gap-2 relative z-10 text-lg">
-            立即登入開始使用
-            <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+    <button onclick="openLoginModal()" class="group relative px-12 py-5 bg-muji-oak text-white font-black rounded-2xl overflow-hidden shadow-muji hover:opacity-90 transition-all duration-300 transform hover:-translate-y-1 active:scale-95 border border-muji-edge">
+        <span class="flex items-center gap-3 relative z-10 text-xl tracking-widest uppercase">
+            立即登入紀錄足跡
+            <svg class="w-6 h-6 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
             </svg>
         </span>
     </button>
