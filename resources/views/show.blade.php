@@ -86,12 +86,12 @@ $expensesToShow = $showArchived
             </div>
             <div class="space-y-2 text-sm">
                 <div class="flex justify-between border-b border-gray-50 pb-2">
-                    <span class="text-gray-400">Check-in</span>
+                    <span class="text-gray-400">入住 Check-in</span>
                     <span class="font-medium text-gray-700">{{ $day['accommodation']['check_in'] ?? '15:00' }}</span>
                 </div>
                 @if(isset($day['accommodation']['price']))
                 <div class="flex justify-between border-b border-gray-50 pb-2">
-                    <span class="text-gray-400">Price</span>
+                    <span class="text-gray-400">價格 Price</span>
                     <span class="font-medium text-gray-700">{{ $day['accommodation']['price'] }}</span>
                 </div>
                 @endif
@@ -445,7 +445,7 @@ $expensesToShow = $showArchived
                         </div>
                         <div class="flex flex-col border-l-2 border-indigo-100 pl-4">
                             <h3 class="text-2xl font-black text-gray-900 leading-tight">編輯日誌摘要</h3>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mt-1">Refine Your Daily Story</p>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mt-1">完善您的每日旅程日誌</p>
                         </div>
                     </div>
                     <button onclick="safeCloseModal('daySummaryEditModal')" class="text-gray-300 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100 transition-all">
@@ -459,16 +459,16 @@ $expensesToShow = $showArchived
                     @method('PUT')
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">今日主題 Topic</label>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">今日主題</label>
                             <input type="text" name="title" value="{{ $day['title'] }}" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500">
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">所在城市/區域 Location</label>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">所在城市/區域</label>
                             <input type="text" name="location" value="{{ $day['location'] == $trip->name ? '' : $day['location'] }}" placeholder="例如: Osaka" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">今日摘要 Summary</label>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">今日摘要</label>
                         <textarea name="summary" rows="2" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500">{{ $day['summary'] }}</textarea>
                     </div>
                     <div class="pt-6 border-t border-gray-100 mt-6">
@@ -504,18 +504,19 @@ $expensesToShow = $showArchived
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">Check-in Time</label>
+                                <label class="block text-sm font-bold text-gray-700 mb-2">入住時間 (Check-in)</label>
                                 <input type="time" name="hotel_checkin" value="{{ $day['accommodation']['check_in'] ?? '' }}" class="w-full px-4 py-2 border border-gray-200 rounded-xl">
                             </div>
                             <div class="sm:col-span-2">
                                 <label class="block text-sm font-bold text-gray-700 mb-2">住宿備註 Notes</label>
                                 <input type="text" name="hotel_note" value="{{ $day['accommodation']['note'] ?? '' }}" class="w-full px-4 py-2 border border-gray-200 rounded-xl" placeholder="例如: 4晚">
                             </div> {{-- note --}}
-                        </div> {{-- grid --}}
-                        <div class="pt-6 mt-8 border-t border-gray-100 flex gap-4">
-                            <button type="button" onclick="safeCloseModal('daySummaryEditModal')" class="flex-1 px-6 py-4 bg-gray-100 text-gray-700 font-black rounded-2xl hover:bg-gray-200 transition-colors">取消 Cancel</button>
-                            <button type="submit" class="flex-1 px-6 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 shadow-xl hover:shadow-indigo-200 transition-all active:scale-95">儲存變更 Save Changes</button>
-                        </div>
+                        </div> {{-- End of grid from line 481 --}}
+                    </div> {{-- End of pt-6 border-t from line 474 (CRITICAL FIX) --}}
+                    <div class="pt-6 mt-8 border-t border-gray-100 flex gap-4">
+                        <button type="button" onclick="safeCloseModal('daySummaryEditModal')" class="flex-1 px-6 py-4 bg-gray-100 text-gray-700 font-black rounded-2xl hover:bg-gray-200 transition-colors">取消</button>
+                        <button type="submit" class="flex-1 px-6 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 shadow-xl hover:shadow-indigo-200 transition-all active:scale-95">儲存回饋</button>
+                    </div>
                 </form>
             </div> {{-- px-8 --}}
         </div> {{-- relative --}}
@@ -536,8 +537,8 @@ $expensesToShow = $showArchived
                             </svg>
                         </div>
                         <div class="flex flex-col border-l-2 border-indigo-100 pl-4">
-                            <h3 id="eventModalTitle" class="text-2xl font-black text-gray-900 leading-tight">行程活動 Event</h3>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mt-1">Design Your Timeline</p>
+                            <h3 id="eventModalTitle" class="text-2xl font-black text-gray-900 leading-tight">行程活動</h3>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mt-1">規劃您的行程細節</p>
                         </div>
                     </div>
                     <button onclick="safeCloseModal('eventDetailsModal')" class="text-gray-300 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100 transition-all">
@@ -573,7 +574,7 @@ $expensesToShow = $showArchived
                     </div>
                     <div class="flex gap-4 pt-6 mt-8 border-t border-gray-100">
                         <button type="button" onclick="safeCloseModal('eventDetailsModal')" class="flex-1 px-6 py-4 bg-gray-100 text-gray-700 font-black rounded-2xl hover:bg-gray-200 transition-colors text-center">取消 Cancel</button>
-                        <button type="submit" class="flex-1 px-6 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 shadow-xl hover:shadow-indigo-200 transition-all active:scale-95 text-center">儲存變更 Save Event</button>
+                        <button type="submit" class="flex-1 px-6 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 shadow-xl hover:shadow-indigo-200 transition-all active:scale-95 text-center">儲存活動 Save Event</button>
                     </div>
                 </form>
             </div>

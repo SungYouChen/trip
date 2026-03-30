@@ -35,6 +35,7 @@
 
         // Safe Modal Engine (Standardized Visibility Control)
         function safeOpenModal(id) {
+            console.log('Safe Modal Error: Not found ->', id);
             try {
                 // Force close potential overlaps if they exist
                 ['loginModal', 'registerModal', 'globalProfileConfigModal', 'mapModal', 'expenseModal', 'daySummaryEditModal', 'eventDetailsModal'].forEach(mId => {
@@ -181,7 +182,7 @@
                         <div class="p-2.5 bg-indigo-50 rounded-xl text-indigo-600 shadow-sm">
                             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
                         </div>
-                        <h3 class="text-2xl font-black text-gray-900 m-0">使用者登入 Login</h3>
+                        <h3 class="text-2xl font-black text-gray-900 m-0">登入 Login</h3>
                     </div>
                     <button onclick="safeCloseModal('loginModal')" class="p-2 rounded-full text-gray-400 hover:bg-gray-100 transition-colors">
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -203,7 +204,7 @@
                         </div>
 
                         <button type="submit" class="w-full bg-indigo-600 text-white font-black py-4 rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 mt-2 active:scale-95">
-                            登入 Sign In
+                            立即登入 Sign In
                         </button>
                         
                         <div class="text-sm text-center mt-6 text-gray-500 pt-6 border-t border-gray-100">
@@ -224,7 +225,7 @@
                         <div class="p-2.5 bg-indigo-50 rounded-xl text-indigo-600 shadow-sm">
                             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
                         </div>
-                        <h3 class="text-2xl font-black text-gray-900 m-0">建立新帳號 Register</h3>
+                        <h3 class="text-2xl font-black text-gray-900 m-0">建立帳號 Register</h3>
                     </div>
                     <button onclick="safeCloseModal('registerModal')" class="p-2 rounded-full text-gray-400 hover:bg-gray-100 transition-colors">
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -280,7 +281,7 @@
                         </div>
                         <div class="flex flex-col border-l-2 border-indigo-100 pl-4">
                             <h3 class="text-3xl font-bold text-slate-900">個人設定 Settings</h3>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mt-1">Global User Experience</p>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mt-1">自定義全域使用體驗</p>
                         </div>
                     </div>
 
@@ -291,7 +292,7 @@
                         <div class="flex justify-between items-center mb-4">
                             <h4 class="text-xs font-black text-indigo-600 uppercase tracking-[0.2em] flex items-center gap-2 bg-indigo-50/50 self-start px-3 py-1.5 rounded-lg border border-indigo-100">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                全站背景圖片 Desktop Wallpaper
+                                全站背景圖片 Wallpaper
                             </h4>
                             @if(auth()->user()->background_image)
                                 <button type="submit" name="restore_default" value="1" class="text-[10px] text-red-400 font-bold hover:underline">恢復預設</button>
@@ -306,7 +307,7 @@
                     <div class="space-y-6 pt-6">
                         <h4 class="text-xs font-black text-indigo-600 uppercase tracking-[0.2em] flex items-center gap-2 mb-4 bg-indigo-50/50 self-start px-3 py-1.5 rounded-lg border border-indigo-100">
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                            視覺質感設定 Visual Effects
+                            視覺特效 Visual Effects
                         </h4>
                         
                         <!-- 透明度 -->
@@ -496,8 +497,8 @@
                                 <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                             </div>
                             <div class="flex flex-col border-l-2 border-indigo-100 pl-4">
-                                <h3 class="text-3xl font-bold text-slate-900 leading-tight">花費紀錄 Expense</h3>
-                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mt-1">Manage Your Budget</p>
+                                <h3 class="text-3xl font-bold text-slate-900 leading-tight">花費紀錄</h3>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mt-1">管理您的旅程預算</p>
                             </div>
                         </div>
                         <button onclick="safeCloseModal('expenseModal')" class="text-gray-300 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100 transition-all">
@@ -513,12 +514,12 @@
                         <div id="methodField"></div>
                         <div class="space-y-6">
                             <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">支出項目說明 Description</label>
+                                <label class="block text-sm font-bold text-gray-700 mb-2">支出項目說明</label>
                                 <input type="text" id="expenseDescription" name="description" required class="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 shadow-sm focus:ring-2 focus:ring-indigo-500 transition-all font-medium" placeholder="例如：午餐拉麵">
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-2">支出金額 Amount</label>
+                                    <label class="block text-sm font-bold text-gray-700 mb-2">支出金額</label>
                                     <div class="flex relative rounded-xl border border-gray-200 overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500 bg-white group transition-all">
                                         <select id="expenseCurrency" name="is_base_currency" class="bg-gray-100 border-0 border-r border-gray-200 px-3 py-3 text-gray-700 font-bold text-xs focus:ring-0 cursor-pointer appearance-none">
                                             <option value="0">{{ isset($trip) ? $trip->target_currency : '當地幣' }}</option>
@@ -528,7 +529,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-2">支出類別 Category</label>
+                                    <label class="block text-sm font-bold text-gray-700 mb-2">支出類別</label>
                                     <select id="expenseCategory" name="category" required class="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 shadow-sm focus:ring-2 focus:ring-indigo-500 font-bold appearance-none cursor-pointer">
                                         <option value="Food">飲食 🍔</option>
                                         <option value="Transport">交通 🚇</option>
@@ -542,16 +543,16 @@
                             </div>
 
                             <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">支出日期 Date</label>
+                                <label class="block text-sm font-bold text-gray-700 mb-2">支出日期</label>
                                 <input type="date" id="expenseDate" name="date" required value="{{ date('Y-m-d') }}" class="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 shadow-sm focus:ring-2 focus:ring-indigo-500 transition-all font-medium">
                             </div>
 
                             <div class="pt-6 mt-8 border-t border-gray-100 flex gap-4">
                                 <button type="button" onclick="safeCloseModal('expenseModal')" class="flex-1 px-4 py-4 border border-gray-200 rounded-2xl text-gray-700 bg-gray-50 hover:bg-gray-200 transition-colors font-black shadow-sm">
-                                    取消 Cancel
+                                    取消
                                 </button>
                                 <button type="submit" id="expenseSubmitBtn" class="flex-1 px-4 py-4 border border-transparent rounded-2xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-xl hover:shadow-indigo-200 transition-all font-black active:scale-95">
-                                    儲存變更 Save
+                                    儲存花費
                                 </button>
                             </div>
                         </div>
