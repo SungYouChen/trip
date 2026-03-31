@@ -129,7 +129,7 @@
             <div class="flex flex-wrap justify-center md:justify-end gap-x-12 gap-y-4 text-[9px] font-black tracking-[0.4em] text-muji-ash uppercase opacity-50">
                 <span>Personal Note</span>
                 <span>System Status</span>
-                <span>Version 2.4.0</span>
+                <span>Version 2.0.0</span>
             </div>
         </div>
     </footer>
