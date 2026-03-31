@@ -122,11 +122,11 @@
             </button>
         </div>
 
-        <div class="mt-40 pb-12 flex justify-between items-end border-t border-muji-edge pt-12">
+        <div class="mt-40 pb-12 flex flex-col md:flex-row justify-between items-center md:items-end border-t border-muji-edge pt-12 gap-8 md:gap-0 text-center md:text-left">
             <div class="text-[9px] font-black tracking-[0.4em] text-muji-ash uppercase">
                 &copy; 2026 JOURNEY APP PROJECT
             </div>
-            <div class="flex gap-12 text-[9px] font-black tracking-[0.4em] text-muji-ash uppercase opacity-50">
+            <div class="flex flex-wrap justify-center md:justify-end gap-x-12 gap-y-4 text-[9px] font-black tracking-[0.4em] text-muji-ash uppercase opacity-50">
                 <span>Personal Note</span>
                 <span>System Status</span>
                 <span>Version 2.4.0</span>
