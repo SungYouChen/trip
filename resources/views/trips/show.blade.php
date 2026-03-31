@@ -768,7 +768,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                                     <input type="text" name="train_no" value="{{ $flightInfo['train_no'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl focus:ring-2 focus:ring-muji-oak shadow-muji-sm text-muji-ink font-medium" placeholder="例如：JR 新幹線 希望號">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-bold text-muji-ash mb-2">座位資訊 (Car/Seat)</label>
+                                    <label class="block text-sm font-bold text-muji-ash mb-2">座位資訊</label>
                                     <input type="text" name="train_seat" value="{{ $flightInfo['train_seat'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl focus:ring-2 focus:ring-muji-oak shadow-muji-sm text-muji-ink font-medium" placeholder="例如：5車 12A">
                                 </div>
                             </div>
@@ -851,11 +851,11 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                                 <label class="block text-xs font-bold text-muji-ash mb-1">出發 / 到達時間</label>
                                 <div class="grid grid-cols-2 gap-2">
                                     <div class="relative">
-                                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-muji-ash uppercase">Dep</span>
+                                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-muji-ash uppercase">出發   </span>
                                         <input type="time" name="outbound_time_start" value="{{ $flightInfo['outbound']['time_start'] ?? '' }}" class="w-full pl-10 pr-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm font-mono text-sm focus:ring-2 focus:ring-muji-oak text-muji-ink">
                                     </div>
                                     <div class="relative">
-                                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-muji-ash uppercase">Arr</span>
+                                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-muji-ash uppercase">抵達</span>
                                         <input type="time" name="outbound_time_end" value="{{ $flightInfo['outbound']['time_end'] ?? '' }}" class="w-full pl-10 pr-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm font-mono text-sm focus:ring-2 focus:ring-muji-oak text-muji-ink">
                                     </div>
                                 </div>
@@ -1150,7 +1150,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 modalTitle: '船期航務編輯',
                 basicsTitle: '航務基本資訊',
                 notes: '備註 / 艙位', notesPlaceholder: '例如：窗位 / 含餐',
-                outbound: '啟航 Departure', inbound: '返航 / 回程 Return',
+                outbound: '啟航', inbound: '返航',
                 routeLabel: '港口', helpRoute: '請使用「港口名稱」或「起訖港 ➝ 終點港」格式'
             }
         };

@@ -43,9 +43,10 @@ class ItineraryDayController extends Controller
             ->whereDay('date', $dayNum)
             ->firstOrFail();
 
-        $day->load(['events' => function($q) { $q->withTrashed()->orderBy('sort_order'); }]);
+        $day->load(['events' => function ($q) {
+            $q->withTrashed()->orderBy('sort_order'); }]);
         $expenses = Expense::withTrashed()
-            ->where(fn($q) => $q->where('trip_id', $trip->id))
+            ->where(fn ($q) => $q->where('trip_id', $trip->id))
             ->whereDate('date', $day->date)
             ->get();
 
@@ -57,7 +58,7 @@ class ItineraryDayController extends Controller
                 'day' => Carbon::parse($day->date)->locale('zh_TW')->dayName,
                 'title' => $day->title ?? $day->summary,
                 'summary' => $day->summary,
-                'location' => $day->location ?? $trip->name,
+                'location' => $day->location ?? '',
                 'accommodation' => $day->accommodation_details,
                 'schedule' => $day->events->sortBy('sort_order')->map(function ($event) {
                     return [
@@ -195,7 +196,7 @@ class ItineraryDayController extends Controller
         $parts = explode('-', $date);
         $dayNum = (int)$parts[1];
         $month = (int)$parts[0];
-        
+
         $day = $trip->days()
             ->whereMonth('date', $month)
             ->whereDay('date', $dayNum)
@@ -209,7 +210,7 @@ class ItineraryDayController extends Controller
     public function restoreDay(User $user, Trip $trip, $dayId)
     {
         $day = ItineraryDay::withTrashed()
-            ->where(fn($q) => $q->where(['id' => $dayId, 'trip_id' => $trip->id]))
+            ->where(fn ($q) => $q->where(['id' => $dayId, 'trip_id' => $trip->id]))
             ->firstOrFail();
         $day->restore();
         return back()->with('success', '行程卡片已還原！');
@@ -218,7 +219,7 @@ class ItineraryDayController extends Controller
     public function forceDeleteDay(User $user, Trip $trip, $dayId)
     {
         $day = ItineraryDay::withTrashed()
-            ->where(fn($q) => $q->where(['id' => $dayId, 'trip_id' => $trip->id]))
+            ->where(fn ($q) => $q->where(['id' => $dayId, 'trip_id' => $trip->id]))
             ->firstOrFail();
         // Cascade: delete all child events
         $day->events()->withTrashed()->forceDelete();

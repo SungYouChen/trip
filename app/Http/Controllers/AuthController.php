@@ -22,7 +22,7 @@ class AuthController extends Controller
 
         if (auth()->attempt($credentials, true)) {
             $request->session()->regenerate();
-            return redirect()->route('home', ['user' => auth()->user()])->with('success', 'Logged in successfully!');
+            return redirect()->route('home', ['user' => auth()->user()])->with('success', '登入成功');
         }
 
         return back()->with('error', 'Incorrect email or password.');
