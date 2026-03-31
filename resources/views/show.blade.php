@@ -458,16 +458,16 @@
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
                                             <label class="block text-sm font-bold text-muji-ash mb-2">今日主題</label>
-                                            <input type="text" name="title" value="{{ $day['title'] }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl focus:ring-2 focus:ring-muji-oak text-muji-ink shadow-muji-sm">
+                                            <input type="text" name="title" value="{{ $day['title'] }}" placeholder="例如：京都清晨散策" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl focus:ring-2 focus:ring-muji-oak text-muji-ink shadow-muji-sm">
                                         </div>
                                         <div>
                                             <label class="block text-sm font-bold text-muji-ash mb-2">所在城市/區域</label>
-                                            <input type="text" name="location" value="{{ $day['location'] == $trip->name ? '' : $day['location'] }}" placeholder="例如: Osaka" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl focus:ring-2 focus:ring-muji-oak text-muji-ink shadow-muji-sm">
+                                            <input type="text" name="location" value="{{ $day['location'] == $trip->name ? '' : $day['location'] }}" placeholder="例如：大阪" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl focus:ring-2 focus:ring-muji-oak text-muji-ink shadow-muji-sm">
                                         </div>
                                     </div>
                                     <div>
                                         <label class="block text-sm font-bold text-muji-ash mb-2">今日摘要</label>
-                                        <textarea name="summary" rows="2" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl focus:ring-2 focus:ring-muji-oak text-muji-ink shadow-muji-sm">{{ $day['summary'] }}</textarea>
+                                        <textarea name="summary" rows="2" placeholder="例如：漫步在道頓堀的街頭，享受章魚燒與大阪燒的美味。" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl focus:ring-2 focus:ring-muji-oak text-muji-ink shadow-muji-sm">{{ $day['summary'] }}</textarea>
                                     </div>
                                     <div class="pt-6 border-t border-muji-edge mt-6">
                                         <h4 class="text-xs font-black text-muji-oak uppercase tracking-[0.2em] flex items-center gap-2 mb-4 bg-muji-base/50 self-start px-3 py-1.5 rounded-lg border border-muji-edge">
@@ -479,11 +479,11 @@
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div class="sm:col-span-2">
                                                 <label class="block text-sm font-bold text-muji-ash mb-2">飯店名稱</label>
-                                                <input type="text" name="hotel_name" value="{{ $day['accommodation']['name'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink focus:ring-2 focus:ring-muji-oak transition-all">
+                                                <input type="text" name="hotel_name" value="{{ $day['accommodation']['name'] ?? '' }}" placeholder="例如：大阪難波格拉斯麗飯店" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink focus:ring-2 focus:ring-muji-oak transition-all">
                                             </div>
                                             <div class="sm:col-span-2">
                                                 <label class="block text-sm font-bold text-muji-ash mb-2">飯店地址</label>
-                                                <input type="text" name="hotel_address" value="{{ $day['accommodation']['address'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink focus:ring-2 focus:ring-muji-oak transition-all">
+                                                <input type="text" name="hotel_address" value="{{ $day['accommodation']['address'] ?? '' }}" placeholder="例如：大阪市浪速區元町1-4-4" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink focus:ring-2 focus:ring-muji-oak transition-all">
                                             </div>
                                             <div>
                                                 <label class="block text-sm font-bold text-muji-ash mb-2">預訂價格</label>
@@ -498,7 +498,7 @@
                                                         <option value="{{ $trip->base_currency }}" {{ $savedCurrency == $trip->base_currency ? 'selected' : '' }}>{{ $trip->base_currency }}</option>
                                                         <option value="{{ $trip->target_currency }}" {{ $savedCurrency == $trip->target_currency ? 'selected' : '' }}>{{ $trip->target_currency }}</option>
                                                     </select>
-                                                    <input type="number" step="0.01" name="hotel_price_num" value="{{ $savedNum }}" class="flex-1 w-full border-0 bg-transparent focus:ring-0 px-4 py-3 outline-none font-mono text-muji-ink font-black" placeholder="16092">
+                                                    <input type="number" step="0.01" name="hotel_price_num" value="{{ $savedNum }}" class="flex-1 w-full border-0 bg-transparent focus:ring-0 px-4 py-3 outline-none font-mono text-muji-ink font-black" placeholder="例如：16092">
                                                 </div>
                                             </div>
                                             <div>
@@ -507,7 +507,7 @@
                                             </div>
                                             <div class="sm:col-span-2">
                                                 <label class="block text-sm font-bold text-muji-ash mb-2">住宿備註</label>
-                                                <input type="text" name="hotel_note" value="{{ $day['accommodation']['note'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink focus:ring-2 focus:ring-muji-oak" placeholder="例如: 4晚">
+                                                <input type="text" name="hotel_note" value="{{ $day['accommodation']['note'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink focus:ring-2 focus:ring-muji-oak" placeholder="例如：連住 4 晚">
                                             </div>
                                         </div> {{-- End of grid from line 481 --}}
                                     </div> {{-- End of pt-6 border-t from line 474 (CRITICAL FIX) --}}
@@ -551,23 +551,23 @@
                                     <div class="space-y-6">
                                         <div>
                                             <label class="block text-sm font-bold text-muji-ash mb-2">活動時間 (例如: 09:00 - 10:30)</label>
-                                            <input type="text" name="time" id="event_time" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
+                                            <input type="text" name="time" id="event_time" required placeholder="例如：09:00 - 10:30" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
                                         </div>
                                         <div>
                                             <label class="block text-sm font-bold text-muji-ash mb-2">活動名稱 / 地點</label>
-                                            <input type="text" name="activity" id="event_activity" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
+                                            <input type="text" name="activity" id="event_activity" required placeholder="例如：道頓堀散策" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
                                         </div>
                                         <div>
                                             <label class="block text-sm font-bold text-muji-ash mb-2">細分目的地 (逗號隔開)</label>
-                                            <input type="text" name="sub_activities" id="event_subs" placeholder="例如: 買藥妝, 吃拉麵" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
+                                            <input type="text" name="sub_activities" id="event_subs" placeholder="例如：買藥妝、吃拉麵" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
                                         </div>
                                         <div>
                                             <label class="block text-sm font-bold text-muji-ash mb-2">行程備註 / 說明</label>
-                                            <textarea name="note" id="event_note" rows="2" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium"></textarea>
+                                            <textarea name="note" id="event_note" rows="2" placeholder="例如：從 3 號出口出來右轉即達" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium"></textarea>
                                         </div>
                                         <div>
                                             <label class="block text-sm font-bold text-muji-ash mb-2">地圖關鍵字 (若不同於活動名稱)</label>
-                                            <input type="text" name="map_query" id="event_map" placeholder="請填寫地標名稱" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
+                                            <input type="text" name="map_query" id="event_map" placeholder="例如：道頓堀固力果廣告牌" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
                                         </div>
                                     </div>
                                     <div class="flex gap-4 pt-6 mt-8 border-t border-muji-edge">

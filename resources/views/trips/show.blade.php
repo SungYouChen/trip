@@ -569,13 +569,13 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 @csrf
                 <input type="hidden" name="type" value="shopping">
                 <div class="flex gap-2">
-                    <input type="text" name="category" placeholder="分類" class="w-1/3 rounded-xl border-muji-edge text-sm p-3 bg-muji-base/30 text-muji-ink focus:ring-muji-oak transition-all hover:bg-muji-base/50" required list="shop_categories" autocomplete="off">
+                    <input type="text" name="category" placeholder="例如：藥妝" class="w-1/3 rounded-xl border-muji-edge text-sm p-3 bg-muji-base/30 text-muji-ink focus:ring-muji-oak transition-all hover:bg-muji-base/50" required list="shop_categories" autocomplete="off">
                     <datalist id="shop_categories">
                         @foreach($shoppingCategories as $cat)
                         <option value="{{ $cat }}">
                         @endforeach
                     </datalist>
-                    <input type="text" name="name" placeholder="想買什麼？" class="w-2/3 rounded-xl border-muji-edge text-sm p-3 bg-muji-base/30 text-muji-ink focus:ring-muji-oak" required>
+                    <input type="text" name="name" placeholder="例如：合利他命" class="w-2/3 rounded-xl border-muji-edge text-sm p-3 bg-muji-base/30 text-muji-ink focus:ring-muji-oak" required>
                     <button type="submit" class="bg-muji-oak text-white p-2 rounded-lg hover:opacity-90">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -667,11 +667,11 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 @csrf
                 <input type="hidden" name="type" value="spot">
                 <div class="flex gap-2">
-                    <input type="text" name="category" placeholder="區域" class="w-1/3 rounded-xl border-muji-edge text-sm p-3 bg-muji-base/30 text-muji-ink focus:ring-muji-oak transition-all hover:bg-muji-base/50" required list="spot_categories" autocomplete="off">
+                    <input type="text" name="category" placeholder="例如：河口湖" class="w-1/3 rounded-xl border-muji-edge text-sm p-3 bg-muji-base/30 text-muji-ink focus:ring-muji-oak transition-all hover:bg-muji-base/50" required list="spot_categories" autocomplete="off">
                     <datalist id="spot_categories">
                         @foreach($spotCategories as $cat) <option value="{{ $cat }}"> @endforeach
                     </datalist>
-                    <input type="text" name="name" placeholder="想去哪裡？" class="w-2/3 rounded-xl border-muji-edge text-sm p-3 bg-muji-base/30 text-muji-ink focus:ring-muji-oak" required>
+                    <input type="text" name="name" placeholder="例如：新倉山淺間公園" class="w-2/3 rounded-xl border-muji-edge text-sm p-3 bg-muji-base/30 text-muji-ink focus:ring-muji-oak" required>
                     <button type="submit" class="bg-muji-oak text-white p-3 rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-muji-sm">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                     </button>
@@ -813,7 +813,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                                         <option value="{{ $trip->base_currency }}" {{ $fsCurrency==$trip->base_currency ? 'selected' : '' }}>{{ $trip->base_currency }}</option>
                                         <option value="{{ $trip->target_currency }}" {{ $fsCurrency==$trip->target_currency ? 'selected' : '' }}>{{ $trip->target_currency }}</option>
                                     </select>
-                                    <input type="number" step="0.01" name="flight_price_num" value="{{ $fsNum }}" class="flex-1 w-full border-0 bg-transparent focus:ring-0 px-4 py-3 font-mono text-muji-ink font-black" placeholder="25000">
+                                    <input type="number" step="0.01" name="flight_price_num" value="{{ $fsNum }}" class="flex-1 w-full border-0 bg-transparent focus:ring-0 px-4 py-3 font-mono text-muji-ink font-black" placeholder="例如：25000">
                                 </div>
                             </div>
                             <div>
@@ -843,7 +843,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                                 </div>
                                 <div>
                                     <label id="mode-label-route" class="block text-xs font-bold text-muji-ash mb-1">路線</label>
-                                    <input type="text" name="outbound_route" value="{{ $flightInfo['outbound']['route'] }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink" placeholder="TPE ➝ UKB">
+                                    <input type="text" name="outbound_route" value="{{ $flightInfo['outbound']['route'] }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink" placeholder="例如：TPE ➝ UKB">
                                     <p id="mode-help-route" class="text-[9px] text-muji-ash mt-1 italic">請使用「起點 ➝ 終點」格式</p>
                                 </div>
                             </div>
@@ -882,7 +882,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                                 </div>
                                 <div>
                                     <label id="mode-label-route-in" class="block text-xs font-bold text-muji-ash mb-1">路線</label>
-                                    <input type="text" name="inbound_route" value="{{ $flightInfo['inbound']['route'] }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink" placeholder="KIX ➝ TPE">
+                                    <input type="text" name="inbound_route" value="{{ $flightInfo['inbound']['route'] }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink" placeholder="例如：KIX ➝ TPE">
                                 </div>
                             </div>
                             <div>
@@ -1078,7 +1078,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         @csrf
                         <label class="block text-sm font-bold text-muji-ash mb-2">邀請新協作者 (Email)</label>
                         <div class="flex gap-2">
-                            <input type="email" name="email" required placeholder="例如：winnie@example.com" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
+                            <input type="email" name="email" required placeholder="例如：elk@example.com" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
                             <button type="submit" class="px-8 py-3 bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 transition-all shadow-muji active:scale-95 whitespace-nowrap">
                                 加入
                             </button>

@@ -271,11 +271,11 @@
                     <div class="space-y-6">
                         <div>
                             <label class="block text-sm font-bold text-muji-ash mb-2">電子郵件</label>
-                            <input type="email" name="email" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="admin@example.com">
+                            <input type="email" name="email" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：elk@example.com">
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-muji-ash mb-2">密碼</label>
-                            <input type="password" name="password" autocomplete="current-password" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="••••••••">
+                            <input type="password" name="password" autocomplete="current-password" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="請輸入密碼">
                         </div>
 
                         <button type="submit" class="w-full bg-muji-oak text-white font-black py-4 rounded-2xl hover:bg-[#8a7b6c] transition-all shadow-muji mt-2 active:scale-95">
@@ -319,19 +319,19 @@
                         <div class="space-y-6">
                             <div>
                                 <label class="block text-sm font-bold text-muji-ash mb-2">姓名</label>
-                                <input type="text" name="name" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="王小明">
+                                <input type="text" name="name" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：王小明">
                             </div>
                             <div>
                                 <label class="block text-sm font-bold text-muji-ash mb-2">帳號 ID</label>
-                                <input type="text" name="username" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如: elk" pattern="[a-zA-Z0-9_\-]+">
+                                <input type="text" name="username" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：elk_trip" pattern="[a-zA-Z0-9_\-]+">
                             </div>
                             <div>
                                 <label class="block text-sm font-bold text-muji-ash mb-2">電子郵件</label>
-                                <input type="email" name="email" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="example@gmail.com">
+                                <input type="email" name="email" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：elk@example.com">
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <input type="password" name="password" required placeholder="設定密碼" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
-                                <input type="password" name="password_confirmation" required placeholder="確認密碼" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
+                                <input type="password" name="password" required placeholder="請輸入密碼" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
+                                <input type="password" name="password_confirmation" required placeholder="請再次輸入密碼" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
                             </div>
 
                             <button type="submit" class="w-full bg-muji-oak text-white font-black py-4 rounded-2xl hover:opacity-90 transition-all shadow-muji mt-2 active:scale-95">
