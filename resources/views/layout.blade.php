@@ -278,9 +278,14 @@
                             <input type="password" name="password" autocomplete="current-password" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="請輸入密碼">
                         </div>
 
-                        <button type="submit" class="w-full bg-muji-oak text-white font-black py-4 rounded-2xl hover:bg-[#8a7b6c] transition-all shadow-muji mt-2 active:scale-95">
-                            立即登入
-                        </button>
+                        <div class="flex gap-4 pt-4 mt-2 border-t border-muji-edge/50">
+                            <button type="button" onclick="safeCloseModal('loginModal')" class="flex-1 py-4 bg-muji-paper text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-base transition-all active:scale-95 text-center">
+                                取消
+                            </button>
+                            <button type="submit" class="flex-1 bg-muji-oak text-white font-black py-4 rounded-2xl hover:opacity-90 transition-all shadow-muji active:scale-95 text-center">
+                                登入
+                            </button>
+                        </div>
 
                         <div class="text-sm text-center mt-6 text-muji-ash pt-6 border-t border-muji-edge">
                             還沒有帳號？ <button type="button" onclick="safeCloseModal('loginModal'); setTimeout(() => safeOpenModal('registerModal'), 300)" class="text-muji-oak font-black hover:underline">立即註冊</button>
@@ -334,9 +339,14 @@
                                 <input type="password" name="password_confirmation" required placeholder="請再次輸入密碼" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
                             </div>
 
-                            <button type="submit" class="w-full bg-muji-oak text-white font-black py-4 rounded-2xl hover:opacity-90 transition-all shadow-muji mt-2 active:scale-95">
-                                註冊
-                            </button>
+                            <div class="flex gap-4 pt-4 mt-2 border-t border-muji-edge/50">
+                                <button type="button" onclick="safeCloseModal('registerModal')" class="flex-1 py-4 bg-muji-paper text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-base transition-all active:scale-95 text-center">
+                                    取消
+                                </button>
+                                <button type="submit" class="flex-1 bg-muji-oak text-white font-black py-4 rounded-2xl hover:opacity-90 transition-all shadow-muji active:scale-95 text-center">
+                                    註冊
+                                </button>
+                            </div>
 
                             <div class="text-sm text-center mt-6 mb-4 text-muji-ash pt-6 border-t border-muji-edge">
                                 已經有帳號了？ <button type="button" onclick="safeCloseModal('registerModal'); setTimeout(() => safeOpenModal('loginModal'), 300)" class="text-muji-oak font-black hover:underline">返回登入</button>
@@ -424,12 +434,12 @@
                                     <p class="text-[10px] text-muji-ash mt-1 italic">※ 手機版本預設為滿版顯示，以達到最佳閱讀體驗。</p>
                                 </div>
 
-                                <div class="pt-4 space-y-3">
-                                    <button type="submit" class="w-full bg-muji-oak text-white font-black py-3 rounded-2xl hover:opacity-90 transition-all shadow-muji transform active:scale-95">
-                                        儲存視覺設定
+                                <div class="pt-6 border-t border-muji-edge mt-6 flex gap-3">
+                                    <button type="button" onclick="resetBgDefaults()" class="flex-1 bg-muji-base text-muji-ash font-bold py-3 rounded-2xl hover:bg-muji-wheat/20 transition-all text-sm border border-muji-edge active:scale-95">
+                                        ↺ 回復預設
                                     </button>
-                                    <button type="button" onclick="resetBgDefaults()" class="w-full bg-muji-base text-muji-ash font-bold py-3 rounded-2xl hover:bg-muji-wheat/20 transition-all text-sm border border-muji-edge">
-                                        ↺ 回復原始設定
+                                    <button type="submit" class="flex-1 bg-muji-oak text-white font-black py-3 rounded-2xl hover:opacity-90 transition-all shadow-muji transform active:scale-95">
+                                        儲存設定
                                     </button>
                                 </div>
                             </div>

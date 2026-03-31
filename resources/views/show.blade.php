@@ -512,8 +512,8 @@
                                         </div> {{-- End of grid from line 481 --}}
                                     </div> {{-- End of pt-6 border-t from line 474 (CRITICAL FIX) --}}
                                     <div class="pt-6 mt-8 border-t border-muji-edge flex gap-4">
-                                        <button type="button" onclick="safeCloseModal('daySummaryEditModal')" class="flex-1 px-6 py-4 bg-muji-base text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-wheat/20 transition-colors">取消</button>
-                                        <button type="submit" class="flex-1 px-6 py-4 bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 shadow-muji transition-all active:scale-95">儲存變更</button>
+                                        <button type="button" onclick="safeCloseModal('daySummaryEditModal')" class="flex-1 py-4 bg-muji-base text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-wheat/20 transition-all active:scale-95 text-center text-sm">取消</button>
+                                        <button type="submit" class="flex-1 py-4 bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 shadow-muji transition-all active:scale-95 text-center text-sm">儲存設定</button>
                                     </div>
                                 </form>
                             </div> {{-- px-8 --}}
@@ -571,8 +571,8 @@
                                         </div>
                                     </div>
                                     <div class="flex gap-4 pt-6 mt-8 border-t border-muji-edge">
-                                        <button type="button" onclick="safeCloseModal('eventDetailsModal')" class="flex-1 px-6 py-4 bg-muji-base text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-wheat/20 transition-colors text-center">取消</button>
-                                        <button type="submit" class="flex-1 px-6 py-4 bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 shadow-muji transition-all active:scale-95 text-center">儲存活動</button>
+                                        <button type="button" onclick="safeCloseModal('eventDetailsModal')" class="flex-1 py-4 bg-muji-base text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-wheat/20 transition-all active:scale-95 text-center text-sm">取消</button>
+                                        <button type="submit" class="flex-1 py-4 bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 shadow-muji transition-all active:scale-95 text-center text-sm">儲存活動</button>
                                     </div>
                                 </form>
                             </div>

@@ -576,7 +576,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         @endforeach
                     </datalist>
                     <input type="text" name="name" placeholder="例如：合利他命" class="w-2/3 rounded-xl border-muji-edge text-sm p-3 bg-muji-base/30 text-muji-ink focus:ring-muji-oak" required>
-                    <button type="submit" class="bg-muji-oak text-white p-2 rounded-lg hover:opacity-90">
+                    <button type="submit" class="bg-muji-oak text-white p-2.5 rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-muji-sm">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
@@ -902,8 +902,8 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                     </div>
 
                     <div class="flex gap-4 pt-6 mt-8 border-t border-muji-edge">
-                        <button type="button" onclick="safeCloseModal('tripTransportModal')" class="flex-1 px-6 py-4 bg-muji-paper text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-base transition-colors">取消</button>
-                        <button type="submit" class="flex-1 px-6 py-4 bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 shadow-muji transition-all active:scale-95">儲存變更</button>
+                        <button type="button" onclick="safeCloseModal('tripTransportModal')" class="flex-1 py-4 bg-muji-paper text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-base transition-all active:scale-95 text-center text-sm">取消</button>
+                        <button type="submit" class="flex-1 py-4 bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 shadow-muji transition-all active:scale-95 text-center text-sm">儲存變更</button>
                     </div>
                 </form>
             </div>
@@ -1021,17 +1021,17 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4 mt-10 pt-8 border-t border-muji-edge">
-                        <button type="submit" class="px-6 py-4 bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 transition-all shadow-muji active:scale-95">
-                            儲存變更
-                        </button>
-                        @if(auth()->id() === $trip->user_id)
-                        <button type="button" onclick="confirmDelete('刪除旅程？', '確定要刪除整個「{{ $trip->name }}」嗎？', 'delete-trip-form')" class="px-6 py-4 bg-white text-red-600 font-black rounded-2xl border border-red-200 hover:bg-red-50 transition-all flex items-center justify-center gap-2 active:scale-95 shadow-sm">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                            刪除旅程
-                        </button>
-                        @endif
+                    <div class="flex gap-4 mt-10 pt-8 border-t border-muji-edge">
+                        <button type="button" onclick="safeCloseModal('tripSettingsModal')" class="flex-1 py-4 bg-muji-paper text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-base transition-all active:scale-95 text-center text-sm">取消</button>
+                        <button type="submit" class="flex-1 py-4 bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 shadow-muji transition-all active:scale-95 text-center text-sm">儲存設定</button>
                     </div>
+                    @if(auth()->id() === $trip->user_id)
+                    <div class="mt-6 text-center">
+                        <button type="button" onclick="confirmDelete('刪除旅程？', '確定要刪除整個「{{ $trip->name }}」嗎？', 'delete-trip-form')" class="text-[10px] text-red-400 font-bold hover:underline opacity-90 transition-all">
+                            永久刪除此旅程計劃
+                        </button>
+                    </div>
+                    @endif
                 </form>
 
                 @if(auth()->id() === $trip->user_id)
