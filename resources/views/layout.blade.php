@@ -479,12 +479,27 @@
                 @endif
 
                 @if(!$isShared)
-                    <a href="{{ auth()->check() ? route('home', ['user' => auth()->user()]) : '/' }}" class="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2 px-2 py-1 rounded-lg hover:bg-slate-50 transition-all {{ request()->routeIs('home') ? 'text-slate-900 bg-slate-100' : '' }}">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                        </svg>
-                        <span class="text-[10px] sm:text-xs">旅程</span>
-                    </a>
+                    @auth
+                        <a href="{{ route('home', ['user' => auth()->user()]) }}" class="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2 px-2 py-1 rounded-lg hover:bg-slate-50 transition-all {{ request()->routeIs('home') ? 'text-slate-900 bg-slate-100' : '' }}">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                            </svg>
+                            <span class="text-[10px] sm:text-xs">旅程</span>
+                        </a>
+                    @else
+                        <button type="button" onclick="safeOpenModal('loginModal')" class="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2 px-2 py-1 rounded-lg hover:bg-muji-base transition-all border-0 bg-transparent text-muji-ash cursor-pointer">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                            </svg>
+                            <span class="text-[10px] sm:text-xs whitespace-nowrap">登入</span>
+                        </button>
+                        <button type="button" onclick="safeOpenModal('registerModal')" class="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2 px-2 py-1 rounded-lg hover:bg-muji-base transition-all border-0 bg-transparent text-muji-ash cursor-pointer">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                            </svg>
+                            <span class="text-[10px] sm:text-xs whitespace-nowrap">註冊</span>
+                        </button>
+                    @endauth
 
                     @auth
                         <button type="button" onclick="safeOpenModal('globalProfileConfigModal')" class="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2 px-2 py-1 rounded-lg hover:bg-slate-50 transition-all text-slate-400 hover:text-slate-900 border-0 bg-transparent cursor-pointer">
