@@ -457,16 +457,16 @@
                                     @method('PUT')
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
-                                            <label class="block text-sm font-bold text-muji-ash mb-2">今日主題</label>
+                                            <label class="block text-sm font-bold text-muji-ash text-left mb-2">今日主題</label>
                                             <input type="text" name="title" value="{{ $day['title'] }}" placeholder="例如：京都清晨散策" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl focus:ring-2 focus:ring-muji-oak text-muji-ink shadow-muji-sm">
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-bold text-muji-ash mb-2">所在城市/區域</label>
+                                            <label class="block text-sm font-bold text-muji-ash text-left mb-2">所在城市/區域</label>
                                             <input type="text" name="location" value="{{ $day['location'] == $trip->name ? '' : $day['location'] }}" placeholder="例如：大阪" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl focus:ring-2 focus:ring-muji-oak text-muji-ink shadow-muji-sm">
                                         </div>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-bold text-muji-ash mb-2">今日摘要</label>
+                                        <label class="block text-sm font-bold text-muji-ash text-left mb-2">今日摘要</label>
                                         <textarea name="summary" rows="2" placeholder="例如：漫步在道頓堀的街頭，享受章魚燒與大阪燒的美味。" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl focus:ring-2 focus:ring-muji-oak text-muji-ink shadow-muji-sm">{{ $day['summary'] }}</textarea>
                                     </div>
                                     <div class="pt-6 border-t border-muji-edge mt-6">
@@ -478,15 +478,15 @@
                                         </h4>
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div class="sm:col-span-2">
-                                                <label class="block text-sm font-bold text-muji-ash mb-2">飯店名稱</label>
+                                                <label class="block text-sm font-bold text-muji-ash text-left mb-2">飯店名稱</label>
                                                 <input type="text" name="hotel_name" value="{{ $day['accommodation']['name'] ?? '' }}" placeholder="例如：大阪難波格拉斯麗飯店" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink focus:ring-2 focus:ring-muji-oak transition-all">
                                             </div>
                                             <div class="sm:col-span-2">
-                                                <label class="block text-sm font-bold text-muji-ash mb-2">飯店地址</label>
+                                                <label class="block text-sm font-bold text-muji-ash text-left mb-2">飯店地址</label>
                                                 <input type="text" name="hotel_address" value="{{ $day['accommodation']['address'] ?? '' }}" placeholder="例如：大阪市浪速區元町1-4-4" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink focus:ring-2 focus:ring-muji-oak transition-all">
                                             </div>
                                             <div>
-                                                <label class="block text-sm font-bold text-muji-ash mb-2">預訂價格</label>
+                                                <label class="block text-sm font-bold text-muji-ash text-left mb-2">預訂價格</label>
                                                 <div class="flex relative rounded-xl border border-muji-edge overflow-hidden focus-within:ring-2 focus-within:ring-muji-oak bg-white shadow-muji-sm transition-all">
                                                     <select name="hotel_currency" class="bg-muji-base border-0 border-r border-muji-edge px-3 py-3 text-muji-ink font-black text-xs focus:ring-0 cursor-pointer appearance-none">
                                                         @php
@@ -502,11 +502,11 @@
                                                 </div>
                                             </div>
                                             <div>
-                                                <label class="block text-sm font-bold text-muji-ash mb-2">入住時間</label>
+                                                <label class="block text-sm font-bold text-muji-ash text-left mb-2">入住時間</label>
                                                 <input type="time" name="hotel_checkin" value="{{ $day['accommodation']['check_in'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink focus:ring-2 focus:ring-muji-oak">
                                             </div>
                                             <div class="sm:col-span-2">
-                                                <label class="block text-sm font-bold text-muji-ash mb-2">住宿備註</label>
+                                                <label class="block text-sm font-bold text-muji-ash text-left mb-2">住宿備註</label>
                                                 <input type="text" name="hotel_note" value="{{ $day['accommodation']['note'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink focus:ring-2 focus:ring-muji-oak" placeholder="例如：連住 4 晚">
                                             </div>
                                         </div> {{-- End of grid from line 481 --}}
@@ -550,23 +550,23 @@
                                     <div id="eventMethod"></div>
                                     <div class="space-y-6">
                                         <div>
-                                            <label class="block text-sm font-bold text-muji-ash mb-2">活動時間 (例如: 09:00 - 10:30)</label>
+                                            <label class="block text-sm font-bold text-muji-ash text-left mb-2">活動時間 (例如: 09:00 - 10:30)</label>
                                             <input type="text" name="time" id="event_time" required placeholder="例如：09:00 - 10:30" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-bold text-muji-ash mb-2">活動名稱 / 地點</label>
+                                            <label class="block text-sm font-bold text-muji-ash text-left mb-2">活動名稱 / 地點</label>
                                             <input type="text" name="activity" id="event_activity" required placeholder="例如：道頓堀散策" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-bold text-muji-ash mb-2">細分目的地 (逗號隔開)</label>
+                                            <label class="block text-sm font-bold text-muji-ash text-left mb-2">細分目的地 (逗號隔開)</label>
                                             <input type="text" name="sub_activities" id="event_subs" placeholder="例如：買藥妝、吃拉麵" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-bold text-muji-ash mb-2">行程備註 / 說明</label>
+                                            <label class="block text-sm font-bold text-muji-ash text-left mb-2">行程備註 / 說明</label>
                                             <textarea name="note" id="event_note" rows="2" placeholder="例如：從 3 號出口出來右轉即達" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium"></textarea>
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-bold text-muji-ash mb-2">地圖關鍵字 (若不同於活動名稱)</label>
+                                            <label class="block text-sm font-bold text-muji-ash text-left mb-2">地圖關鍵字 (若不同於活動名稱)</label>
                                             <input type="text" name="map_query" id="event_map" placeholder="例如：道頓堀固力果廣告牌" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
                                         </div>
                                     </div>
