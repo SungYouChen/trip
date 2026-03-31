@@ -756,7 +756,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         <div id="fields-flight" class="mode-fields {{ ($transportType ?? 'flight') == 'flight' ? '' : 'hidden' }} grid grid-cols-1 gap-6">
                             <div>
                                 <label class="block text-sm font-bold text-muji-ash text-left mb-2">航空公司 / 航班編號</label>
-                                <input type="text" name="airline" value="{{ $flightInfo['airline'] ?? '' }}" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：星宇航空 JX800">
+                                <input type="text" name="airline" value="{{ $flightInfo['airline'] ?? '' }}" class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：星宇航空 JX800">
                             </div>
                         </div>
 
@@ -765,11 +765,11 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-bold text-muji-ash text-left mb-2">列車名稱 / 車次</label>
-                                    <input type="text" name="train_no" value="{{ $flightInfo['train_no'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl focus:ring-2 focus:ring-muji-oak shadow-muji-sm text-muji-ink font-medium" placeholder="例如：JR 新幹線 希望號">
+                                    <input type="text" name="train_no" value="{{ $flightInfo['train_no'] ?? '' }}" class="w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl focus:ring-2 focus:ring-muji-oak shadow-muji-sm text-muji-ink font-medium" placeholder="例如：JR 新幹線 希望號">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-bold text-muji-ash text-left mb-2">座位資訊</label>
-                                    <input type="text" name="train_seat" value="{{ $flightInfo['train_seat'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl focus:ring-2 focus:ring-muji-oak shadow-muji-sm text-muji-ink font-medium" placeholder="例如：5車 12A">
+                                    <input type="text" name="train_seat" value="{{ $flightInfo['train_seat'] ?? '' }}" class="w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl focus:ring-2 focus:ring-muji-oak shadow-muji-sm text-muji-ink font-medium" placeholder="例如：5車 12A">
                                 </div>
                             </div>
                         </div>
@@ -778,7 +778,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         <div id="fields-car" class="mode-fields {{ ($transportType ?? '') == 'car' ? '' : 'hidden' }} grid grid-cols-1 gap-6">
                             <div>
                                 <label class="block text-sm font-bold text-muji-ash mb-2">車型 / 租賃公司</label>
-                                <input type="text" name="car_model" value="{{ $flightInfo['car_model'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：Toyota Yaris / Times Car Rental">
+                                <input type="text" name="car_model" value="{{ $flightInfo['car_model'] ?? '' }}" class="w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：Toyota Yaris / Times Car Rental">
                             </div>
                         </div>
 
@@ -786,7 +786,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         <div id="fields-bus" class="mode-fields {{ ($transportType ?? '') == 'bus' ? '' : 'hidden' }} grid grid-cols-1 gap-6">
                             <div>
                                 <label class="block text-sm font-bold text-muji-ash mb-2">客運公司 / 路線名稱</label>
-                                <input type="text" name="airline" value="{{ $flightInfo['airline'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：國光客運 / 京都市巴士 205路">
+                                <input type="text" name="airline" value="{{ $flightInfo['airline'] ?? '' }}" class="w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：國光客運 / 京都市巴士 205路">
                             </div>
                         </div>
 
@@ -794,7 +794,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         <div id="fields-ship" class="mode-fields {{ ($transportType ?? '') == 'ship' ? '' : 'hidden' }} grid grid-cols-1 gap-6">
                             <div>
                                 <label class="block text-sm font-bold text-muji-ash mb-2">船名 / 航次名稱</label>
-                                <input type="text" name="airline" value="{{ $flightInfo['airline'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：麗星郵輪 / 櫻島渡輪">
+                                <input type="text" name="airline" value="{{ $flightInfo['airline'] ?? '' }}" class="w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：麗星郵輪 / 櫻島渡輪">
                             </div>
                         </div>
 
@@ -813,12 +813,12 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                                         <option value="{{ $trip->base_currency }}" {{ $fsCurrency==$trip->base_currency ? 'selected' : '' }}>{{ $trip->base_currency }}</option>
                                         <option value="{{ $trip->target_currency }}" {{ $fsCurrency==$trip->target_currency ? 'selected' : '' }}>{{ $trip->target_currency }}</option>
                                     </select>
-                                    <input type="number" step="0.01" name="flight_price_num" value="{{ $fsNum }}" class="flex-1 w-full border-0 bg-transparent focus:ring-0 px-4 py-3 font-mono text-muji-ink font-black" placeholder="例如：25000">
+                                    <input type="number" step="0.01" name="flight_price_num" value="{{ $fsNum }}" class="flex-1 w-full h-[46px] border-0 bg-transparent focus:ring-0 px-4 font-mono text-muji-ink font-black" placeholder="例如：25000">
                                 </div>
                             </div>
                             <div>
                                 <label id="mode-label-baggage" class="block text-sm font-bold text-muji-ash text-left mb-2">行李 / 備註規定</label>
-                                <input type="text" name="baggage" id="mode-input-baggage" value="{{ $flightInfo['baggage'] }}" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：23kg x 2">
+                                <input type="text" name="baggage" id="mode-input-baggage" value="{{ $flightInfo['baggage'] }}" class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：23kg x 2">
                             </div>
                         </div>
                     </div>
@@ -832,31 +832,30 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         <div class="grid grid-cols-1 gap-4">
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-xs font-bold text-muji-ash mb-1">日期</label>
+                                    <label class="block text-sm font-bold text-muji-ash text-left mb-2">日期</label>
                                 @php
                                     $rawOut = $flightInfo['outbound']['date'] ?? '';
                                     preg_match('/(\d{1,4}[-\/]\d{1,2}[-\/]?\d{0,4})/', $rawOut, $mOut);
                                     $valOut = '';
                                     try { if($mOut[1] ?? false) $valOut = \Carbon\Carbon::parse($mOut[1])->toDateString(); } catch(\Exception $e){}
                                 @endphp
-                                <input type="date" name="outbound_date" value="{{ $valOut }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
+                                <input type="date" name="outbound_date" value="{{ $valOut }}" class="w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium text-muji-ink text-sm">
                                 </div>
                                 <div>
-                                    <label id="mode-label-route" class="block text-sm font-bold text-muji-ash mb-1">路線</label>
-                                    <input type="text" name="outbound_route" value="{{ $flightInfo['outbound']['route'] }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink" placeholder="例如：TPE ➝ UKB">
-                                    <p id="mode-help-route" class="text-[9px] text-muji-ash mt-1 italic">請使用「起點 ➝ 終點」格式</p>
+                                    <label id="mode-label-route" class="block text-sm font-bold text-muji-ash text-left mb-2">路線</label>
+                                    <input type="text" name="outbound_route" value="{{ $flightInfo['outbound']['route'] }}" class="w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：TPE ➝ UKB">
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-muji-ash mb-1">出發 / 到達時間</label>
+                                <label class="block text-sm font-bold text-muji-ash text-left mb-2">出發 ／ 抵達時間</label>
                                 <div class="grid grid-cols-2 gap-2">
                                     <div class="relative">
                                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-muji-ash uppercase">出發   </span>
-                                        <input type="time" name="outbound_time_start" value="{{ $flightInfo['outbound']['time_start'] ?? '' }}" class="w-full pl-10 pr-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm font-mono text-sm focus:ring-2 focus:ring-muji-oak text-muji-ink">
+                                        <input type="time" name="outbound_time_start" value="{{ $flightInfo['outbound']['time_start'] ?? '' }}" class="w-full h-[46px] pl-10 pr-4 bg-white border border-muji-edge rounded-xl shadow-muji-sm font-mono text-sm focus:ring-2 focus:ring-muji-oak text-muji-ink transition-all font-medium">
                                     </div>
                                     <div class="relative">
                                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-muji-ash uppercase">抵達</span>
-                                        <input type="time" name="outbound_time_end" value="{{ $flightInfo['outbound']['time_end'] ?? '' }}" class="w-full pl-10 pr-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm font-mono text-sm focus:ring-2 focus:ring-muji-oak text-muji-ink">
+                                        <input type="time" name="outbound_time_end" value="{{ $flightInfo['outbound']['time_end'] ?? '' }}" class="w-full h-[46px] pl-10 pr-4 bg-white border border-muji-edge rounded-xl shadow-muji-sm font-mono text-sm focus:ring-2 focus:ring-muji-oak text-muji-ink transition-all font-medium">
                                     </div>
                                 </div>
                             </div>
@@ -871,30 +870,30 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         <div class="grid grid-cols-1 gap-4">
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-xs font-bold text-muji-ash mb-1">日期</label>
+                                    <label class="block text-sm font-bold text-muji-ash text-left mb-2">日期</label>
                                 @php
                                     $rawIn = $flightInfo['inbound']['date'] ?? '';
                                     preg_match('/(\d{1,4}[-\/]\d{1,2}[-\/]?\d{0,4})/', $rawIn, $mIn);
                                     $valIn = '';
                                     try { if($mIn[1] ?? false) $valIn = \Carbon\Carbon::parse($mIn[1])->toDateString(); } catch(\Exception $e){}
                                 @endphp
-                                <input type="date" name="inbound_date" value="{{ $valIn }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium text-muji-ink text-sm">
+                                <input type="date" name="inbound_date" value="{{ $valIn }}" class="w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium text-muji-ink text-sm">
                                 </div>
                                 <div>
-                                    <label id="mode-label-route-in" class="block text-sm font-bold text-muji-ash mb-1">路線</label>
-                                    <input type="text" name="inbound_route" value="{{ $flightInfo['inbound']['route'] }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink" placeholder="例如：KIX ➝ TPE">
+                                    <label id="mode-label-route-in" class="block text-sm font-bold text-muji-ash text-left mb-2">路線</label>
+                                    <input type="text" name="inbound_route" value="{{ $flightInfo['inbound']['route'] }}" class="w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：KIX ➝ TPE">
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-muji-ash mb-1">出發 / 到達時間</label>
+                                <label class="block text-sm font-bold text-muji-ash text-left mb-2">出發 ／ 抵達時間</label>
                                 <div class="grid grid-cols-2 gap-2">
                                     <div class="relative">
                                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-muji-ash uppercase">出發</span>
-                                        <input type="time" name="inbound_time_start" value="{{ $flightInfo['inbound']['time_start'] ?? '' }}" class="w-full pl-10 pr-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm font-mono text-sm focus:ring-2 focus:ring-muji-oak text-muji-ink">
+                                        <input type="time" name="inbound_time_start" value="{{ $flightInfo['inbound']['time_start'] ?? '' }}" class="w-full h-[46px] pl-10 pr-4 bg-white border border-muji-edge rounded-xl shadow-muji-sm font-mono text-sm focus:ring-2 focus:ring-muji-oak text-muji-ink transition-all font-medium">
                                     </div>
                                     <div class="relative">
                                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-muji-ash uppercase">到達</span>
-                                        <input type="time" name="inbound_time_end" value="{{ $flightInfo['inbound']['time_end'] ?? '' }}" class="w-full pl-10 pr-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm font-mono text-sm focus:ring-2 focus:ring-muji-oak text-muji-ink">
+                                        <input type="time" name="inbound_time_end" value="{{ $flightInfo['inbound']['time_end'] ?? '' }}" class="w-full h-[46px] pl-10 pr-4 bg-white border border-muji-edge rounded-xl shadow-muji-sm font-mono text-sm focus:ring-2 focus:ring-muji-oak text-muji-ink transition-all font-medium">
                                     </div>
                                 </div>
                             </div>
