@@ -255,7 +255,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                             </svg>
                         </div>
-                        <h3 class="text-2xl font-black text-muji-ink m-0">登入</h3>
+                        <div class="flex flex-col border-l-2 border-muji-edge pl-4 text-left">
+                            <h3 class="text-2xl font-black text-muji-ink m-0">登入</h3>
+                        </div>
                     </div>
                     <button onclick="safeCloseModal('loginModal')" class="p-2 rounded-full text-muji-ash hover:bg-muji-base transition-colors">
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -300,7 +302,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                             </svg>
                         </div>
-                        <h3 class="text-2xl font-black text-muji-ink m-0">建立帳號</h3>
+                        <div class="flex flex-col border-l-2 border-muji-edge pl-4 text-left">
+                            <h3 class="text-2xl font-black text-muji-ink m-0">建立帳號</h3>
+                        </div>
                     </div>
                     <button onclick="safeCloseModal('registerModal')" class="p-2 rounded-full text-muji-ash hover:bg-muji-base transition-colors">
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
