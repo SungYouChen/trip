@@ -13,8 +13,12 @@ Route::get('/', function() {
     if (auth()->check()) {
         return redirect()->route('home', ['user' => auth()->user()]);
     }
-    return view('welcome_or_login'); // I'll need a landing page or just use the login modal on home
+    return view('welcome_or_login'); 
 });
+
+Route::get('/story', function() {
+    return view('welcome_or_login');
+})->name('story');
 
 Route::middleware(['auth', 'user.scope'])->group(function () {
     Route::get('/{user}', [TripController::class, 'index'])->name('home');
