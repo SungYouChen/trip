@@ -279,10 +279,10 @@
                         </div>
 
                         <div class="flex gap-4 pt-4 mt-2 border-t border-muji-edge/50">
-                            <button type="button" onclick="safeCloseModal('loginModal')" class="flex-1 py-4 bg-muji-paper text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-base transition-all active:scale-95 text-center">
+                            <button type="button" onclick="safeCloseModal('loginModal')" class="flex-1 h-[46px] flex items-center justify-center bg-muji-paper text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-base transition-all active:scale-95 text-sm">
                                 取消
                             </button>
-                            <button type="submit" class="flex-1 bg-muji-oak text-white font-black py-4 rounded-2xl hover:opacity-90 transition-all shadow-muji active:scale-95 text-center">
+                            <button type="submit" class="flex-1 h-[46px] flex items-center justify-center bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 transition-all shadow-muji active:scale-95 text-sm">
                                 登入
                             </button>
                         </div>
@@ -340,10 +340,10 @@
                             </div>
 
                             <div class="flex gap-4 pt-4 mt-2 border-t border-muji-edge/50">
-                                <button type="button" onclick="safeCloseModal('registerModal')" class="flex-1 py-4 bg-muji-paper text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-base transition-all active:scale-95 text-center">
+                                <button type="button" onclick="safeCloseModal('registerModal')" class="flex-1 h-[46px] flex items-center justify-center bg-muji-paper text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-base transition-all active:scale-95 text-sm">
                                     取消
                                 </button>
-                                <button type="submit" class="flex-1 bg-muji-oak text-white font-black py-4 rounded-2xl hover:opacity-90 transition-all shadow-muji active:scale-95 text-center">
+                                <button type="submit" class="flex-1 h-[46px] flex items-center justify-center bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 transition-all shadow-muji active:scale-95 text-sm">
                                     註冊
                                 </button>
                             </div>
@@ -392,8 +392,8 @@
                                     @endif
                                 </div>
 
-                                <div class="bg-muji-base/30 p-4 rounded-xl border border-muji-edge">
-                                    <input type="file" name="background_image" accept="image/*" class="block w-full text-xs text-muji-ash file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-white file:text-muji-oak hover:file:bg-muji-base cursor-pointer transition-all" id="bg-upload-input" onchange="this.form.submit()">
+                                <div class="bg-muji-base/30 p-2 rounded-2xl border border-muji-edge h-[64px] flex items-center">
+                                    <input type="file" name="background_image" accept="image/*" class="block w-full text-xs text-muji-ash file:mr-4 file:h-[46px] file:px-6 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-white file:text-muji-oak hover:file:bg-muji-base cursor-pointer transition-all" id="bg-upload-input" onchange="this.form.submit()">
                                 </div>
                             </div>
 
@@ -435,10 +435,10 @@
                                 </div>
 
                                 <div class="pt-6 border-t border-muji-edge mt-6 flex gap-3">
-                                    <button type="button" onclick="resetBgDefaults()" class="flex-1 bg-muji-base text-muji-ash font-bold py-3 rounded-2xl hover:bg-muji-wheat/20 transition-all text-sm border border-muji-edge active:scale-95">
+                                    <button type="button" onclick="resetBgDefaults()" class="flex-1 h-[46px] flex items-center justify-center bg-muji-base text-muji-ash font-bold rounded-2xl hover:bg-muji-wheat/20 transition-all text-sm border border-muji-edge active:scale-95">
                                         ↺ 回復預設
                                     </button>
-                                    <button type="submit" class="flex-1 bg-muji-oak text-white font-black py-3 rounded-2xl hover:opacity-90 transition-all shadow-muji transform active:scale-95">
+                                    <button type="submit" class="flex-1 h-[46px] flex items-center justify-center bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 transition-all shadow-muji transform active:scale-95">
                                         儲存設定
                                     </button>
                                 </div>
@@ -635,22 +635,22 @@
                             <div class="space-y-6">
                                 <div>
                                     <label class="block text-sm font-bold text-muji-ash mb-2">支出項目說明</label>
-                                    <input type="text" id="expenseDescription" name="description" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：午餐拉麵">
+                                    <input type="text" id="expenseDescription" name="description" required class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：午餐拉麵">
                                 </div>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-sm font-bold text-muji-ash mb-2">支出金額</label>
-                                        <div class="flex relative rounded-xl border border-muji-edge overflow-hidden focus-within:ring-2 focus-within:ring-muji-oak bg-white group transition-all">
-                                            <select id="expenseCurrency" name="is_base_currency" class="bg-muji-base border-0 border-r border-muji-edge px-3 py-3 text-muji-ink font-black text-xs focus:ring-0 cursor-pointer appearance-none">
+                                        <div class="flex relative h-[46px] rounded-xl border border-muji-edge overflow-hidden focus-within:ring-2 focus-within:ring-muji-oak bg-white group transition-all">
+                                            <select id="expenseCurrency" name="is_base_currency" class="bg-muji-base h-full border-0 border-r border-muji-edge px-3 text-muji-ink font-black text-xs focus:ring-0 cursor-pointer appearance-none">
                                                 <option value="0">{{ isset($trip) ? $trip->target_currency : '當地幣' }}</option>
                                                 <option value="1">{{ isset($trip) ? $trip->base_currency : '本國幣' }}</option>
                                             </select>
-                                            <input type="number" step="0.01" id="expenseAmount" name="amount" required class="flex-1 w-full border-0 bg-transparent focus:ring-0 px-4 py-3 font-mono text-muji-ink font-black" placeholder="0.00">
+                                            <input type="number" step="0.01" id="expenseAmount" name="amount" required class="flex-1 w-full h-full border-0 bg-transparent focus:ring-0 px-4 font-mono text-muji-ink font-black" placeholder="0.00">
                                         </div>
                                     </div>
                                     <div>
                                         <label class="block text-sm font-bold text-muji-ash mb-2">支出類別</label>
-                                        <select id="expenseCategory" name="category" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak font-black appearance-none cursor-pointer">
+                                        <select id="expenseCategory" name="category" required class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak font-black appearance-none cursor-pointer">
                                             <option value="Food">飲食 🍔</option>
                                             <option value="Transport">交通 🚇</option>
                                             <option value="Shopping">購物 🛍️</option>
@@ -664,14 +664,14 @@
 
                                 <div>
                                     <label class="block text-sm font-bold text-muji-ash mb-2">支出日期</label>
-                                    <input type="date" id="expenseDate" name="date" required value="{{ date('Y-m-d') }}" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
+                                    <input type="date" id="expenseDate" name="date" required value="{{ date('Y-m-d') }}" class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
                                 </div>
 
                                 <div class="pt-6 mt-8 border-t border-muji-edge flex gap-4">
-                                    <button type="button" onclick="safeCloseModal('expenseModal')" class="flex-1 px-4 py-4 border border-muji-edge rounded-2xl text-muji-ash bg-muji-paper hover:bg-muji-base transition-colors font-black">
+                                    <button type="button" onclick="safeCloseModal('expenseModal')" class="flex-1 h-[46px] flex items-center justify-center border border-muji-edge rounded-2xl text-muji-ash bg-muji-paper hover:bg-muji-base transition-colors font-black text-sm">
                                         取消
                                     </button>
-                                    <button type="submit" id="expenseSubmitBtn" class="flex-1 px-4 py-4 border border-transparent rounded-2xl text-white bg-muji-oak hover:opacity-90 shadow-muji transition-all font-black active:scale-95">
+                                    <button type="submit" id="expenseSubmitBtn" class="flex-1 h-[46px] flex items-center justify-center border border-transparent rounded-2xl text-white bg-muji-oak hover:opacity-90 shadow-muji transition-all font-black active:scale-95 text-sm">
                                         儲存花費
                                     </button>
                                 </div>

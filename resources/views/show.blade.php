@@ -110,8 +110,8 @@
                         <h3 class="text-muji-ash text-[10px] font-bold uppercase tracking-widest">每日行程</h3>
                         @if(!$isShared)
                             @auth
-                                <button type="button" onclick="openEventModal()" class="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 bg-muji-wheat text-muji-oak rounded-full hover:opacity-80 transition-all border border-muji-edge shadow-muji-sm active:scale-95">
-                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <button type="button" onclick="openEventModal()" class="flex items-center justify-center gap-2 h-[46px] px-6 bg-muji-wheat text-muji-oak rounded-2xl hover:opacity-80 transition-all border border-muji-edge shadow-muji-sm active:scale-95 text-sm font-bold">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                                     </svg>
                                     新增活動
@@ -512,8 +512,8 @@
                                         </div> {{-- End of grid from line 481 --}}
                                     </div> {{-- End of pt-6 border-t from line 474 (CRITICAL FIX) --}}
                                     <div class="pt-6 mt-8 border-t border-muji-edge flex gap-4">
-                                        <button type="button" onclick="safeCloseModal('daySummaryEditModal')" class="flex-1 py-4 bg-muji-base text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-wheat/20 transition-all active:scale-95 text-center text-sm">取消</button>
-                                        <button type="submit" class="flex-1 py-4 bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 shadow-muji transition-all active:scale-95 text-center text-sm">儲存設定</button>
+                                        <button type="button" onclick="safeCloseModal('daySummaryEditModal')" class="flex-1 h-[46px] flex items-center justify-center bg-muji-base text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-wheat/20 transition-all active:scale-95 text-sm">取消</button>
+                                        <button type="submit" class="flex-1 h-[46px] flex items-center justify-center bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 shadow-muji transition-all active:scale-95 text-sm">儲存設定</button>
                                     </div>
                                 </form>
                             </div> {{-- px-8 --}}
@@ -571,8 +571,8 @@
                                         </div>
                                     </div>
                                     <div class="flex gap-4 pt-6 mt-8 border-t border-muji-edge">
-                                        <button type="button" onclick="safeCloseModal('eventDetailsModal')" class="flex-1 py-4 bg-muji-base text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-wheat/20 transition-all active:scale-95 text-center text-sm">取消</button>
-                                        <button type="submit" class="flex-1 py-4 bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 shadow-muji transition-all active:scale-95 text-center text-sm">儲存活動</button>
+                                        <button type="button" onclick="safeCloseModal('eventDetailsModal')" class="flex-1 h-[46px] flex items-center justify-center bg-muji-base text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-wheat/20 transition-all active:scale-95 text-sm">取消</button>
+                                        <button type="submit" class="flex-1 h-[46px] flex items-center justify-center bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 shadow-muji transition-all active:scale-95 text-sm">儲存活動</button>
                                     </div>
                                 </form>
                             </div>

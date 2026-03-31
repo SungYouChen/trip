@@ -88,7 +88,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
         @if(!$isShared && $trip->is_public)
         <div class="mt-4 mb-2 bg-muji-base/80 backdrop-blur-sm p-2 rounded-xl flex items-center justify-between gap-3 border border-muji-edge max-w-sm mx-auto overflow-hidden shadow-muji-sm">
             <span id="shareLink" class="text-[10px] text-muji-oak font-mono truncate flex-1 font-bold">{{ route('trip.index_shared', ['token' => $trip->share_token]) }}</span>
-            <button onclick="copyShareLink()" class="bg-muji-oak text-white text-[10px] px-3 py-1 rounded-lg hover:opacity-80 transition-colors font-black whitespace-nowrap">複製連結</button>
+            <button onclick="copyShareLink()" class="bg-muji-oak text-white text-[10px] h-[32px] px-4 flex items-center justify-center rounded-xl hover:opacity-80 transition-colors font-black whitespace-nowrap">複製連結</button>
         </div>
         <script>
             function copyShareLink() {
@@ -314,7 +314,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
     <!-- Footer -->
     <div onclick="toggleTransportDetails()" class="relative px-8 py-4 bg-muji-base/30 flex flex-wrap justify-between items-center gap-4 border-t border-muji-edge cursor-pointer hover:bg-muji-wheat/10 transition-colors font-black">
         <div class="flex items-center gap-3">
-            <div class="flex items-center gap-2 px-3 py-1.5 bg-muji-paper rounded-xl shadow-muji-sm border border-muji-edge">
+            <div class="flex items-center gap-2 px-4 h-[46px] bg-muji-paper rounded-xl shadow-muji-sm border border-muji-edge">
                 <svg class="w-4 h-4 {{ $theme['text'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
@@ -325,7 +325,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
         </div>
         @if(!$isShared)
         @auth
-        <button onclick="event.stopPropagation(); openFlightEditModal()" class="flex items-center gap-2 px-6 py-2.5 {{ $theme['bg_light'] }} {{ $theme['text'] }} rounded-2xl font-black text-xs hover:shadow-lg transition-all active:scale-95 border {{ $theme['border'] }}">
+        <button onclick="event.stopPropagation(); openFlightEditModal()" class="flex items-center justify-center gap-2 px-6 h-[46px] {{ $theme['bg_light'] }} {{ $theme['text'] }} rounded-2xl font-black text-xs hover:shadow-lg transition-all active:scale-95 border {{ $theme['border'] }}">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
             </svg>
@@ -568,15 +568,15 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
             <form action="{{ route('checklist.store', ['user' => $trip->user, 'trip' => $trip]) }}" method="POST" class="mt-4 pt-4 border-t border-muji-edge">
                 @csrf
                 <input type="hidden" name="type" value="shopping">
-                <div class="flex gap-2">
-                    <input type="text" name="category" placeholder="例如：藥妝" class="w-1/3 rounded-xl border-muji-edge text-sm p-3 bg-muji-base/30 text-muji-ink focus:ring-muji-oak transition-all hover:bg-muji-base/50" required list="shop_categories" autocomplete="off">
+                <div class="flex gap-2 items-stretch h-[46px]">
+                    <input type="text" name="category" placeholder="例如：藥妝" class="w-1/3 rounded-xl border-muji-edge text-sm px-4 bg-muji-base/30 text-muji-ink focus:ring-muji-oak transition-all hover:bg-muji-base/50" required list="shop_categories" autocomplete="off">
                     <datalist id="shop_categories">
                         @foreach($shoppingCategories as $cat)
                         <option value="{{ $cat }}">
                         @endforeach
                     </datalist>
-                    <input type="text" name="name" placeholder="例如：合利他命" class="w-2/3 rounded-xl border-muji-edge text-sm p-3 bg-muji-base/30 text-muji-ink focus:ring-muji-oak" required>
-                    <button type="submit" class="bg-muji-oak text-white p-2.5 rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-muji-sm">
+                    <input type="text" name="name" placeholder="例如：合利他命" class="w-2/3 rounded-xl border-muji-edge text-sm px-4 bg-muji-base/30 text-muji-ink focus:ring-muji-oak" required>
+                    <button type="submit" class="bg-muji-oak text-white w-[46px] flex items-center justify-center rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-muji-sm flex-shrink-0">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
@@ -666,13 +666,13 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
             <form action="{{ route('checklist.store', ['user' => $trip->user, 'trip' => $trip]) }}" method="POST" class="mt-8 pt-6 border-t border-muji-edge">
                 @csrf
                 <input type="hidden" name="type" value="spot">
-                <div class="flex gap-2">
-                    <input type="text" name="category" placeholder="例如：河口湖" class="w-1/3 rounded-xl border-muji-edge text-sm p-3 bg-muji-base/30 text-muji-ink focus:ring-muji-oak transition-all hover:bg-muji-base/50" required list="spot_categories" autocomplete="off">
+                <div class="flex gap-2 items-stretch h-[46px]">
+                    <input type="text" name="category" placeholder="例如：河口湖" class="w-1/3 rounded-xl border-muji-edge text-sm px-4 bg-muji-base/30 text-muji-ink focus:ring-muji-oak transition-all hover:bg-muji-base/50" required list="spot_categories" autocomplete="off">
                     <datalist id="spot_categories">
                         @foreach($spotCategories as $cat) <option value="{{ $cat }}"> @endforeach
                     </datalist>
-                    <input type="text" name="name" placeholder="例如：新倉山淺間公園" class="w-2/3 rounded-xl border-muji-edge text-sm p-3 bg-muji-base/30 text-muji-ink focus:ring-muji-oak" required>
-                    <button type="submit" class="bg-muji-oak text-white p-3 rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-muji-sm">
+                    <input type="text" name="name" placeholder="例如：新倉山淺間公園" class="w-2/3 rounded-xl border-muji-edge text-sm px-4 bg-muji-base/30 text-muji-ink focus:ring-muji-oak" required>
+                    <button type="submit" class="bg-muji-oak text-white w-[46px] flex items-center justify-center rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-muji-sm flex-shrink-0">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                     </button>
                 </div>
@@ -901,8 +901,8 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                     </div>
 
                     <div class="flex gap-4 pt-6 mt-8 border-t border-muji-edge">
-                        <button type="button" onclick="safeCloseModal('tripTransportModal')" class="flex-1 py-4 bg-muji-paper text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-base transition-all active:scale-95 text-center text-sm">取消</button>
-                        <button type="submit" class="flex-1 py-4 bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 shadow-muji transition-all active:scale-95 text-center text-sm">儲存變更</button>
+                        <button type="button" onclick="safeCloseModal('tripTransportModal')" class="flex-1 h-[46px] flex items-center justify-center bg-muji-paper text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-base transition-all active:scale-95 text-sm">取消</button>
+                        <button type="submit" class="flex-1 h-[46px] flex items-center justify-center bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 shadow-muji transition-all active:scale-95 text-sm">儲存變更</button>
                     </div>
                 </form>
             </div>
@@ -1021,8 +1021,8 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                     </div>
 
                     <div class="flex gap-4 mt-10 pt-8 border-t border-muji-edge">
-                        <button type="button" onclick="safeCloseModal('tripSettingsModal')" class="flex-1 py-4 bg-muji-paper text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-base transition-all active:scale-95 text-center text-sm">取消</button>
-                        <button type="submit" class="flex-1 py-4 bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 shadow-muji transition-all active:scale-95 text-center text-sm">儲存設定</button>
+                        <button type="button" onclick="safeCloseModal('tripSettingsModal')" class="flex-1 h-[46px] flex items-center justify-center bg-muji-paper text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-base transition-all active:scale-95 text-sm">取消</button>
+                        <button type="submit" class="flex-1 h-[46px] flex items-center justify-center bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 shadow-muji transition-all active:scale-95 text-sm">儲存設定</button>
                     </div>
                     @if(auth()->id() === $trip->user_id)
                     <div class="mt-6 text-center">
@@ -1077,8 +1077,8 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         @csrf
                         <label class="block text-sm font-bold text-muji-ash text-left mb-2">邀請新協作者 (Email)</label>
                         <div class="flex gap-2">
-                            <input type="email" name="email" required placeholder="例如：elk@example.com" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
-                            <button type="submit" class="px-8 py-3 bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 transition-all shadow-muji active:scale-95 whitespace-nowrap">
+                            <input type="email" name="email" required placeholder="例如：elk@example.com" class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
+                            <button type="submit" class="px-8 h-[46px] flex items-center justify-center bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 transition-all shadow-muji active:scale-95 whitespace-nowrap">
                                 加入
                             </button>
                         </div>
