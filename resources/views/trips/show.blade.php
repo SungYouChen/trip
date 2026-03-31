@@ -778,7 +778,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         <div id="fields-car" class="mode-fields {{ ($transportType ?? '') == 'car' ? '' : 'hidden' }} grid grid-cols-1 gap-6">
                             <div>
                                 <label class="block text-sm font-bold text-muji-ash mb-2">車型 / 租賃公司</label>
-                                <input type="text" name="car_model" value="{{ $flightInfo['car_model'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 shadow-sm" placeholder="例如：Toyota Yaris / Times Car Rental">
+                                <input type="text" name="car_model" value="{{ $flightInfo['car_model'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：Toyota Yaris / Times Car Rental">
                             </div>
                         </div>
 
@@ -786,7 +786,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         <div id="fields-bus" class="mode-fields {{ ($transportType ?? '') == 'bus' ? '' : 'hidden' }} grid grid-cols-1 gap-6">
                             <div>
                                 <label class="block text-sm font-bold text-muji-ash mb-2">客運公司 / 路線名稱</label>
-                                <input type="text" name="airline" value="{{ $flightInfo['airline'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 shadow-sm" placeholder="例如：國光客運 / 京都市巴士 205路">
+                                <input type="text" name="airline" value="{{ $flightInfo['airline'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：國光客運 / 京都市巴士 205路">
                             </div>
                         </div>
 
@@ -794,7 +794,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         <div id="fields-ship" class="mode-fields {{ ($transportType ?? '') == 'ship' ? '' : 'hidden' }} grid grid-cols-1 gap-6">
                             <div>
                                 <label class="block text-sm font-bold text-muji-ash mb-2">船名 / 航次名稱</label>
-                                <input type="text" name="airline" value="{{ $flightInfo['airline'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 shadow-sm" placeholder="例如：麗星郵輪 / 櫻島渡輪">
+                                <input type="text" name="airline" value="{{ $flightInfo['airline'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：麗星郵輪 / 櫻島渡輪">
                             </div>
                         </div>
 
@@ -878,7 +878,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                                     $valIn = '';
                                     try { if($mIn[1] ?? false) $valIn = \Carbon\Carbon::parse($mIn[1])->toDateString(); } catch(\Exception $e){}
                                 @endphp
-                                <input type="date" name="inbound_date" value="{{ $valIn }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm focus:ring-2 focus:ring-muji-oak text-muji-ink">
+                                <input type="date" name="inbound_date" value="{{ $valIn }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium text-muji-ink text-sm">
                                 </div>
                                 <div>
                                     <label id="mode-label-route-in" class="block text-sm font-bold text-muji-ash mb-1">路線</label>
