@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Japan Trip 2025</title>
+    <title>Elk's Trip Planner</title>
     <link rel="icon" href="/icon_logo.png?v={{ time() }}" type="image/png">
 
     <!-- Fonts -->
