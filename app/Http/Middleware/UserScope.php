@@ -29,8 +29,17 @@ class UserScope
         if (auth()->check()) {
             $currUser = auth()->user();
             
-            // 1. If visiting own scope, always allow
+            // 1. If visiting own scope, check if a trip/day object is provided and ensure it Belongs to current user
             if ($targetUserId == $currUser->id) {
+                if ($tripId) {
+                    $tripObj = ($trip instanceof \App\Models\Trip) ? $trip : \App\Models\Trip::find($tripId);
+                    if ($tripObj && $tripObj->user_id != $currUser->id && !$tripObj->collaborators()->where('user_id', $currUser->id)->exists()) {
+                         if ($request->expectsJson()) {
+                            return response()->json(['message' => 'Forbidden Access to Trip'], 403);
+                        }
+                        return redirect()->route('home', ['user' => auth()->user()])->with('error', '您無權訪問此旅程。');
+                    }
+                }
                 return $next($request);
             }
 

@@ -12,6 +12,7 @@ class TripController extends Controller
     public function index(User $user)
     {
         $trips = Trip::withTrashed()
+            ->with(['user', 'collaborators'])
             ->where(function($q) use ($user) {
                 $q->where('user_id', $user->id)
                   ->orWhereHas('collaborators', fn($cq) => $cq->where('user_id', $user->id));

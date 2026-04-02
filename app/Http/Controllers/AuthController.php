@@ -9,9 +9,7 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
-    // PASSWORD CONFIGURATION
-    // Change this date to your anniversary date (YYYYMMDD)
-    private const PASSWORD = '20190913';
+    // The password is now managed via config/app.php ('anniversary_password')
 
     public function login(Request $request)
     {

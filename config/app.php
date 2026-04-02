@@ -15,6 +15,8 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'anniversary_password' => env('APP_ANNIVERSARY', '20190913'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment
@@ -78,7 +80,7 @@ return [
     |
     */
 
-    'locale' => env('APP_LOCALE', 'en'),
+    'locale' => env('APP_LOCALE', 'zh_TW'),
 
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
