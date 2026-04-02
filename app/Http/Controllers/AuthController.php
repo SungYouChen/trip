@@ -22,10 +22,22 @@ class AuthController extends Controller
 
         if (auth()->attempt($credentials, true)) {
             $request->session()->regenerate();
+            
+            if ($request->ajax()) {
+                return response()->json([
+                    'message' => '登入成功！',
+                    'redirect' => route('home', ['user' => auth()->user()])
+                ]);
+            }
+
             return redirect()->route('home', ['user' => auth()->user()])->with('success', '登入成功');
         }
 
-        return back()->with('error', 'Incorrect email or password.');
+        if ($request->ajax()) {
+            return response()->json(['message' => '信箱或密碼錯誤。'], 422);
+        }
+
+        return back()->with('error', '信箱或密碼錯誤。');
     }
 
     public function logout(Request $request)
@@ -34,7 +46,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/')->with('success', 'Logged out.');
+        return redirect('/')->with('success', '已成功登出。');
     }
 
     public function register(Request $request)
@@ -55,6 +67,13 @@ class AuthController extends Controller
 
         auth()->login($user);
 
-        return redirect()->route('home', ['user' => $user])->with('success', 'Registered successfully!');
+        if ($request->ajax()) {
+            return response()->json([
+                'message' => '註冊成功！',
+                'redirect' => route('home', ['user' => $user])
+            ]);
+        }
+
+        return redirect()->route('home', ['user' => $user])->with('success', '註冊成功！');
     }
 }

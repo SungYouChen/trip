@@ -50,13 +50,13 @@ class ItineraryController extends Controller
 
         \App\Models\ChecklistItem::create($validated);
 
-        return back()->with('success', 'Item added!');
+        return back()->with('success', '已成功新增項目！');
     }
 
     public function deleteItem($id)
     {
         \App\Models\ChecklistItem::destroy($id);
-        return back()->with('success', 'Item deleted!');
+        return back()->with('success', '已刪除項目。');
     }
 
     public function show($date)

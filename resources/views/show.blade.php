@@ -366,7 +366,17 @@
                                                 @endif
                                                 <div>
                                                     <h4 class="font-black {{ $exIsTrashed ? 'text-red-800 underline' : 'text-muji-ink' }}">{{ $expense->description }}</h4>
-                                                    <p class="text-[10px] text-muji-ash capitalize font-black tracking-widest">{{ $expense->category }}</p>
+                                                    @php
+                                                        $catMap = [
+                                                            'food' => '飲食',
+                                                            'transport' => '交通',
+                                                            'shopping' => '購物',
+                                                            'entertainment' => '遊玩',
+                                                            'hotel' => '住宿',
+                                                            'other' => '其他'
+                                                        ];
+                                                    @endphp
+                                                    <p class="text-[10px] text-muji-ash capitalize font-black tracking-widest">{{ $catMap[$expense->category] ?? $expense->category }}</p>
                                                 </div>
                                             </div>
                                             <div class="text-right">
@@ -452,7 +462,10 @@
                                         </svg>
                                     </button>
                                 </div>
-                                <form action="{{ route('day.update', ['user' => $trip->user, 'trip' => $trip, 'date' => request()->route('date')]) }}" method="POST" class="space-y-4">
+                                <form action="{{ route('day.update', ['user' => $trip->user, 'trip' => $trip, 'date' => request()->route('date')]) }}" 
+                                      method="POST" 
+                                      class="space-y-4"
+                                      onsubmit="handleAjaxSubmit(event, this, 'daySummaryEditModal')">
                                     @csrf
                                     @method('PUT')
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -545,7 +558,12 @@
                                         </svg>
                                     </button>
                                 </div>
-                                <form id="eventForm" action="{{ route('events.store', ['user' => $trip->user, 'trip' => $trip, 'date' => request()->route('date')]) }}" method="POST" class="space-y-4" autocomplete="off">
+                                <form id="eventForm" 
+                                      action="{{ route('events.store', ['user' => $trip->user, 'trip' => $trip, 'date' => request()->route('date')]) }}" 
+                                      method="POST" 
+                                      class="space-y-4" 
+                                      autocomplete="off"
+                                      onsubmit="handleAjaxSubmit(event, this, 'eventDetailsModal')">
                                     @csrf
                                     <div id="eventMethod"></div>
                                     <div class="space-y-6">

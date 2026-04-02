@@ -139,9 +139,16 @@ class ExpenseController extends Controller
 
         $validated['is_base_currency'] = $request->boolean('is_base_currency');
 
-        $trip->expenses()->create($validated);
+        $expense = $trip->expenses()->create($validated);
 
-        return back()->with('success', 'Expense created successfully!');
+        if ($request->ajax()) {
+            return response()->json([
+                'message' => '花費紀錄已儲存！',
+                'expense' => $expense
+            ]);
+        }
+
+        return back()->with('success', '花費紀錄已儲存！');
     }
 
     public function update(User $user, Request $request, Expense $expense)
@@ -158,7 +165,11 @@ class ExpenseController extends Controller
 
         $expense->update($validated);
 
-        return back()->with('success', 'Expense updated successfully!');
+        if ($request->ajax()) {
+            return response()->json(['message' => '紀錄已更新！']);
+        }
+
+        return back()->with('success', '紀錄已更新！');
     }
 
     public function destroy(User $user, Expense $expense)

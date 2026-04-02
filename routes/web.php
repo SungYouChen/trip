@@ -8,6 +8,7 @@ use App\Http\Controllers\TripController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ItineraryDayController;
+use App\Http\Controllers\FeedbackController;
 
 Route::get('/', function() {
     if (auth()->check()) {
@@ -47,6 +48,9 @@ Route::middleware(['auth', 'user.scope'])->group(function () {
     Route::post('/{user}/trip/{trip}/collaborators', [TripController::class, 'addCollaborator'])->name('trip.collaborators.add');
     Route::delete('/{user}/trip/{trip}/collaborators/{collaborator}', [TripController::class, 'removeCollaborator'])->name('trip.collaborators.remove');
     Route::post('/{user}/profile', [TripController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/{user}/feedback', [FeedbackController::class, 'index'])->name('feedback.index');
+    Route::post('/{user}/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
+    Route::delete('/{user}/feedback/{feedback}', [FeedbackController::class, 'destroy'])->name('feedback.destroy');
 
     // Restore & Force Delete Routes
     Route::patch('/{user}/trips/{tripId}/restore', [TripController::class, 'restore'])->name('trips.restore');

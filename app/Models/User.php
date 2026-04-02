@@ -20,6 +20,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'username',
+        'avatar',
         'background_image',
         'bg_opacity',
         'bg_blur',
@@ -27,7 +28,13 @@ class User extends Authenticatable
         'bg_width',
         'email',
         'password',
+        'is_admin',
     ];
+
+    public function feedbacks()
+    {
+        return $this->hasMany(Feedback::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.

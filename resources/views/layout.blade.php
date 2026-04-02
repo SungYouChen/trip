@@ -7,8 +7,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Elk's Trip Planner</title>
+    <title>Elk 的旅程規劃</title>
     <link rel="icon" href="/icon_logo.png?v={{ time() }}" type="image/png">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -174,6 +175,11 @@
             border-radius: 12px;
             box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
         }
+
+        /* Essential Fix: Ensure Swal stays on top of all modals */
+        .swal2-container {
+            z-index: 10000 !important;
+        }
     </style>
 </head>
 
@@ -266,7 +272,7 @@
                     </button>
                 </div>
 
-                <form action="{{ route('login.post') }}" method="POST">
+                <form action="{{ route('login.post') }}" method="POST" onsubmit="handleAjaxSubmit(event, this, 'loginModal')">
                     @csrf
                     <div class="space-y-6">
                         <div>
@@ -319,7 +325,7 @@
                 </div>
 
                 <div class="max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar">
-                    <form action="{{ route('register.post') }}" method="POST">
+                    <form action="{{ route('register.post') }}" method="POST" onsubmit="handleAjaxSubmit(event, this, 'registerModal')">
                         @csrf
                         <div class="space-y-6">
                             <div>
@@ -358,97 +364,7 @@
         </div>
     </div>
     <!-- Profile Settings Modal (Global) -->
-    @auth
-        <div id="globalProfileConfigModal" class="fixed inset-0 z-[2000] overflow-y-auto" style="display: none;" role="dialog" aria-modal="true">
-            <div class="flex min-h-full items-center justify-center p-4 text-center">
-                <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="safeCloseModal('globalProfileConfigModal')"></div>
-                <div class="relative transform overflow-hidden bg-white rounded-3xl w-full max-w-lg shadow-2xl flex flex-col transition-all">
-                    <div class="px-8 py-10 overflow-y-auto custom-scrollbar scroll-smooth">
-                        <div class="flex items-center gap-4 mb-10">
-                            <div class="p-3 bg-muji-base rounded-2xl text-muji-oak shadow-muji-sm">
-                                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                </svg>
-                            </div>
-                            <div class="flex flex-col border-l-2 border-muji-edge pl-4">
-                                <h3 class="text-3xl font-black text-muji-ink">個人設定</h3>
-                                <p class="text-[10px] font-bold text-muji-ash uppercase tracking-[0.2em] mt-1">自定義全域使用體驗</p>
-                            </div>
-                        </div>
-
-                        <form id="profileConfigForm" action="{{ route('profile.update', ['user' => auth()->user()]) }}" method="POST" enctype="multipart/form-data">
-                            @csrf
-                            <!-- 全站背景圖片 -->
-                            <div class="space-y-4">
-                                <div class="flex justify-between items-center mb-4">
-                                    <h4 class="text-xs font-black text-muji-oak uppercase tracking-[0.2em] flex items-center gap-2 bg-muji-base/50 self-start px-3 py-1.5 rounded-lg border border-muji-edge">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                        </svg>
-                                        全站背景圖片
-                                    </h4>
-                                    @if(auth()->user()->background_image)
-                                        <button type="submit" name="restore_default" value="1" class="text-[10px] text-red-400 font-bold hover:underline">恢復預設</button>
-                                    @endif
-                                </div>
-
-                                <div class="bg-muji-base/30 p-2 rounded-2xl border border-muji-edge h-[64px] flex items-center">
-                                    <input type="file" name="background_image" accept="image/*" class="block w-full text-xs text-muji-ash file:mr-4 file:h-[46px] file:px-6 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-white file:text-muji-oak hover:file:bg-muji-base cursor-pointer transition-all" id="bg-upload-input" onchange="this.form.submit()">
-                                </div>
-                            </div>
-
-                            <div class="space-y-6 pt-6">
-                                <h4 class="text-xs font-black text-muji-oak uppercase tracking-[0.2em] flex items-center gap-2 mb-4 bg-muji-base/50 self-start px-3 py-1.5 rounded-lg border border-muji-edge">
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                    視覺特效
-                                </h4>
-
-                                <!-- 透明度 -->
-                                <div class="space-y-3">
-                                    <div class="flex justify-between items-center">
-                                        <label class="text-sm font-bold text-muji-ash">圖片透明度</label>
-                                        <span id="val-bg-opacity" class="text-xs font-mono text-muji-ink font-bold">{{ auth()->user()->bg_opacity }}%</span>
-                                    </div>
-                                    <input type="range" name="bg_opacity" id="range-bg-opacity" min="0" max="100" value="{{ auth()->user()->bg_opacity }}" class="w-full h-1.5 bg-muji-base rounded-lg appearance-none cursor-pointer accent-muji-oak" oninput="previewBackground()">
-                                </div>
-
-                                <!-- 模糊度 -->
-                                <div class="space-y-3">
-                                    <div class="flex justify-between items-center">
-                                        <label class="text-sm font-bold text-muji-ash">圖片霧化</label>
-                                        <span id="val-bg-blur" class="text-xs font-mono text-muji-ink font-bold">{{ auth()->user()->bg_blur }}px</span>
-                                    </div>
-                                    <input type="range" name="bg_blur" id="range-bg-blur" min="0" max="20" value="{{ auth()->user()->bg_blur }}" class="w-full h-1.5 bg-muji-base rounded-lg appearance-none cursor-pointer accent-muji-oak" oninput="previewBackground()">
-                                </div>
-
-                                <!-- 區塊寬度 (僅電腦版生效) -->
-                                <div id="width-settings" class="space-y-3">
-                                    <div class="flex justify-between items-center">
-                                        <label class="text-sm font-bold text-muji-ash">區塊顯示寬度</label>
-                                        <span id="val-bg-width" class="text-xs font-mono text-muji-ink font-bold">{{ auth()->user()->bg_width }}%</span>
-                                    </div>
-                                    <input type="range" name="bg_width" id="range-bg-width" min="5" max="100" value="{{ auth()->user()->bg_width }}" class="w-full h-1.5 bg-muji-base rounded-lg appearance-none cursor-pointer accent-muji-oak" oninput="previewBackground()">
-                                    <p class="text-[10px] text-muji-ash mt-1 italic">※ 手機版本預設為滿版顯示，以達到最佳閱讀體驗。</p>
-                                </div>
-
-                                <div class="pt-6 border-t border-muji-edge mt-6 flex gap-3">
-                                    <button type="button" onclick="resetBgDefaults()" class="flex-1 h-[46px] flex items-center justify-center bg-muji-base text-muji-ash font-bold rounded-2xl hover:bg-muji-wheat/20 transition-all text-sm border border-muji-edge active:scale-95">
-                                        ↺ 回復預設
-                                    </button>
-                                    <button type="submit" class="flex-1 h-[46px] flex items-center justify-center bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 transition-all shadow-muji transform active:scale-95">
-                                        儲存設定
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endauth
+    @include('profile_modal_partial')
 
     <header class="bg-muji-paper/90 border-b border-muji-edge sticky top-0 z-50 backdrop-blur-md">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -494,6 +410,12 @@
 
                 @if(!$isShared)
                     @auth
+                        <a href="{{ route('feedback.index', ['user' => auth()->user()]) }}" class="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2 px-2 py-1 rounded-lg hover:bg-slate-50 transition-all {{ request()->routeIs('feedback.index') ? 'text-slate-900 bg-slate-100' : '' }}">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                            </svg>
+                            <span class="text-[10px] sm:text-xs">回饋</span>
+                        </a>
                         <a href="{{ route('home', ['user' => auth()->user()]) }}" class="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2 px-2 py-1 rounded-lg hover:bg-slate-50 transition-all {{ request()->routeIs('home') ? 'text-slate-900 bg-slate-100' : '' }}">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -516,12 +438,11 @@
                     @endauth
 
                     @auth
-                        <button type="button" onclick="safeOpenModal('globalProfileConfigModal')" class="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2 px-2 py-1 rounded-lg hover:bg-slate-50 transition-all text-slate-400 hover:text-slate-900 border-0 bg-transparent cursor-pointer">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            <span class="text-[10px] sm:text-xs">設定</span>
+                        <button type="button" onclick="safeOpenModal('globalProfileConfigModal')" class="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2 px-2 py-1 rounded-lg hover:bg-muji-base transition-all text-muji-ash hover:text-muji-ink border-0 bg-transparent cursor-pointer group">
+                            <div class="w-6 h-6 rounded-full overflow-hidden border border-muji-edge shadow-muji-sm group-hover:scale-110 transition-transform">
+                                <img src="{{ auth()->user()->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&background=9c8c7c&color=fff' }}" class="w-full h-full object-cover">
+                            </div>
+                            <span class="text-[10px] sm:text-xs font-black">設定</span>
                         </button>
 
                         <form action="{{ route('logout') }}" method="POST" class="inline">
@@ -629,7 +550,10 @@
                     </div>
 
                     @auth
-                        <form id="expenseForm" action="{{ isset($trip) ? route('expenses.store', ['user' => $trip->user, 'trip' => $trip]) : '#' }}" method="POST">
+                        <form id="expenseForm" 
+                              action="{{ isset($trip) ? route('expenses.store', ['user' => $trip->user, 'trip' => $trip]) : '#' }}" 
+                              method="POST"
+                              onsubmit="handleAjaxSubmit(event, this, 'expenseModal')">
                             @csrf
                             <div id="methodField"></div>
                             <div class="space-y-6">
@@ -721,6 +645,15 @@
     @stack('modals')
 
     <script>
+        function previewUserAvatar(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('avatar-preview').src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
         // Scroll Lock Helpers to prevent layout shift
 
 
@@ -1019,8 +952,79 @@
             Swal.fire({ icon: 'error', title: '糟糕！', text: '{{ session('error') }}', borderRadius: '1.5rem' });
         @endif
         @if($errors->any())
-            Swal.fire({ icon: 'error', title: '格式錯誤', text: '{{ $errors->first() }}', borderRadius: '1.5rem' });
+            Swal.fire({ icon: 'error', title: 'Validation Error', text: '{{ $errors->first() }}', borderRadius: '1.5rem' });
         @endif
+
+        // --- Global AJAX Form Handler (Swal Version + Redirect Support) ---
+        async function handleAjaxSubmit(event, form, modalId) {
+            event.preventDefault();
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            
+            // Loading State
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="flex items-center gap-2 justify-center"><svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> 處理中...</span>';
+
+            try {
+                const formData = new FormData(form);
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Redirect Support (Crucial for Auth)
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                        return;
+                    }
+
+                    Toast.fire({ icon: 'success', title: data.message || '儲存成功！' });
+                    
+                    if (modalId) {
+                        safeCloseModal(modalId);
+                    }
+                    setTimeout(() => window.location.reload(), 1000); 
+                } else {
+                    let errorMsg = '處理過程中發生問題。';
+                    if (data.errors) {
+                        errorMsg = Object.values(data.errors).flat().join('<br>'); // Change to HTML br
+                    } else if (data.message) {
+                        errorMsg = data.message;
+                    }
+                    
+                    Swal.fire({
+                        icon: 'error',
+                        title: '輸入驗證失敗',
+                        html: errorMsg, // Use html property instead of text
+                        confirmButtonColor: '#9c8c7c',
+                        customClass: {
+                            popup: 'rounded-[32px]',
+                            confirmButton: 'rounded-xl px-10'
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('AJAX Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: '系統錯誤',
+                    text: '網路連線異常，請稍後再試。',
+                    confirmButtonColor: '#9c8c7c',
+                    customClass: { popup: 'rounded-[32px]' }
+                });
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
+        }
     </script>
 
 </body>

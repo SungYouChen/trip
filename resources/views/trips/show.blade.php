@@ -460,7 +460,10 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 
     @if(!$isShared)
     @auth
-    <form action="{{ route('trip.add_day', ['user' => $trip->user, 'trip' => $trip]) }}" method="POST" class="h-full">
+    <form action="{{ route('trip.add_day', ['user' => $trip->user, 'trip' => $trip]) }}" 
+          method="POST" 
+          class="h-full"
+          onsubmit="handleAjaxSubmit(event, this, null)">
         @csrf
         <button type="submit" class="w-full h-full min-h-[200px] flex flex-col items-center justify-center p-6 border-2 border-dashed border-muji-edge rounded-3xl text-muji-ash hover:text-muji-oak hover:border-muji-oak hover:bg-muji-wheat/10 transition-all group">
             <div class="w-12 h-12 rounded-full bg-muji-base group-hover:bg-muji-wheat flex items-center justify-center mb-3 transition-colors">
@@ -475,9 +478,9 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
     @endif
 </div>
 
-<!-- Checklists Section -->
-<div class="grid md:grid-cols-2 gap-8 mt-12">
-    <!-- Must Buy List -->
+<!-- Checklists Section (Standardized space-y-8 / gap-8) -->
+<div class="grid md:grid-cols-2 gap-8 mt-8">
+    <!-- Must Buy List (p-8) -->
     <div class="muji-card shadow-muji border-muji-edge p-8 bg-muji-paper/50 relative flex flex-col min-h-[400px]">
         <h3 class="text-xl font-black text-muji-ink mb-6 flex items-center gap-2">
             <span class="w-8 h-8 rounded-lg bg-muji-base flex items-center justify-center text-muji-oak shadow-muji-sm">
@@ -565,7 +568,10 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 
             @if(!$isShared)
             @auth
-            <form action="{{ route('checklist.store', ['user' => $trip->user, 'trip' => $trip]) }}" method="POST" class="mt-4 pt-4 border-t border-muji-edge">
+            <form action="{{ route('checklist.store', ['user' => $trip->user, 'trip' => $trip]) }}" 
+                  method="POST" 
+                  class="mt-4 pt-4 border-t border-muji-edge"
+                  onsubmit="handleAjaxSubmit(event, this, null)">
                 @csrf
                 <input type="hidden" name="type" value="shopping">
                 <div class="flex gap-2 items-stretch h-[46px]">
@@ -663,7 +669,10 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 
             @if(!$isShared)
             @auth
-            <form action="{{ route('checklist.store', ['user' => $trip->user, 'trip' => $trip]) }}" method="POST" class="mt-8 pt-6 border-t border-muji-edge">
+            <form action="{{ route('checklist.store', ['user' => $trip->user, 'trip' => $trip]) }}" 
+                  method="POST" 
+                  class="mt-8 pt-6 border-t border-muji-edge"
+                  onsubmit="handleAjaxSubmit(event, this, null)">
                 @csrf
                 <input type="hidden" name="type" value="spot">
                 <div class="flex gap-2 items-stretch h-[46px]">
@@ -710,7 +719,10 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                     </button>
                 </div>
 
-                <form action="{{ route('trip.flight.update', ['user' => $trip->user, 'trip' => $trip]) }}" method="POST" class="space-y-8">
+                <form action="{{ route('trip.flight.update', ['user' => $trip->user, 'trip' => $trip]) }}" 
+                      method="POST" 
+                      class="space-y-8"
+                      onsubmit="handleAjaxSubmit(event, this, 'tripTransportModal')">
                     @csrf
                     @method('PUT')
 
@@ -947,7 +959,11 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 @endif
 
                 <!-- 旅程設定 Form -->
-                <form action="{{ route('trips.update', ['user' => $trip->user, 'trip' => $trip]) }}" method="POST" enctype="multipart/form-data" class="space-y-8">
+                <form action="{{ route('trips.update', ['user' => $trip->user, 'trip' => $trip]) }}" 
+                      method="POST" 
+                      enctype="multipart/form-data" 
+                      class="space-y-8"
+                      onsubmit="handleAjaxSubmit(event, this, 'tripSettingsModal')">
                     @csrf
                     @method('PUT')
 
@@ -1052,15 +1068,17 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         @foreach($trip->collaborators as $collaborator)
                         <div class="flex justify-between items-center bg-muji-base/50 p-3 rounded-xl border border-muji-edge">
                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-muji-wheat/30 flex items-center justify-center text-muji-oak font-bold text-xs shadow-muji-sm">
-                                    {{ strtoupper(substr($collaborator->name, 0, 1)) }}
+                                <div class="w-8 h-8 rounded-full overflow-hidden border border-muji-edge shadow-muji-sm">
+                                    <img src="{{ $collaborator->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($collaborator->name).'&background=9c8c7c&color=fff' }}" class="w-full h-full object-cover">
                                 </div>
                                 <div>
                                     <p class="text-sm font-black text-muji-ink">{{ $collaborator->name }}</p>
                                     <p class="text-[10px] font-bold text-muji-ash uppercase tracking-wider">{{ $collaborator->email }}</p>
                                 </div>
                             </div>
-                            <form action="{{ route('trip.collaborators.remove', ['user' => $trip->user, 'trip' => $trip, 'collaborator' => $collaborator->id]) }}" method="POST">
+                            <form action="{{ route('trip.collaborators.remove', ['user' => $trip->user, 'trip' => $trip, 'collaborator' => $collaborator->id]) }}" 
+                                  method="POST"
+                                  onsubmit="handleAjaxSubmit(event, this, null)">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-red-400 hover:text-red-600 p-1" onclick="return confirm('確定移除此協作者？')">
@@ -1073,7 +1091,9 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         @endforeach
                     </div>
 
-                    <form action="{{ route('trip.collaborators.add', ['user' => $trip->user, 'trip' => $trip]) }}" method="POST">
+                    <form action="{{ route('trip.collaborators.add', ['user' => $trip->user, 'trip' => $trip]) }}" 
+                          method="POST"
+                          onsubmit="handleAjaxSubmit(event, this, null)">
                         @csrf
                         <label class="block text-sm font-bold text-muji-ash text-left mb-2">邀請新協作者 (Email)</label>
                         <div class="flex gap-2">
@@ -1093,6 +1113,66 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 @endpush
 
     <script>
+        // --- NEW: Universal AJAX Form Handler ---
+        async function handleAjaxSubmit(event, form, modalId) {
+            event.preventDefault();
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            
+            // Loading State
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<svg class="animate-spin h-5 w-5 text-white inline-block mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Processing...';
+
+            try {
+                const formData = new FormData(form);
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showToast(data.message || 'Saved Successfully!', 'success');
+                    // OPTIONAL: Reload page after delay if data changes are too complex for partial update
+                    setTimeout(() => window.location.reload(), 1000); 
+                } else {
+                    // English Error Handling
+                    const errorMsg = data.errors ? Object.values(data.errors)[0][0] : (data.message || 'Error occurred.');
+                    showToast(errorMsg, 'error');
+                }
+            } catch (error) {
+                showToast('Network error, please try again.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
+        }
+
+        // --- NEW: Sytem-wide Toast Component ---
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-24 left-1/2 -translate-x-1/2 px-8 py-4 rounded-2xl shadow-muji border-2 font-black text-xs tracking-widest uppercase transition-all duration-500 z-[9999] animate-in fade-in slide-in-from-bottom-5`;
+            
+            if (type === 'success') {
+                toast.classList.add('bg-muji-oak', 'text-white', 'border-white');
+            } else {
+                toast.classList.add('bg-red-500', 'text-white', 'border-white');
+            }
+            
+            toast.innerText = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             // General Checkbox Persistence
             const checkboxes = document.querySelectorAll('.persist-chk');

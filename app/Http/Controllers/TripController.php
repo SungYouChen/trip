@@ -35,7 +35,14 @@ class TripController extends Controller
             'name' => 'required|string',
         ]);
 
-        $trip->checklistItems()->create($validated);
+        $item = $trip->checklistItems()->create($validated);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'message' => 'Item added successfully!',
+                'item' => $item
+            ]);
+        }
 
         return back()->with('success', 'Item added!');
     }
@@ -213,6 +220,10 @@ class TripController extends Controller
 
         $trip->update(['flight_info' => $flightInfo]);
 
+        if ($request->ajax()) {
+            return response()->json(['message' => 'Transport information updated!']);
+        }
+
         return back()->with('success', '交通資訊已更新！');
     }
 
@@ -258,6 +269,10 @@ class TripController extends Controller
             'flight_info' => $flightInfo,
         ]);
 
+        if ($request->ajax()) {
+            return response()->json(['message' => 'Trip settings updated successfully!']);
+        }
+
         return back()->with('success', '旅程設定與封面已更新！');
     }
 
@@ -298,6 +313,10 @@ class TripController extends Controller
 
         $trip->collaborators()->syncWithoutDetaching([$collaborator->id => ['role' => 'editor']]);
 
+        if ($request->ajax()) {
+            return response()->json(['message' => '協作者已加入！']);
+        }
+
         return back()->with('success', '已成功加入協作者！');
     }
 
@@ -308,52 +327,99 @@ class TripController extends Controller
             if ($user->background_image && str_contains($user->background_image, 'backgrounds/')) {
                 Storage::disk('public')->delete(str_replace('/storage/', '', $user->background_image));
             }
+            if ($user->avatar && str_contains($user->avatar, 'avatars/')) {
+                Storage::disk('public')->delete(str_replace('/storage/', '', $user->avatar));
+            }
             $user->update([
+                'name' => 'Elk User',
+                'avatar' => null,
                 'background_image' => null,
                 'bg_opacity' => 100,
                 'bg_blur' => 0,
                 'bg_style' => 'full',
                 'bg_width' => 95,
             ]);
+            if ($request->ajax()) {
+                return response()->json(['message' => '設定已恢復預設！']);
+            }
+
             return back()->with('success', '已恢復預設背景與設定！');
         }
 
         // 2. Handle Settings & Upload
         $validated = $request->validate([
-            'background_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120', // Max 5MB
+            'name' => 'nullable|string|max:255',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'background_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
             'bg_opacity' => 'nullable|integer|min:0|max:100',
             'bg_blur' => 'nullable|integer|min:0|max:20',
             'bg_style' => 'nullable|string|in:full,center',
             'bg_width' => 'nullable|integer|min:0|max:100',
+            'current_password' => 'nullable|string|required_with:new_password',
+            'new_password' => 'nullable|string|min:8|confirmed',
         ]);
 
         $updateData = [];
+        if ($request->filled('name')) $updateData['name'] = $validated['name'];
         if (isset($validated['bg_opacity'])) $updateData['bg_opacity'] = $validated['bg_opacity'];
         if (isset($validated['bg_blur'])) $updateData['bg_blur'] = $validated['bg_blur'];
         if (isset($validated['bg_style'])) $updateData['bg_style'] = $validated['bg_style'];
-        if (isset($validated['bg_width'])) $updateData['bg_width'] = $validated['bg_width'];
+        if ($request->has('bg_width')) $updateData['bg_width'] = $request->bg_width;
 
+        // Handle Avatar Removal
+        if ($request->has('remove_avatar')) {
+            if ($user->avatar && str_contains($user->avatar, 'avatars/')) {
+                Storage::disk('public')->delete(str_replace('/storage/', '', $user->avatar));
+            }
+            $updateData['avatar'] = null;
+        }
+
+        // Handle Avatar Upload
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar && str_contains($user->avatar, 'avatars/')) {
+                Storage::disk('public')->delete(str_replace('/storage/', '', $user->avatar));
+            }
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $updateData['avatar'] = Storage::url($path);
+        }
+
+        // Handle Background Upload
         if ($request->hasFile('background_image')) {
-            // Delete old one if exists
             if ($user->background_image && str_contains($user->background_image, 'backgrounds/')) {
                 Storage::disk('public')->delete(str_replace('/storage/', '', $user->background_image));
             }
-
             $path = $request->file('background_image')->store('backgrounds', 'public');
             $updateData['background_image'] = Storage::url($path);
         }
 
+        // Handle Password Change
+        if ($request->filled('new_password')) {
+            if (!\Illuminate\Support\Facades\Hash::check($validated['current_password'], $user->password)) {
+                return back()->with('error', '目前的密碼不正確。');
+            }
+            $updateData['password'] = \Illuminate\Support\Facades\Hash::make($validated['new_password']);
+        }
+
         if (!empty($updateData)) {
             $user->update($updateData);
-            return back()->with('success', '個人設定已更新！');
+
+            if ($request->ajax()) {
+                return response()->json(['message' => '個人設定已更新！']);
+            }
+
+            return back()->with('success', '個人帳號與設定已更新！');
         }
 
         return back()->with('info', '未變更任何設定。');
     }
 
-    public function removeCollaborator(User $user, Trip $trip, $collaboratorId)
+    public function removeCollaborator(User $user, Trip $trip, $collaboratorId, Request $request)
     {
         $trip->collaborators()->detach($collaboratorId);
+        if ($request->ajax()) {
+            return response()->json(['message' => '協作者已移除。']);
+        }
+
         return back()->with('success', '已移除協作者。');
     }
 

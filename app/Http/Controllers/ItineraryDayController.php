@@ -114,6 +114,10 @@ class ItineraryDayController extends Controller
             ]
         ]);
 
+        if ($request->ajax()) {
+            return response()->json(['message' => '日誌摘要已更新！']);
+        }
+
         return back()->with('success', '日誌摘要已更新！');
     }
 
@@ -143,6 +147,10 @@ class ItineraryDayController extends Controller
             'sort_order' => $day->events()->count(),
         ]);
 
+        if ($request->ajax()) {
+            return response()->json(['message' => '行程活動已新增！']);
+        }
+
         return back()->with('success', '行程活動已新增！');
     }
 
@@ -167,6 +175,10 @@ class ItineraryDayController extends Controller
             'map_query' => $validated['map_query'],
             'sub_activities' => $subActivities,
         ]);
+
+        if ($request->ajax()) {
+            return response()->json(['message' => '行程活動已更新！']);
+        }
 
         return back()->with('success', '行程活動已更新！');
     }
