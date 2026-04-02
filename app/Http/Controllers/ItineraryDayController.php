@@ -101,15 +101,15 @@ class ItineraryDayController extends Controller
         }
 
         $day->update([
-            'title' => $validated['title'],
-            'location' => $validated['location'],
-            'summary' => $validated['summary'],
-            'accommodation' => $validated['hotel_name'],
+            'title' => $validated['title'] ?? null,
+            'location' => $validated['location'] ?? null,
+            'summary' => $validated['summary'] ?? null,
+            'accommodation' => $validated['hotel_name'] ?? null,
             'accommodation_details' => [
-                'name' => $validated['hotel_name'],
-                'address' => $validated['hotel_address'],
+                'name' => $validated['hotel_name'] ?? null,
+                'address' => $validated['hotel_address'] ?? null,
                 'price' => $hotelPriceCombined,
-                'check_in' => $validated['hotel_checkin'],
+                'check_in' => $validated['hotel_checkin'] ?? null,
                 'note' => $validated['hotel_note'] ?? null,
             ]
         ]);
@@ -134,15 +134,15 @@ class ItineraryDayController extends Controller
             'sub_activities' => 'nullable|string', // Will be comma separated
         ]);
 
-        $subActivities = $validated['sub_activities']
+        $subActivities = ($validated['sub_activities'] ?? null)
             ? array_map('trim', explode(',', $validated['sub_activities']))
             : null;
 
         $day->events()->create([
             'time' => $validated['time'],
             'activity' => $validated['activity'],
-            'note' => $validated['note'],
-            'map_query' => $validated['map_query'],
+            'note' => $validated['note'] ?? null,
+            'map_query' => $validated['map_query'] ?? null,
             'sub_activities' => $subActivities,
             'sort_order' => $day->events()->count(),
         ]);
@@ -164,15 +164,15 @@ class ItineraryDayController extends Controller
             'sub_activities' => 'nullable|string',
         ]);
 
-        $subActivities = $validated['sub_activities']
+        $subActivities = ($validated['sub_activities'] ?? null)
             ? array_map('trim', explode(',', $validated['sub_activities']))
             : null;
 
         $event->update([
             'time' => $validated['time'],
             'activity' => $validated['activity'],
-            'note' => $validated['note'],
-            'map_query' => $validated['map_query'],
+            'note' => $validated['note'] ?? null,
+            'map_query' => $validated['map_query'] ?? null,
             'sub_activities' => $subActivities,
         ]);
 
@@ -183,27 +183,36 @@ class ItineraryDayController extends Controller
         return back()->with('success', '行程活動已更新！');
     }
 
-    public function deleteEvent(User $user, ItineraryEvent $event)
+    public function deleteEvent(User $user, ItineraryEvent $event, Request $request)
     {
         $event->delete(); // soft delete
+        if ($request->ajax()) {
+            return response()->json(['message' => '行程活動已封存。']);
+        }
         return back()->with('success', '行程活動已封存。');
     }
 
-    public function restoreEvent(User $user, $eventId)
+    public function restoreEvent(User $user, $eventId, Request $request)
     {
         $event = ItineraryEvent::withTrashed()->findOrFail($eventId);
         $event->restore();
+        if ($request->ajax()) {
+            return response()->json(['message' => '行程活動已還原！']);
+        }
         return back()->with('success', '行程活動已還原！');
     }
 
-    public function forceDeleteEvent(User $user, $eventId)
+    public function forceDeleteEvent(User $user, $eventId, Request $request)
     {
         $event = ItineraryEvent::withTrashed()->findOrFail($eventId);
         $event->forceDelete();
+        if ($request->ajax()) {
+            return response()->json(['message' => '行程活動已永久刪除。']);
+        }
         return back()->with('success', '行程活動已永久刪除。');
     }
 
-    public function deleteDay(User $user, Trip $trip, $date)
+    public function deleteDay(User $user, Trip $trip, $date, Request $request)
     {
         $parts = explode('-', $date);
         $dayNum = (int)$parts[1];
@@ -216,19 +225,25 @@ class ItineraryDayController extends Controller
 
         $day->delete(); // soft delete
 
+        if ($request->ajax()) {
+            return response()->json(['message' => '行程卡片已封存。']);
+        }
         return back()->with('success', '行程卡片已封存。');
     }
 
-    public function restoreDay(User $user, Trip $trip, $dayId)
+    public function restoreDay(User $user, Trip $trip, $dayId, Request $request)
     {
         $day = ItineraryDay::withTrashed()
             ->where(fn ($q) => $q->where(['id' => $dayId, 'trip_id' => $trip->id]))
             ->firstOrFail();
         $day->restore();
+        if ($request->ajax()) {
+            return response()->json(['message' => '行程卡片已還原！']);
+        }
         return back()->with('success', '行程卡片已還原！');
     }
 
-    public function forceDeleteDay(User $user, Trip $trip, $dayId)
+    public function forceDeleteDay(User $user, Trip $trip, $dayId, Request $request)
     {
         $day = ItineraryDay::withTrashed()
             ->where(fn ($q) => $q->where(['id' => $dayId, 'trip_id' => $trip->id]))
@@ -236,6 +251,9 @@ class ItineraryDayController extends Controller
         // Cascade: delete all child events
         $day->events()->withTrashed()->forceDelete();
         $day->forceDelete();
+        if ($request->ajax()) {
+            return response()->json(['message' => '行程卡片及所有活動已永久刪除。']);
+        }
         return back()->with('success', '行程卡片及所有活動已永久刪除。');
     }
 }

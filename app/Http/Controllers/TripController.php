@@ -12,7 +12,10 @@ class TripController extends Controller
     public function index(User $user)
     {
         $trips = Trip::withTrashed()
-            ->where(fn($q) => $q->where('user_id', $user->id))
+            ->where(function($q) use ($user) {
+                $q->where('user_id', $user->id)
+                  ->orWhereHas('collaborators', fn($cq) => $cq->where('user_id', $user->id));
+            })
             ->orderBy('start_date', 'desc')
             ->get();
             
@@ -50,6 +53,7 @@ class TripController extends Controller
     public function deleteItem(User $user, Trip $trip, $id)
     {
         $trip->checklistItems()->findOrFail($id)->delete(); // soft delete
+        if (request()->ajax()) return response()->json(['message' => '清單項目已封存。']);
         return back()->with('success', '清單項目已封存。');
     }
 
@@ -57,6 +61,7 @@ class TripController extends Controller
     {
         $item = $trip->checklistItems()->withTrashed()->findOrFail($id);
         $item->restore();
+        if (request()->ajax()) return response()->json(['message' => '清單項目已還原！']);
         return back()->with('success', '清單項目已還原！');
     }
 
@@ -64,6 +69,7 @@ class TripController extends Controller
     {
         $item = $trip->checklistItems()->withTrashed()->findOrFail($id);
         $item->forceDelete();
+        if (request()->ajax()) return response()->json(['message' => '清單項目已永久刪除。']);
         return back()->with('success', '清單項目已永久刪除。');
     }
 
@@ -118,6 +124,12 @@ class TripController extends Controller
             $start->addDay();
         }
 
+        if (request()->ajax()) {
+            return response()->json([
+                'message' => '旅程已建立，已為您預建行程表！',
+                'redirect' => route('trip.show', ['user' => $user, 'trip' => $trip])
+            ]);
+        }
         return redirect()->route('trip.show', ['user' => $user, 'trip' => $trip])->with('success', '旅程已建立，已為您預建行程表！');
     }
     public function addDay(User $user, Trip $trip)
@@ -137,15 +149,18 @@ class TripController extends Controller
             'accommodation_details' => []
         ]);
 
+        if (request()->ajax()) return response()->json(['message' => '已新增一天的行程卡片！']);
         return back()->with('success', '已新增一天的行程卡片！');
     }
 
     public function destroy(User $user, Trip $trip)
     {
         if ($trip->user_id !== auth()->id()) {
+            if (request()->ajax()) return response()->json(['message' => '只有旅程建立者可以封存此旅程。'], 403);
             return back()->with('error', '只有旅程建立者可以封存此旅程。');
         }
         $trip->delete(); // soft delete
+        if (request()->ajax()) return response()->json(['message' => '旅程已封存。', 'redirect' => route('home', ['user' => auth()->user()])]);
         return redirect()->route('home', ['user' => auth()->user()])->with('success', '旅程已封存。可在「查看封存」中還原。');
     }
 
@@ -155,6 +170,7 @@ class TripController extends Controller
             ->where(fn($q) => $q->where('id', $tripId))
             ->firstOrFail();
         $trip->restore();
+        if (request()->ajax()) return response()->json(['message' => '旅程已還原！']);
         return redirect()->route('home', ['user' => $user])->with('success', '旅程已還原！');
     }
 
@@ -172,6 +188,7 @@ class TripController extends Controller
         $trip->expenses()->withTrashed()->forceDelete();
         $trip->checklistItems()->withTrashed()->forceDelete();
         $trip->forceDelete();
+        if (request()->ajax()) return response()->json(['message' => '旅程及所有子項目已永久刪除。', 'redirect' => route('home', ['user' => $user])]);
         return redirect()->route('home', ['user' => $user])->with('success', '旅程及所有子項目已永久刪除。');
     }
 
@@ -285,6 +302,7 @@ class TripController extends Controller
         $trip->save();
 
         $msg = $trip->is_public ? '已開啟分享功能！' : '已關閉分享功能。';
+        if (request()->ajax()) return response()->json(['message' => $msg]);
         return back()->with('success', $msg);
     }
 

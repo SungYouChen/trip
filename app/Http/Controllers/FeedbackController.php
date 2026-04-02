@@ -78,6 +78,9 @@ class FeedbackController extends Controller
         }
 
         $feedback->delete();
+        if (request()->ajax()) {
+            return response()->json(['message' => '訊息已刪除。']);
+        }
         return back()->with('success', '訊息已刪除。');
     }
 }

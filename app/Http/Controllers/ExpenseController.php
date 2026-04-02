@@ -175,6 +175,7 @@ class ExpenseController extends Controller
     public function destroy(User $user, Expense $expense)
     {
         $expense->delete(); // soft delete
+        if (request()->ajax()) return response()->json(['message' => '花費紀錄已封存。']);
         return back()->with('success', '花費已封存。');
     }
 
@@ -182,6 +183,7 @@ class ExpenseController extends Controller
     {
         $expense = Expense::withTrashed()->findOrFail($expenseId);
         $expense->restore();
+        if (request()->ajax()) return response()->json(['message' => '花費紀錄已還原！']);
         return back()->with('success', '花費已還原！');
     }
 
@@ -189,6 +191,7 @@ class ExpenseController extends Controller
     {
         $expense = Expense::withTrashed()->findOrFail($expenseId);
         $expense->forceDelete();
+        if (request()->ajax()) return response()->json(['message' => '花費紀錄已永久刪除。']);
         return back()->with('success', '花費已永久刪除。');
     }
 }

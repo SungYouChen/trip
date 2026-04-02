@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ItineraryDay extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, \Illuminate\Database\Eloquent\Factories\HasFactory;
     protected $fillable = ['trip_id', 'date', 'title', 'location', 'summary', 'accommodation', 'accommodation_details'];
 
     protected $casts = [

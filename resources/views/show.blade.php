@@ -600,6 +600,7 @@
             @endauth
         @endpush
 
+        @auth
         <script>
             /**
              * Open the Event Modal
@@ -624,7 +625,7 @@
 
                 if (event) {
                     if (title) title.innerText = '編輯行程活動';
-                    // Use the username from the trip object (ensure it's properly escaped)
+                    // Use the username from the trip's owner
                     form.action = `/{{ $trip->user->username }}/events/${event.id}`;
                     if (methodDiv) methodDiv.innerHTML = '@method("PUT")';
 
@@ -641,7 +642,7 @@
                     setVal('event_map', event.map_query);
                 } else {
                     if (title) title.innerText = '新增行程活動';
-                    form.action = "{{ route('events.store', ['user' => $trip->user, 'trip' => $trip, 'date' => request()->route('date') ?? (isset($currentDate) ? $currentDate : '')]) }}";
+                    form.action = "{{ route('events.store', ['user' => $trip->user->username, 'trip' => $trip, 'date' => request()->route('date') ?? (isset($currentDate) ? $currentDate : '')]) }}";
                     if (methodDiv) methodDiv.innerHTML = '';
                     form.reset();
                 }
@@ -653,4 +654,5 @@
                 safeCloseModal('eventDetailsModal');
             }
         </script>
+        @endauth
 @endsection
