@@ -44,7 +44,7 @@
                     <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-muji-wheat text-muji-oak mb-2">
                         {{ $day['date'] }} ({{ $day['day'] }})
                     </span>
-                    <div class="flex items-center gap-3 @auth cursor-pointer hover:opacity-80 transition-all @endauth" @auth onclick="safeOpenModal('daySummaryEditModal')" @endauth>
+                    <div class="flex items-center gap-3 @if(!$isShared) @auth cursor-pointer hover:opacity-80 transition-all @endauth @endif" @if(!$isShared) @auth onclick="safeOpenModal('daySummaryEditModal')" @endauth @endif>
                         <h1 class="text-3xl font-black text-muji-ink">{{ $day['title'] }}</h1>
                     </div>
                     @if($day['summary'])
@@ -437,7 +437,8 @@
         </div>
 
         @push('modals')
-            @auth
+            @if(!$isShared)
+                @auth
                 <!-- Day Edit Modal -->
                 <div id="daySummaryEditModal" class="fixed inset-0 z-[2000] hidden overflow-y-auto" role="dialog" aria-modal="true">
                     <div class="flex min-h-full items-center justify-center p-4 text-center">
@@ -597,62 +598,65 @@
                         </div>
                     </div>
                 </div>
-            @endauth
+                @endauth
+            @endif
         @endpush
 
-        @auth
-        <script>
-            /**
-             * Open the Event Modal
-             * @param {Object|null} event - The event data to edit, or null to create new
-             */
-            function openEventModal(event = null) {
-                console.log('Opening Event Modal...', event);
-                const modal = document.getElementById('eventDetailsModal');
-                if (!modal) {
-                    console.error('Modal "eventDetailsModal" not found in DOM.');
-                    return;
+        @if(!$isShared)
+            @auth
+            <script>
+                /**
+                 * Open the Event Modal
+                 * @param {Object|null} event - The event data to edit, or null to create new
+                 */
+                function openEventModal(event = null) {
+                    console.log('Opening Event Modal...', event);
+                    const modal = document.getElementById('eventDetailsModal');
+                    if (!modal) {
+                        console.error('Modal "eventDetailsModal" not found in DOM.');
+                        return;
+                    }
+
+                    const title = document.getElementById('eventModalTitle');
+                    const form = document.getElementById('eventForm');
+                    const methodDiv = document.getElementById('eventMethod');
+
+                    if (!form) {
+                        console.error('Form "eventForm" not found in modal.');
+                        return;
+                    }
+
+                    if (event) {
+                        if (title) title.innerText = '編輯行程活動';
+                        // Use the username from the trip's owner
+                        form.action = `/{{ $trip->user->username }}/events/${event.id}`;
+                        if (methodDiv) methodDiv.innerHTML = '@method("PUT")';
+
+                        // Populate fields safely
+                        const setVal = (id, val) => {
+                            const el = document.getElementById(id);
+                            if (el) el.value = val || '';
+                        };
+
+                        setVal('event_time', event.time);
+                        setVal('event_activity', event.activity);
+                        setVal('event_subs', Array.isArray(event.sub_activities) ? event.sub_activities.join(', ') : (event.sub_activities || ''));
+                        setVal('event_note', event.note);
+                        setVal('event_map', event.map_query);
+                    } else {
+                        if (title) title.innerText = '新增行程活動';
+                        form.action = "{{ route('events.store', ['user' => $trip->user->username, 'trip' => $trip, 'date' => request()->route('date') ?? (isset($currentDate) ? $currentDate : '')]) }}";
+                        if (methodDiv) methodDiv.innerHTML = '';
+                        form.reset();
+                    }
+
+                    safeOpenModal('eventDetailsModal');
                 }
 
-                const title = document.getElementById('eventModalTitle');
-                const form = document.getElementById('eventForm');
-                const methodDiv = document.getElementById('eventMethod');
-
-                if (!form) {
-                    console.error('Form "eventForm" not found in modal.');
-                    return;
+                function closeEventModal() {
+                    safeCloseModal('eventDetailsModal');
                 }
-
-                if (event) {
-                    if (title) title.innerText = '編輯行程活動';
-                    // Use the username from the trip's owner
-                    form.action = `/{{ $trip->user->username }}/events/${event.id}`;
-                    if (methodDiv) methodDiv.innerHTML = '@method("PUT")';
-
-                    // Populate fields safely
-                    const setVal = (id, val) => {
-                        const el = document.getElementById(id);
-                        if (el) el.value = val || '';
-                    };
-
-                    setVal('event_time', event.time);
-                    setVal('event_activity', event.activity);
-                    setVal('event_subs', Array.isArray(event.sub_activities) ? event.sub_activities.join(', ') : (event.sub_activities || ''));
-                    setVal('event_note', event.note);
-                    setVal('event_map', event.map_query);
-                } else {
-                    if (title) title.innerText = '新增行程活動';
-                    form.action = "{{ route('events.store', ['user' => $trip->user->username, 'trip' => $trip, 'date' => request()->route('date') ?? (isset($currentDate) ? $currentDate : '')]) }}";
-                    if (methodDiv) methodDiv.innerHTML = '';
-                    form.reset();
-                }
-
-                safeOpenModal('eventDetailsModal');
-            }
-
-            function closeEventModal() {
-                safeCloseModal('eventDetailsModal');
-            }
-        </script>
-        @endauth
+            </script>
+            @endauth
+        @endif
 @endsection

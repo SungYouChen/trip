@@ -695,6 +695,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 
 
 @push('modals')
+@if(!$isShared)
 @auth
 <!-- Flight Edit Modal -->
 <div id="tripTransportModal" class="fixed inset-0 z-[2000]" style="display: none;" role="dialog" aria-modal="true">
@@ -1109,9 +1110,11 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
             </div>
         </div>
     </div>
-    @endauth
+@endauth
+@endif
 @endpush
 
+    @if(!$isShared)
     <script>
         // --- NEW: Universal AJAX Form Handler ---
         async function handleAjaxSubmit(event, form, modalId) {
@@ -1287,6 +1290,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
             safeCloseModal('tripSettingsModal');
         }
     </script>
+    @endif
 
     <script>
         function toggleTransportDetails() {

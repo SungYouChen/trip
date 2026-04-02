@@ -492,7 +492,7 @@
 
 
     <!-- Floating Action Button Speed Dial -->
-    @if(isset($trip))
+    @if(isset($trip) && !$isShared)
         <div class="fixed bottom-6 right-6 flex flex-col items-end gap-3 z-[100]" id="speedDial">
             <div id="speedDialMenu" class="hidden flex flex-col items-end gap-3 mb-1 animate-in slide-in-from-bottom-4 fade-in duration-200">
                 @if(request()->routeIs('day.show') || request()->routeIs('day.show_shared'))
