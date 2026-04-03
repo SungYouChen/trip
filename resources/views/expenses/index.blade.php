@@ -1,7 +1,11 @@
 @php $isShared = $isShared ?? false; @endphp
 @extends('layout')
-
+@section('title', '花費統計')
 @section('content')
+    @push('modals')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    @endpush
+
     <div class="mb-4">
         @php
             $exReturnLink = $isShared 
@@ -14,14 +18,20 @@
         </a>
     </div>
 
-    <div class="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-            <h1 class="text-3xl font-black text-muji-ink tracking-tight">總花費</h1>
-            <p class="text-muji-ash mt-1 font-medium italic opacity-60">數據僅供參考，以實際扣款為準</p>
+    <div class="mb-8 flex flex-col md:flex-row items-stretch gap-6">
+        <div class="flex-1 flex flex-col justify-center">
+            <h1 class="text-3xl font-black text-muji-ink tracking-tight">花費統計</h1>
+            <p class="text-muji-ash mt-1 font-medium italic opacity-60">讓每一分錢都花得清清楚楚</p>
+            
+            <div class="mt-6 bg-muji-base/50 p-6 rounded-3xl border border-muji-edge shadow-muji-sm">
+                <span class="text-[10px] font-black text-muji-ash uppercase tracking-widest block mb-2">預計總花費</span>
+                <span class="text-5xl font-black text-muji-oak leading-none">{{ $trip->base_currency }} {{ number_format($totalBase) }}</span>
+                <p class="text-xs font-black text-muji-ash uppercase tracking-tight mt-3">約合 {{ $trip->target_currency }} {{ number_format($totalTarget) }}</p>
+            </div>
         </div>
-        <div class="text-right bg-muji-base/50 p-4 rounded-2xl border border-muji-edge shadow-muji-sm">
-            <span class="text-4xl font-black text-muji-oak">{{ $trip->base_currency }} {{ number_format($totalBase) }}</span>
-            <p class="text-[10px] font-black text-muji-ash uppercase tracking-widest mt-1">約合 {{ $trip->target_currency }} {{ number_format($totalTarget) }}</p>
+        
+        <div class="w-full md:w-72 h-72 bg-white/40 backdrop-blur-sm rounded-3xl border border-muji-edge p-6 flex items-center justify-center shadow-muji">
+            <canvas id="expenseChart"></canvas>
         </div>
     </div>
 
@@ -146,4 +156,81 @@
             @endforelse
         </div>
     </div>
+
+    @push('modals')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('expenseChart');
+            if(!ctx) return;
+            
+            const categoryData = @json($byCategory);
+            const labels = Object.keys(categoryData).map(cat => {
+                if(cat == 'Food') return '飲食 🍔';
+                if(cat == 'Transport') return '交通 🚇';
+                if(cat == 'Shopping') return '購物 🛍️';
+                if(cat == 'Accommodation') return '住宿 🏨';
+                if(cat == 'Flight') return '機票 ✈️';
+                if(cat == 'Entertainment') return '娛樂 🎡';
+                return '其他 💡';
+            });
+            const values = Object.values(categoryData);
+
+            new Chart(ctx.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: [
+                            '#9c8c7c', // Muji Oak
+                            '#dcd3c1', // Muji Wheat
+                            '#e8e4db', // Muji Edge
+                            '#757575', // Muji Ash
+                            '#333333', // Muji Ink
+                            '#f8f5f0', // Muji Base
+                            '#c0b4a4'  // Muji Earth
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: 12
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            titleColor: '#333333',
+                            bodyColor: '#757575',
+                            borderColor: '#e8e4db',
+                            borderWidth: 1,
+                            padding: 12,
+                            cornerRadius: 12,
+                            bodyFont: {
+                                size: 10,
+                                weight: 'bold'
+                            },
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) label += ': ';
+                                    const val = context.raw;
+                                    label += '{{ $trip->base_currency }} ' + val.toLocaleString();
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+        });
+    </script>
+    @endpush
 @endsection

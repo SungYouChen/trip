@@ -3,15 +3,22 @@
             <div class="flex min-h-full items-center justify-center p-4 text-center">
                 <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="safeCloseModal('globalProfileConfigModal')"></div>
                 <div class="relative transform overflow-hidden bg-white rounded-[40px] w-full max-w-lg shadow-2xl flex flex-col transition-all">
-                    <div class="px-8 py-10 overflow-y-auto custom-scrollbar scroll-smooth max-h-[85vh]">
-                        <div class="flex items-center gap-4 mb-10 text-left">
+                    <!-- 統一右上角關閉按鈕 (X) - 移出捲軸容器 -->
+                    <button onclick="safeCloseModal('globalProfileConfigModal')" class="absolute top-6 right-6 text-muji-ash hover:text-muji-oak p-2 rounded-full hover:bg-muji-base transition-all group z-50">
+                        <svg class="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+
+                    <div class="px-5 sm:px-8 py-8 sm:py-10 overflow-y-auto custom-scrollbar scroll-smooth max-h-[85vh]">
+                        <div class="flex items-center gap-4 mb-8 sm:mb-10 text-left">
                             <div class="p-3 bg-muji-base rounded-2xl text-muji-oak shadow-muji-sm">
                                 <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                                 </svg>
                             </div>
                             <div class="flex flex-col border-l-2 border-muji-edge pl-4">
-                                <h3 class="text-3xl font-black text-muji-ink">帳號與設定</h3>
+                                <h3 class="text-3xl font-black text-muji-ink leading-tight">帳號與設定</h3>
                                 <p class="text-[10px] font-bold text-muji-ash uppercase tracking-[0.2em] mt-1">管理個人資料與系統偏好</p>
                             </div>
                         </div>
@@ -35,16 +42,29 @@
 
                                 <div class="flex flex-col sm:flex-row items-center gap-8 bg-muji-base/20 p-6 rounded-[32px] border border-muji-edge/50">
                                     <div class="relative group">
-                                        <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-muji bg-white relative group">
+                                        <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-muji bg-white relative">
                                             <img id="avatar-preview" src="{{ auth()->user()->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&background=9c8c7c&color=fff' }}" class="w-full h-full object-cover">
-                                            @if(auth()->user()->avatar)
-                                                <button type="submit" name="remove_avatar" value="1" class="absolute top-0 right-0 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20 shadow-lg" title="移除頭像">
-                                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M6 18L18 6M6 6l12 12" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                                </button>
-                                            @endif
                                         </div>
-                                        <label class="absolute inset-0 flex items-center justify-center bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-opacity rounded-full cursor-pointer">
-                                            <input type="file" name="avatar" class="hidden" onchange="previewUserAvatar(this)">
+                                        @if(auth()->user()->avatar)
+                                            <button type="button" onclick="performAvatarRemoval(this)" class="absolute -top-1 -right-1 bg-red-500 text-white w-7 h-7 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-30 shadow-lg hover:scale-110 active:scale-95 border-2 border-white" title="移除頭像">
+                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M6 18L18 6M6 6l12 12" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                            </button>
+                                            <input type="hidden" name="remove_avatar" id="remove_avatar_input" value="0">
+                                            <script>
+                                                function performAvatarRemoval(btn) {
+                                                    if(confirm('確定要移除個人頭像嗎？')) {
+                                                        const input = document.getElementById('remove_avatar_input');
+                                                        const form = btn.closest('form');
+                                                        input.value = "1";
+                                                        // 手動觸發 AJAX 提交
+                                                        const event = new Event('submit', { cancelable: true });
+                                                        form.dispatchEvent(event);
+                                                    }
+                                                }
+                                            </script>
+                                        @endif
+                                        <label class="absolute inset-0 flex items-center justify-center bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-opacity rounded-full cursor-pointer z-10">
+                                            <input type="file" name="avatar" accept="image/*" class="hidden" onchange="previewUserAvatar(this)">
                                             <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                                         </label>
                                     </div>
@@ -95,7 +115,19 @@
                                         視覺自定義
                                     </h4>
                                     @if(auth()->user()->background_image || auth()->user()->avatar)
-                                        <button type="submit" name="restore_default" value="1" class="text-[10px] text-red-400 font-bold hover:underline transition-all active:scale-95">恢復預設</button>
+                                        <button type="button" onclick="performRestoreDefault(this)" class="text-[10px] text-red-400 font-bold hover:underline transition-all active:scale-95">恢復預設</button>
+                                        <input type="hidden" name="restore_default" id="restore_default_input" value="0">
+                                        <script>
+                                            function performRestoreDefault(btn) {
+                                                if(confirm('確定要恢復預設顯示（移除背景圖與頭像）嗎？')) {
+                                                    const input = document.getElementById('restore_default_input');
+                                                    const form = btn.closest('form');
+                                                    input.value = "1";
+                                                    const event = new Event('submit', { cancelable: true });
+                                                    form.dispatchEvent(event);
+                                                }
+                                            }
+                                        </script>
                                     @endif
                                 </div>
 
@@ -132,11 +164,11 @@
                                     </div>
                                 </div>
 
-                                <div class="pt-10 flex gap-4">
-                                    <button type="button" onclick="safeCloseModal('globalProfileConfigModal')" class="flex-1 h-[56px] flex items-center justify-center bg-white text-muji-ash font-bold rounded-[24px] hover:bg-muji-base transition-all text-sm border border-muji-edge active:scale-95">
+                                <div class="pt-8 mt-10 border-t border-muji-edge flex gap-4">
+                                    <button type="button" onclick="safeCloseModal('globalProfileConfigModal')" class="flex-1 h-[46px] flex items-center justify-center bg-white text-muji-ash font-bold rounded-[24px] hover:bg-muji-base transition-all text-sm border border-muji-edge active:scale-95">
                                         取消
                                     </button>
-                                    <button type="submit" class="flex-1 h-[56px] flex items-center justify-center bg-muji-oak text-white font-black rounded-[24px] hover:opacity-95 hover:shadow-muji hover:translate-y-[-1px] transition-all active:scale-95 text-sm uppercase tracking-widest">
+                                    <button type="submit" class="flex-1 h-[46px] flex items-center justify-center bg-muji-oak text-white font-black rounded-[24px] hover:opacity-95 hover:shadow-muji hover:translate-y-[-1px] transition-all active:scale-95 text-sm uppercase tracking-widest">
                                         儲存所有變更
                                     </button>
                                 </div>

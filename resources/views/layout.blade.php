@@ -17,6 +17,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
 
     <link rel="manifest" href="/manifest.json">
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(reg => {
+                    console.log('Premium PWA Active:', reg.scope);
+                }).catch(err => {
+                    console.warn('PWA skipped:', err);
+                });
+            });
+        }
+    </script>
 
     <!-- Vite Assets -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -181,9 +192,115 @@
             z-index: 10000 !important;
         }
     </style>
+    <style>
+        /* iOS Date/Time Input Focus Fix */
+        @media screen and (max-width: 768px) {
+
+            input[type="date"],
+            input[type="time"] {
+                -webkit-appearance: none !important;
+                min-height: 46px !important;
+                height: 46px !important;
+                line-height: 46px !important;
+                /* 強制文字與框同高 */
+                padding-top: 0 !important;
+                /* 排除任何預設偏移 */
+                padding-bottom: 0 !important;
+                opacity: 1 !important;
+                z-index: 1 !important;
+                cursor: pointer;
+            }
+        }
+        /* Mobile Menu Drawer Styles */
+        #mobileMenuDrawer {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(100%);
+        }
+        #mobileMenuDrawer.active {
+            transform: translateX(0);
+        }
+        #mobileMenuBackdrop {
+            transition: opacity 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+        #mobileMenuBackdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
 </head>
 
-<body class="text-muji-ink antialiased min-h-screen flex flex-col relative bg-transparent">
+<body class="text-muji-ink antialiased min-h-screen flex flex-col relative bg-transparent overflow-x-hidden">
+    <!-- Muji Pull-to-Refresh Indicator (Mobile Optimized) -->
+    <div id="ptr-indicator" class="fixed top-[-80px] left-0 w-full h-[80px] flex items-center justify-center z-[9999] pointer-events-none" style="transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); will-change: transform; backface-visibility: hidden;">
+        <div class="bg-white/95 backdrop-blur-md p-3 rounded-full shadow-muji border border-muji-edge flex items-center justify-center transform-gpu">
+            <svg id="ptr-icon" class="w-6 h-6 text-muji-ash will-change-transform" style="backface-visibility: hidden;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            let startY = 0; let pullDist = 0; let active = false;
+            const threshold = 70;
+            const indicator = document.getElementById('ptr-indicator');
+            const icon = document.getElementById('ptr-icon');
+            document.addEventListener('touchstart', (e) => {
+                if (window.scrollY === 0) {
+                    startY = e.touches[0].pageY; active = true;
+                    indicator.style.transition = 'none'; // 開始拉動：關閉動畫，避免抖動
+                }
+            }, { passive: true });
+
+            document.addEventListener('touchmove', (e) => {
+                if (!active || window.scrollY > 0) return;
+                const rawDist = (e.touches[0].pageY - startY);
+                if (rawDist > 0) {
+                    pullDist = rawDist * 0.55;
+                    indicator.style.transform = `translate3d(0, ${Math.min(pullDist, 160)}px, 0)`;
+
+                    // 1. 線性比例分配 (從 0.8 到 1.8)
+                    const scale = 1 + (pullDist / threshold) * 0.2;
+
+                    // 2. 線性顏色漸變 (灰色 #9c8c7c -> 紅色 #9c8c7c)
+                    // 我們動態計算 RGB 的插值
+                    const colorRatio = Math.min(1.2, pullDist / threshold);
+                    const r = Math.round(156 + (156 - 156) * colorRatio);
+                    const g = Math.round(140 + (140 - 140) * colorRatio);
+                    const b = Math.round(124 + (124 - 124) * colorRatio);
+
+                    icon.style.color = `rgb(${r}, ${g}, ${b})`;
+                    icon.style.transform = `rotate(${rawDist * 0.6}deg) scale(${scale})`;
+
+                    if (pullDist > threshold) {
+                        if (!icon._hapt && window.navigator.vibrate) {
+                            window.navigator.vibrate(15); 
+                            icon._hapt = true;
+                        }
+                    } else {
+                        icon._hapt = false;
+                    }
+                    if (rawDist > 10) e.preventDefault();
+                }
+            }, { passive: false });
+
+            document.addEventListener('touchend', () => {
+                indicator.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)'; // 放開：恢復平滑動畫
+                indicator.style.transform = 'translate3d(0, 0, 0)';
+
+                if (active && pullDist > threshold) {
+                    icon.classList.add('animate-spin');
+                    setTimeout(() => window.location.reload(), 200);
+                } else {
+                    icon.style.transform = 'rotate(0deg) scale(1)';
+                }
+                startY = 0; pullDist = 0; active = false;
+            });
+        })();
+    </script>
+
     @php
         // Background Resolution Logic (centralized)
         if (isset($user) && !empty($user->background_image)) {
@@ -214,16 +331,22 @@
         }
 
         // 3. Resolve Visual Settings (prioritize the host/owner profile config)
-        $bgOpacityValue = (($bgOwner->bg_opacity ?? 40)) / 100;
-        $bgBlurValue = $bgOwner->bg_blur ?? 5;
-        $bgWidthValue = $bgOwner->bg_width ?? 45;
+        $bgOpacityValue = ($bgOwner && isset($bgOwner->bg_opacity)) ? ($bgOwner->bg_opacity / 100) : 0.4;
+        $bgBlurValue = ($bgOwner && isset($bgOwner->bg_blur)) ? $bgOwner->bg_blur : 5;
+        $bgWidthValue = ($bgOwner && isset($bgOwner->bg_width)) ? $bgOwner->bg_width : 45;
     @endphp
 
     <style id="bg-live-styles">
         :root {
-            --bg-opacity: {{ $bgOpacityValue }};
-            --bg-blur: {{ $bgBlurValue }}px;
-            --bg-width: {{ $bgWidthValue }}%;
+            --bg-opacity:
+                {{ $bgOpacityValue }}
+            ;
+            --bg-blur:
+                {{ $bgBlurValue }}
+                px;
+            --bg-width:
+                {{ $bgWidthValue }}
+                %;
         }
 
         @media (max-width: 768px) {
@@ -239,21 +362,21 @@
     </style>
 
     <!-- Global Background Wrapper -->
-    <div id="bg-wrapper" class="fixed inset-0 z-[-10] overflow-hidden pointer-events-none select-none" style="background-color: #f5f4f2;">
-        <div id="global-bg-element" class="absolute inset-y-0 bg-cover bg-center bg-no-repeat transition-all duration-700 ease-in-out" style="background-image: url('{{ $bgUrl }}'); 
-                    opacity: var(--bg-opacity); 
-                    filter: blur(var(--bg-blur));
-                    width: var(--bg-width);
+    <div id="bg-wrapper" class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none select-none" style="background-color: #f5f4f2;">
+        <div id="global-bg-element" class="absolute inset-y-0 bg-cover bg-center bg-no-repeat transition-all duration-700 ease-in-out" 
+             style="background-image: url('{{ $bgUrl }}'); 
+                    opacity: {{ $bgOpacityValue }}; 
+                    filter: blur({{ $bgBlurValue }}px);
+                    width: var(--bg-width, {{ $bgWidthValue }}%);
                     left: 50%;
                     transform: translateX(-50%);"></div>
-
     </div>
 
     <!-- Login Modal -->
     <div id="loginModal" class="fixed inset-0 z-[2000] overflow-y-auto" style="display: none;" role="dialog" aria-modal="true">
         <div class="flex min-h-full items-center justify-center p-4 text-center">
             <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="safeCloseModal('loginModal')"></div>
-            <div class="relative transform overflow-hidden bg-white rounded-3xl w-full max-w-lg p-8 shadow-2xl flex flex-col transition-all">
+            <div class="relative transform overflow-hidden bg-white rounded-[40px] w-full max-w-lg p-8 shadow-2xl flex flex-col transition-all">
                 <div class="flex justify-between items-center mb-8">
                     <div class="flex items-center gap-3">
                         <div class="p-2.5 bg-muji-base rounded-xl text-muji-oak shadow-muji-sm">
@@ -284,11 +407,11 @@
                             <input type="password" name="password" autocomplete="current-password" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="請輸入密碼">
                         </div>
 
-                        <div class="flex gap-4 pt-4 mt-2 border-t border-muji-edge/50">
-                            <button type="button" onclick="safeCloseModal('loginModal')" class="flex-1 h-[46px] flex items-center justify-center bg-muji-paper text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-base transition-all active:scale-95 text-sm">
+                        <div class="flex gap-4 pt-6 mt-4 border-t border-muji-edge/50">
+                            <button type="button" onclick="safeCloseModal('loginModal')" class="flex-1 h-[46px] flex items-center justify-center bg-muji-paper text-muji-ash border border-muji-edge font-black rounded-[24px] hover:bg-muji-base transition-all active:scale-95 text-sm">
                                 取消
                             </button>
-                            <button type="submit" class="flex-1 h-[46px] flex items-center justify-center bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 transition-all shadow-muji active:scale-95 text-sm">
+                            <button type="submit" class="flex-1 h-[46px] flex items-center justify-center bg-muji-oak text-white font-black rounded-[24px] hover:opacity-90 transition-all shadow-muji active:scale-95 text-sm">
                                 登入
                             </button>
                         </div>
@@ -305,7 +428,7 @@
     <div id="registerModal" class="fixed inset-0 z-[2000] overflow-y-auto" style="display: none;" role="dialog" aria-modal="true">
         <div class="flex min-h-full items-center justify-center p-4 text-center">
             <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="safeCloseModal('registerModal')"></div>
-            <div class="relative transform overflow-hidden bg-white rounded-3xl w-full max-w-lg p-8 shadow-2xl flex flex-col transition-all">
+            <div class="relative transform overflow-hidden bg-white rounded-[40px] w-full max-w-lg p-8 shadow-2xl flex flex-col transition-all">
                 <div class="flex justify-between items-center mb-8">
                     <div class="flex items-center gap-3">
                         <div class="p-2.5 bg-muji-base rounded-xl text-muji-oak shadow-muji-sm">
@@ -345,11 +468,11 @@
                                 <input type="password" name="password_confirmation" required placeholder="請再次輸入密碼" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
                             </div>
 
-                            <div class="flex gap-4 pt-4 mt-2 border-t border-muji-edge/50">
-                                <button type="button" onclick="safeCloseModal('registerModal')" class="flex-1 h-[46px] flex items-center justify-center bg-muji-paper text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-base transition-all active:scale-95 text-sm">
+                            <div class="flex gap-4 pt-6 mt-4 border-t border-muji-edge/50">
+                                <button type="button" onclick="safeCloseModal('registerModal')" class="flex-1 h-[46px] flex items-center justify-center bg-muji-paper text-muji-ash border border-muji-edge font-black rounded-[24px] hover:bg-muji-base transition-all active:scale-95 text-sm">
                                     取消
                                 </button>
-                                <button type="submit" class="flex-1 h-[46px] flex items-center justify-center bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 transition-all shadow-muji active:scale-95 text-sm">
+                                <button type="submit" class="flex-1 h-[46px] flex items-center justify-center bg-muji-oak text-white font-black rounded-[24px] hover:opacity-90 transition-all shadow-muji active:scale-95 text-sm">
                                     註冊
                                 </button>
                             </div>
@@ -366,99 +489,156 @@
     <!-- Profile Settings Modal (Global) -->
     @include('profile_modal_partial')
 
-    <header class="bg-muji-paper/90 border-b border-muji-edge sticky top-0 z-50 backdrop-blur-md">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <header class="bg-muji-paper/90 border-b border-muji-edge sticky top-0 z-50 backdrop-blur-md w-full overflow-hidden">
+        <div class="max-w-4xl mx-auto px-2 sm:px-6 lg:px-8 h-16 flex items-center justify-between overflow-hidden">
             <a href="{{ auth()->check() ? route('home', ['user' => auth()->user()]) : '/' }}" class="flex items-center gap-2 group">
                 <div class="w-10 h-10 rounded-lg bg-muji-base flex items-center justify-center shadow-muji-sm group-hover:scale-105 transition-transform overflow-hidden relative">
                     <img src="/icon_logo.png?v={{ time() }}" alt="Logo" class="w-full h-full object-contain p-1 z-10 relative">
                 </div>
-                <h1 class="text-lg sm:text-xl font-bold text-muji-ink truncate max-w-[140px] xs:max-w-[200px] sm:max-w-none">
+                <h1 class="text-sm sm:text-xl font-bold text-muji-ink truncate max-w-[120px] xs:max-w-[200px] sm:max-w-none">
                     {{ isset($trip) ? $trip->name : 'Trip Planner' }}
                 </h1>
             </a>
 
             <nav class="flex items-center justify-end gap-1 sm:gap-4 text-muji-ash font-black">
-                @if(isset($trip))
-                    @if($isShared)
-                        <a href="{{ route('trip.index_shared', ['token' => $trip->share_token]) }}" class="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2 px-2 py-1 rounded-lg hover:bg-slate-50 transition-all {{ request()->routeIs('trip.index_shared') ? 'text-slate-900 bg-slate-100' : '' }}">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                            </svg>
-                            <span class="text-[10px] sm:text-xs">總覽</span>
-                        </a>
-                        <a href="{{ route('expenses.index_shared', ['token' => $trip->share_token]) }}" class="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2 px-2 py-1 rounded-lg hover:bg-slate-50 transition-all {{ request()->routeIs('expenses.index_shared') ? 'text-slate-900 bg-slate-100' : '' }}">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span class="text-[10px] sm:text-xs">消費</span>
-                        </a>
-                    @else
-                        <a href="{{ route('trip.show', ['user' => $trip->user, 'trip' => $trip]) }}" class="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2 px-2 py-1 rounded-lg hover:bg-slate-50 transition-all {{ request()->routeIs('trip.show') ? 'text-slate-900 bg-slate-100' : '' }}">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                            </svg>
-                            <span class="text-[10px] sm:text-xs">總覽</span>
-                        </a>
-                        <a href="{{ route('expenses.index', ['user' => $trip->user, 'trip' => $trip]) }}" class="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2 px-2 py-1 rounded-lg hover:bg-muji-base transition-all {{ request()->routeIs('expenses.index') ? 'text-muji-ink bg-muji-wheat/50' : '' }}">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span class="text-[10px] sm:text-xs">消費</span>
-                        </a>
+                <!-- Desktop View (Visible on sm or larger) -->
+                <div class="hidden sm:flex items-center gap-4">
+                    @if(isset($trip))
+                        @if($isShared)
+                            <a href="{{ route('trip.index_shared', ['token' => $trip->share_token]) }}" class="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-muji-base transition-all {{ request()->routeIs('trip.index_shared') ? 'text-muji-ink bg-muji-base' : '' }}">
+                                <span class="text-xs">總覽</span>
+                            </a>
+                            <a href="{{ route('expenses.index_shared', ['token' => $trip->share_token]) }}" class="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-muji-base transition-all {{ request()->routeIs('expenses.index_shared') ? 'text-muji-ink bg-muji-base' : '' }}">
+                                <span class="text-xs">花費統計</span>
+                            </a>
+                        @else
+                            <a href="{{ route('trip.show', ['user' => $trip->user, 'trip' => $trip]) }}" class="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-muji-base transition-all {{ request()->routeIs('trip.show') ? 'text-muji-ink bg-muji-base' : '' }}">
+                                <span class="text-xs">旅程計劃</span>
+                            </a>
+                            <a href="{{ route('expenses.index', ['user' => $trip->user, 'trip' => $trip]) }}" class="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-muji-base transition-all {{ request()->routeIs('expenses.index') ? 'text-muji-ink bg-muji-base' : '' }}">
+                                <span class="text-xs">花費統計</span>
+                            </a>
+                        @endif
                     @endif
-                @endif
 
-                @if(!$isShared)
-                    @auth
-                        <a href="{{ route('feedback.index', ['user' => auth()->user()]) }}" class="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2 px-2 py-1 rounded-lg hover:bg-slate-50 transition-all {{ request()->routeIs('feedback.index') ? 'text-slate-900 bg-slate-100' : '' }}">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                            </svg>
-                            <span class="text-[10px] sm:text-xs">回饋</span>
-                        </a>
-                        <a href="{{ route('home', ['user' => auth()->user()]) }}" class="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2 px-2 py-1 rounded-lg hover:bg-slate-50 transition-all {{ request()->routeIs('home') ? 'text-slate-900 bg-slate-100' : '' }}">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                            </svg>
-                            <span class="text-[10px] sm:text-xs">旅程</span>
-                        </a>
-                    @else
-                        <button type="button" onclick="safeOpenModal('loginModal')" class="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2 px-2 py-1 rounded-lg hover:bg-muji-base transition-all border-0 bg-transparent text-muji-ash cursor-pointer">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                            </svg>
-                            <span class="text-[10px] sm:text-xs whitespace-nowrap">登入</span>
-                        </button>
-                        <button type="button" onclick="safeOpenModal('registerModal')" class="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2 px-2 py-1 rounded-lg hover:bg-muji-base transition-all border-0 bg-transparent text-muji-ash cursor-pointer">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                            </svg>
-                            <span class="text-[10px] sm:text-xs whitespace-nowrap">註冊</span>
-                        </button>
-                    @endauth
-
-                    @auth
-                        <button type="button" onclick="safeOpenModal('globalProfileConfigModal')" class="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2 px-2 py-1 rounded-lg hover:bg-muji-base transition-all text-muji-ash hover:text-muji-ink border-0 bg-transparent cursor-pointer group">
-                            <div class="w-6 h-6 rounded-full overflow-hidden border border-muji-edge shadow-muji-sm group-hover:scale-110 transition-transform">
-                                <img src="{{ auth()->user()->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&background=9c8c7c&color=fff' }}" class="w-full h-full object-cover">
-                            </div>
-                            <span class="text-[10px] sm:text-xs font-black">設定</span>
-                        </button>
-
-                        <form action="{{ route('logout') }}" method="POST" class="inline">
-                            @csrf
-                            <button type="submit" class="flex flex-col items-center gap-0.5 px-2 py-1 text-slate-300 hover:text-red-400 transition-colors border-0 bg-transparent cursor-pointer">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                </svg>
-                                <span class="text-[10px] sm:hidden text-center truncate">登出</span>
+                    @if(!$isShared)
+                        @auth
+                            <a href="{{ route('feedback.index', ['user' => auth()->user()]) }}" class="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-muji-base transition-all {{ request()->routeIs('feedback.index') ? 'text-muji-ink bg-muji-base' : '' }}">
+                                <span class="text-xs">產品意見回饋</span>
+                            </a>
+                            <a href="{{ route('home', ['user' => auth()->user()]) }}" class="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-muji-base transition-all {{ request()->routeIs('home') ? 'text-muji-ink bg-muji-base' : '' }}">
+                                <span class="text-xs">旅程足跡</span>
+                            </a>
+                            <button type="button" onclick="safeOpenModal('globalProfileConfigModal')" class="flex items-center gap-2 group border-0 bg-transparent cursor-pointer">
+                                <div class="w-8 h-8 rounded-full overflow-hidden border border-muji-edge shadow-muji-sm group-hover:scale-110 transition-transform">
+                                    <img src="{{ auth()->user()->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&background=9c8c7c&color=fff' }}" class="w-full h-full object-cover">
+                                </div>
                             </button>
-                        </form>
-                    @endauth
-                @endif
+                            <form action="{{ route('logout') }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" class="p-2 text-muji-ash hover:text-red-500 transition-colors border-0 bg-transparent cursor-pointer">
+                                    <svg class="w-5 h-5 font-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                                </button>
+                            </form>
+                        @else
+                            <button type="button" onclick="safeOpenModal('loginModal')" class="px-4 py-2 text-xs font-black text-muji-ash hover:text-muji-ink transition-all">登入</button>
+                            <button type="button" onclick="safeOpenModal('registerModal')" class="px-4 py-2 text-xs font-black bg-muji-oak text-white rounded-xl shadow-muji active:scale-95 transition-all">註冊帳號</button>
+                        @endauth
+                    @endif
+                </div>
+
+                <!-- Mobile View Trigger (Visible only on mobile) -->
+                <div class="flex sm:hidden items-center gap-2">
+                    @if(isset($trip) && (request()->routeIs('expenses.index') || request()->routeIs('expenses.index_shared')))
+                         <a href="{{ $isShared ? route('trip.index_shared', ['token' => $trip->share_token]) : route('trip.show', ['user' => $trip->user, 'trip' => $trip]) }}" class="p-2.5 bg-muji-base rounded-2xl text-muji-ink active:scale-90 transition-transform">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>
+                         </a>
+                    @endif
+                    <button type="button" onclick="toggleMobileMenu(true)" class="p-2.5 text-muji-ash active:scale-90 transition-transform">
+                        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+                    </button>
+                </div>
             </nav>
         </div>
     </header>
+
+    <!-- Mobile Side Menu (Slider - Vanilla JS Version) -->
+    <div id="mobileMenuBackdrop" class="fixed inset-0 z-[2000] sm:hidden bg-muji-ink/30 backdrop-blur-sm" onclick="toggleMobileMenu(false)"></div>
+    
+    <div id="mobileMenuDrawer" class="fixed right-0 top-0 bottom-0 z-[2001] w-[85%] max-w-sm bg-muji-paper shadow-2xl flex flex-col sm:hidden rounded-l-[32px] overflow-hidden">
+        <div class="p-6 flex items-center justify-between border-b border-muji-edge bg-white/50 backdrop-blur-sm">
+            <span class="text-xs font-black text-muji-ash uppercase tracking-widest">選單導覽</span>
+            <button onclick="toggleMobileMenu(false)" class="p-2 text-muji-ash active:rotate-90 transition-transform">
+                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-4 space-y-6">
+            <!-- User Section -->
+            @auth
+                <div class="p-5 rounded-[2rem] bg-muji-base/30 border border-muji-edge/50">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-white shadow-muji">
+                            <img src="{{ auth()->user()->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&background=9c8c7c&color=fff' }}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="min-w-0">
+                            <h3 class="text-base font-black text-muji-ink truncate">{{ auth()->user()->name }}</h3>
+                            <p class="text-[10px] text-muji-ash/70 truncate">{{ auth()->user()->email }}</p>
+                        </div>
+                    </div>
+                </div>
+            @endauth
+
+            <!-- Navigation Links -->
+            <div class="space-y-1">
+                <p class="text-[10px] font-black text-muji-ash/40 uppercase tracking-[0.2em] pl-4 mb-2">計畫行程</p>
+                <a href="{{ auth()->check() ? route('home', ['user' => auth()->user()]) : '/' }}" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-muji-base transition-all {{ request()->routeIs('home') ? 'bg-muji-wheat/30 text-muji-ink' : 'text-muji-ash' }}">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    <span class="text-sm font-bold">旅程足跡</span>
+                </a>
+                
+                @if(isset($trip))
+                    <a href="{{ $isShared ? route('expenses.index_shared', ['token' => $trip->share_token]) : route('expenses.index', ['user' => $trip->user, 'trip' => $trip]) }}" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-muji-base transition-all {{ request()->routeIs('expenses.index*') ? 'bg-muji-wheat/30 text-muji-ink' : 'text-muji-ash' }}">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span class="text-sm font-bold">花費統計</span>
+                    </a>
+                @endif
+
+                <a href="{{ auth()->check() ? route('feedback.index', ['user' => auth()->user()]) : '#' }}" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-muji-base transition-all {{ request()->routeIs('feedback.index') ? 'bg-muji-wheat/30 text-muji-ink' : 'text-muji-ash' }}">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                    <span class="text-sm font-bold">產品意見回饋</span>
+                </a>
+            </div>
+
+            <div class="pt-10 mt-6 border-t-2 border-muji-base space-y-2 relative">
+                <!-- 另一種做法：加入一條實體 hr -->
+                <div class="absolute top-0 left-4 right-4 h-px bg-muji-edge/80"></div>
+                <p class="text-[10px] font-black text-muji-ash/40 uppercase tracking-[0.2em] pl-4 mb-2">帳戶設定</p>
+                @auth
+                    <button onclick="toggleMobileMenu(false); safeOpenModal('globalProfileConfigModal')" class="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-muji-base text-muji-ink transition-all text-left border-0 bg-transparent cursor-pointer">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <span class="text-sm font-bold">帳號與設定</span>
+                    </button>
+                    <form method="POST" action="{{ route('logout') }}" class="w-full">
+                        @csrf
+                        <button type="submit" class="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-red-50 text-red-500 transition-all text-left border-0 bg-transparent cursor-pointer">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                            <span class="text-sm font-black">登出此帳號</span>
+                        </button>
+                    </form>
+                @else
+                    <button onclick="toggleMobileMenu(false); safeOpenModal('loginModal')" class="w-full flex items-center gap-4 p-5 rounded-3xl bg-muji-oak text-white transition-all text-left shadow-muji active:scale-[0.98] border-0 cursor-pointer">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+                        <span class="text-sm font-black uppercase tracking-widest">登入 / 註冊 Trip Planner</span>
+                    </button>
+                @endauth
+            </div>
+        </div>
+
+        <div class="p-8 text-center bg-muji-base/10">
+            <p class="text-[10px] text-muji-ash/40 font-mono tracking-[0.3em] uppercase">Muji Aesthetic v2.1</p>
+        </div>
+    </div>
 
     <main class="flex-grow w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
         @yield('content')
@@ -474,7 +654,7 @@
     <div id="mapModal" class="fixed inset-0 z-[2000] hidden overflow-y-auto" role="dialog" aria-modal="true">
         <div class="flex min-h-full items-center justify-center p-4 text-center">
             <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="safeCloseModal('mapModal')"></div>
-            <div class="relative transform overflow-hidden bg-white rounded-3xl w-full max-w-4xl h-[80vh] shadow-2xl flex flex-col transition-all p-4">
+            <div class="relative transform overflow-hidden bg-white rounded-[40px] w-full max-w-4xl h-[80vh] shadow-2xl flex flex-col transition-all p-4">
                 <div class="flex justify-between items-center mb-4 px-2">
                     <h3 id="mapTitle" class="text-xl font-bold text-gray-900 truncate pr-4">地點 (地圖)</h3>
                     <button onclick="safeCloseModal('mapModal')" class="p-2 rounded-full hover:bg-gray-100 transition-colors">
@@ -528,9 +708,16 @@
     <div id="expenseModal" class="fixed inset-0 z-[2000] hidden overflow-y-auto" role="dialog" aria-modal="true">
         <div class="flex min-h-full items-center justify-center p-4 text-center">
             <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="safeCloseModal('expenseModal')"></div>
-            <div class="relative transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-xl flex flex-col max-h-[85vh]">
-                <div class="px-8 py-10 overflow-y-auto custom-scrollbar scroll-smooth">
-                    <div class="flex justify-between items-start mb-10">
+            <div class="relative transform overflow-hidden rounded-[40px] bg-white text-left shadow-2xl transition-all w-full max-w-lg flex flex-col max-h-[90vh]">
+                <!-- 統一右上角關閉按鈕 (X) - 移出捲軸容器 -->
+                <button onclick="safeCloseModal('expenseModal')" class="absolute top-6 right-6 text-muji-ash hover:text-muji-oak p-2 rounded-full hover:bg-muji-base transition-all group z-50">
+                    <svg class="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
+                <div class="px-5 sm:px-8 py-8 sm:py-10 overflow-y-auto custom-scrollbar scroll-smooth">
+                    <div class="flex justify-between items-start mb-8 sm:mb-10 text-left">
                         <div class="flex items-center gap-4">
                             <div class="p-3 bg-muji-base rounded-2xl text-muji-oak shadow-muji-sm">
                                 <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -542,28 +729,20 @@
                                 <p class="text-[10px] font-bold text-muji-ash uppercase tracking-[0.2em] mt-1">管理您的旅程預算</p>
                             </div>
                         </div>
-                        <button onclick="safeCloseModal('expenseModal')" class="text-muji-ash hover:text-muji-ink p-2 rounded-full hover:bg-muji-base transition-all">
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
                     </div>
 
                     @auth
-                        <form id="expenseForm" 
-                              action="{{ isset($trip) ? route('expenses.store', ['user' => $trip->user, 'trip' => $trip]) : '#' }}" 
-                              method="POST"
-                              onsubmit="handleAjaxSubmit(event, this, 'expenseModal')">
+                        <form id="expenseForm" action="{{ isset($trip) ? route('expenses.store', ['user' => $trip->user, 'trip' => $trip]) : '#' }}" method="POST" onsubmit="handleAjaxSubmit(event, this, 'expenseModal')">
                             @csrf
                             <div id="methodField"></div>
                             <div class="space-y-6">
                                 <div>
-                                    <label class="block text-sm font-bold text-muji-ash mb-2">支出項目說明</label>
+                                    <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">支出項目說明</label>
                                     <input type="text" id="expenseDescription" name="description" required class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：午餐拉麵">
                                 </div>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-sm font-bold text-muji-ash mb-2">支出金額</label>
+                                        <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">支出金額</label>
                                         <div class="flex relative h-[46px] rounded-xl border border-muji-edge overflow-hidden focus-within:ring-2 focus-within:ring-muji-oak bg-white group transition-all">
                                             <select id="expenseCurrency" name="is_base_currency" class="bg-muji-base h-full border-0 border-r border-muji-edge px-3 text-muji-ink font-black text-xs focus:ring-0 cursor-pointer appearance-none">
                                                 <option value="0">{{ isset($trip) ? $trip->target_currency : '當地幣' }}</option>
@@ -573,7 +752,7 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-bold text-muji-ash mb-2">支出類別</label>
+                                        <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">支出類別</label>
                                         <select id="expenseCategory" name="category" required class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak font-black appearance-none cursor-pointer">
                                             <option value="Food">飲食 🍔</option>
                                             <option value="Transport">交通 🚇</option>
@@ -588,14 +767,14 @@
 
                                 <div>
                                     <label class="block text-sm font-bold text-muji-ash mb-2">支出日期</label>
-                                    <input type="date" id="expenseDate" name="date" required value="{{ date('Y-m-d') }}" class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
+                                    <input type="date" id="expenseDate" name="date" required value="{{ date('Y-m-d') }}" class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium py-0 leading-none">
                                 </div>
 
-                                <div class="pt-6 mt-8 border-t border-muji-edge flex gap-4">
-                                    <button type="button" onclick="safeCloseModal('expenseModal')" class="flex-1 h-[46px] flex items-center justify-center border border-muji-edge rounded-2xl text-muji-ash bg-muji-paper hover:bg-muji-base transition-colors font-black text-sm">
+                                <div class="pt-8 mt-8 border-t border-muji-edge flex gap-4">
+                                    <button type="button" onclick="safeCloseModal('expenseModal')" class="flex-1 h-[46px] flex items-center justify-center border border-muji-edge rounded-[24px] text-muji-ash bg-muji-paper hover:bg-muji-base transition-colors font-black text-sm">
                                         取消
                                     </button>
-                                    <button type="submit" id="expenseSubmitBtn" class="flex-1 h-[46px] flex items-center justify-center border border-transparent rounded-2xl text-white bg-muji-oak hover:opacity-90 shadow-muji transition-all font-black active:scale-95 text-sm">
+                                    <button type="submit" id="expenseSubmitBtn" class="flex-1 h-[46px] flex items-center justify-center border border-transparent rounded-[24px] text-white bg-muji-oak hover:opacity-90 shadow-muji transition-all font-black active:scale-95 text-sm">
                                         儲存花費
                                     </button>
                                 </div>
@@ -611,7 +790,7 @@
     <div id="metroModal" class="fixed inset-0 z-[2000] hidden overflow-y-auto" role="dialog" aria-modal="true">
         <div class="flex min-h-full items-center justify-center p-0 text-center">
             <div class="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity" onclick="safeCloseModal('metroModal')"></div>
-            <div class="relative transform overflow-hidden bg-white w-full max-w-6xl h-screen shadow-2xl flex flex-col transition-all">
+            <div class="relative transform overflow-hidden bg-white rounded-[40px] w-full max-w-6xl h-[90vh] shadow-2xl flex flex-col transition-all border border-muji-edge">
                 <div class="flex justify-between items-center px-6 py-4 bg-gray-50 border-b border-gray-100">
                     <div class="flex items-center gap-3">
                         <div class="p-2 bg-indigo-50 rounded-lg text-indigo-600">
@@ -648,7 +827,7 @@
         function previewUserAvatar(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     document.getElementById('avatar-preview').src = e.target.result;
                 }
                 reader.readAsDataURL(input.files[0]);
@@ -722,7 +901,7 @@
         // Expense Modal Functions
         function openExpenseModal(data = null) {
             @auth
-                const modal = document.getElementById('expenseModal');
+                                                                            const modal = document.getElementById('expenseModal');
                 if (!modal) return;
 
                 const form = document.getElementById('expenseForm');
@@ -945,6 +1124,21 @@
             }
         });
 
+        // --- 全域手機選單控制器 (純 JS) ---
+        function toggleMobileMenu(isOpen) {
+            const drawer = document.getElementById('mobileMenuDrawer');
+            const backdrop = document.getElementById('mobileMenuBackdrop');
+            if (isOpen) {
+                drawer.classList.add('active');
+                backdrop.classList.add('active');
+                document.body.style.overflow = 'hidden'; 
+            } else {
+                drawer.classList.remove('active');
+                backdrop.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
         @if(session('success'))
             Toast.fire({ icon: 'success', title: '{{ session('success') }}' });
         @endif
@@ -955,78 +1149,151 @@
             Swal.fire({ icon: 'error', title: 'Validation Error', text: '{{ $errors->first() }}', borderRadius: '1.5rem' });
         @endif
 
-        // --- Global AJAX Form Handler (Swal Version + Redirect Support) ---
-        async function handleAjaxSubmit(event, form, modalId) {
-            event.preventDefault();
-            const submitBtn = form.querySelector('button[type="submit"]');
-            const originalBtnText = submitBtn.innerHTML;
-            
-            // Loading State
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="flex items-center gap-2 justify-center"><svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> 處理中...</span>';
-
-            try {
-                const formData = new FormData(form);
-                const response = await fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
+            // --- 零依賴 Canvas 影像壓縮大招 (核心修復：解決 iPhone 照片過大上傳失敗) ---
+            async function compressImage(file, maxWidth = 1600, quality = 0.85) {
+                if (!file || !file.type.startsWith('image/')) return file;
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = (e) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            let width = img.width; let height = img.height;
+                            if (width > maxWidth) { height = (maxWidth / width) * height; width = maxWidth; }
+                            canvas.width = width; canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            canvas.toBlob((blob) => {
+                                resolve(new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", { type: 'image/jpeg', lastModified: Date.now() }));
+                            }, 'image/jpeg', quality);
+                        };
+                        img.src = e.target.result;
+                    };
                 });
+            }
 
-                const data = await response.json();
+            // --- Global AJAX Form Handler (Swal Version + Redirect Support) ---
+            async function handleAjaxSubmit(event, form, modalId) {
+                event.preventDefault();
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalBtnText = submitBtn.innerHTML;
+                // Loading State
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="flex items-center gap-2 justify-center"><svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> 儲存中...</span>';
 
-                if (response.ok) {
-                    // Redirect Support (Crucial for Auth)
-                    if (data.redirect) {
-                        window.location.href = data.redirect;
-                        return;
+                try {
+                    const formData = new FormData(form);
+                    // 智慧循環：檢查並壓縮大容量照片 (超過 1.5MB 才壓縮)
+                    const entries = Array.from(formData.entries());
+                    for (let [key, value] of entries) {
+                        if (value instanceof File && value.size > 1.5 * 1024 * 1024 && value.type.startsWith('image/')) {
+                            const compressed = await compressImage(value, 1200, 0.8);
+                            formData.set(key, compressed);
+                        }
                     }
 
-                    Toast.fire({ icon: 'success', title: data.message || '儲存成功！' });
-                    
-                    if (modalId) {
-                        safeCloseModal(modalId);
-                    }
-                    setTimeout(() => window.location.reload(), 1000); 
-                } else {
-                    let errorMsg = '處理過程中發生問題。';
-                    if (data.errors) {
-                        errorMsg = Object.values(data.errors).flat().join('<br>'); // Change to HTML br
-                    } else if (data.message) {
-                        errorMsg = data.message;
-                    }
-                    
-                    Swal.fire({
-                        icon: 'error',
-                        title: '輸入驗證失敗',
-                        html: errorMsg, // Use html property instead of text
-                        confirmButtonColor: '#9c8c7c',
-                        customClass: {
-                            popup: 'rounded-[32px]',
-                            confirmButton: 'rounded-xl px-10'
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                         }
                     });
+
+                    if (response.status === 413) {
+                        throw new Error('這張照片「太重了」！超過了空間上限，請壓縮後再試。');
+                    }
+
+                    let data;
+                    const responseText = await response.text();
+                    try {
+                        data = JSON.parse(responseText);
+                    } catch (jsonErr) {
+                        throw new Error('伺服器無法處理此檔案(代碼:' + response.status + ')。');
+                    }
+
+                    if (response.ok) {
+                        // Redirect Support (Crucial for Auth)
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                            return;
+                        }
+
+                        Toast.fire({ icon: 'success', title: data.message || '儲存成功！' });
+
+                        if (modalId) {
+                            safeCloseModal(modalId);
+                        }
+                        setTimeout(() => window.location.reload(), 1000);
+                    } else {
+                        let errorMsg = '處理過程中發生問題。';
+                        if (data.errors) {
+                            errorMsg = Object.values(data.errors).flat().join('<br>'); // Change to HTML br
+                        } else if (data.message) {
+                            errorMsg = data.message;
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: '輸入驗證失敗',
+                            html: errorMsg, // Use html property instead of text
+                            confirmButtonColor: '#9c8c7c',
+                            customClass: {
+                                popup: 'rounded-[32px]',
+                                confirmButton: 'rounded-xl px-10'
+                            }
+                        });
+                    }
+                } catch (error) {
+                    console.error('AJAX Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: '系統錯誤',
+                        text: '網路連線異常，請稍後再試。',
+                        confirmButtonColor: '#9c8c7c',
+                        customClass: { popup: 'rounded-[32px]' }
+                    });
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
                 }
-            } catch (error) {
-                console.error('AJAX Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: '系統錯誤',
-                    text: '網路連線異常，請稍後再試。',
-                    confirmButtonColor: '#9c8c7c',
-                    customClass: { popup: 'rounded-[32px]' }
-                });
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalBtnText;
             }
-        }
     </script>
 
+    <script>
+        // 智慧網路狀態監測
+        function updateOnlineStatus() {
+            const banner = document.getElementById('offline-banner');
+            if (!banner) return;
+            const isOnline = navigator.onLine;
+
+            if (isOnline) {
+                banner.classList.add('translate-y-[-100%]');
+                banner.classList.remove('translate-y-0');
+            } else {
+                banner.classList.remove('translate-y-[-100%]');
+                banner.classList.add('translate-y-0');
+            }
+        }
+
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        window.addEventListener('load', updateOnlineStatus);
+    </script>
+
+    <!-- Offline Banner: Muji Style -->
+    <div id="offline-banner" class="fixed top-0 left-0 w-full z-[9999] transform translate-y-[-100%] transition-transform duration-500 pointer-events-none">
+        <div class="bg-muji-oak/90 backdrop-blur-md text-white text-[10px] font-black tracking-widest uppercase py-2 flex items-center justify-center gap-2 border-b border-muji-edge/20 shadow-lg">
+            <svg class="w-3 h-3 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
+            </svg>
+            離線模式：目前存取的是本地快取版本
+        </div>
+    </div>
 </body>
+
 
 </html>

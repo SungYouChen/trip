@@ -1,4 +1,5 @@
 @extends('layout')
+@section('title', '產品意見回饋')
 
 @section('content')
 <!-- Unified Page Container (p-6/space-y-6) -->
@@ -12,7 +13,7 @@
             </svg>
         </div>
         <div class="flex flex-col border-l-2 border-muji-edge pl-4">
-            <h3 class="text-xl font-black text-muji-ink uppercase tracking-tight">回饋建議</h3>
+            <h3 class="text-xl font-black text-muji-ink uppercase tracking-tight">產品意見回饋</h3>
             <p class="text-[10px] font-black text-muji-ash uppercase tracking-[0.2em] mt-0.5">社群與互動</p>
         </div>
     </div>

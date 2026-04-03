@@ -27,6 +27,7 @@ Route::middleware(['auth', 'user.scope'])->group(function () {
     Route::get('/{user}/trip/{trip}', [TripController::class, 'show'])->name('trip.show');
     Route::get('/{user}/trip/{trip}/day/{date}', [ItineraryDayController::class, 'show'])->name('day.show');
     Route::get('/{user}/trip/{trip}/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
+    Route::get('/{user}/exchange-rate', [TripController::class, 'fetchExchangeRate'])->name('trip.exchange_rate');
 
     // Management Routes
     Route::post('/{user}/trips', [TripController::class, 'store'])->name('trips.store');

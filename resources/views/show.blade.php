@@ -443,9 +443,16 @@
                 <div id="daySummaryEditModal" class="fixed inset-0 z-[2000] hidden overflow-y-auto" role="dialog" aria-modal="true">
                     <div class="flex min-h-full items-center justify-center p-4 text-center">
                         <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="safeCloseModal('daySummaryEditModal')"></div>
-                        <div class="relative transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-xl flex flex-col max-h-[90vh]">
-                            <div class="px-8 py-10 overflow-y-auto custom-scrollbar scroll-smooth">
-                                <div class="flex justify-between items-start mb-10">
+                        <div class="relative transform overflow-hidden rounded-[40px] bg-white text-left shadow-2xl transition-all w-full max-w-lg flex flex-col max-h-[90vh]">
+                            <!-- 統一右上角關閉按鈕 (X) - 移出捲軸容器 -->
+                            <button onclick="safeCloseModal('daySummaryEditModal')" class="absolute top-6 right-6 text-muji-ash hover:text-muji-oak p-2 rounded-full hover:bg-white transition-all group z-50">
+                                <svg class="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+
+                            <div class="px-5 sm:px-8 py-8 sm:py-10 overflow-y-auto custom-scrollbar scroll-smooth">
+                                <div class="flex justify-between items-start mb-8 sm:mb-10 text-left">
                                     <div class="flex items-center gap-4">
                                         <div class="p-3 bg-muji-base rounded-2xl text-muji-oak shadow-muji-sm">
                                             <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -457,11 +464,6 @@
                                             <p class="text-[10px] font-bold text-muji-ash uppercase tracking-[0.2em] mt-1">完善您的每日旅程日誌</p>
                                         </div>
                                     </div>
-                                    <button onclick="safeCloseModal('daySummaryEditModal')" class="text-muji-ash hover:text-muji-ink p-2 rounded-full hover:bg-muji-base transition-all">
-                                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                    </button>
                                 </div>
                                 <form action="{{ route('day.update', ['user' => $trip->user, 'trip' => $trip, 'date' => request()->route('date')]) }}" 
                                       method="POST" 
@@ -471,16 +473,16 @@
                                     @method('PUT')
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
-                                            <label class="block text-sm font-bold text-muji-ash text-left mb-2">今日主題</label>
+                                            <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">今日主題</label>
                                             <input type="text" name="title" value="{{ $day['title'] }}" placeholder="例如：京都清晨散策" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl focus:ring-2 focus:ring-muji-oak text-muji-ink shadow-muji-sm">
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-bold text-muji-ash text-left mb-2">所在城市/區域</label>
+                                            <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">所在城市/區域</label>
                                             <input type="text" name="location" value="{{ $day['location'] == $trip->name ? '' : $day['location'] }}" placeholder="例如：大阪" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl focus:ring-2 focus:ring-muji-oak text-muji-ink shadow-muji-sm">
                                         </div>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-bold text-muji-ash text-left mb-2">今日摘要</label>
+                                        <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">今日摘要</label>
                                         <textarea name="summary" rows="2" placeholder="例如：漫步在道頓堀的街頭，享受章魚燒與大阪燒的美味。" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl focus:ring-2 focus:ring-muji-oak text-muji-ink shadow-muji-sm">{{ $day['summary'] }}</textarea>
                                     </div>
                                     <div class="pt-6 border-t border-muji-edge mt-6">
@@ -492,15 +494,15 @@
                                         </h4>
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div class="sm:col-span-2">
-                                                <label class="block text-sm font-bold text-muji-ash text-left mb-2">飯店名稱</label>
+                                                <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">飯店名稱</label>
                                                 <input type="text" name="hotel_name" value="{{ $day['accommodation']['name'] ?? '' }}" placeholder="例如：大阪難波格拉斯麗飯店" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink focus:ring-2 focus:ring-muji-oak transition-all">
                                             </div>
                                             <div class="sm:col-span-2">
-                                                <label class="block text-sm font-bold text-muji-ash text-left mb-2">飯店地址</label>
+                                                <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">飯店地址</label>
                                                 <input type="text" name="hotel_address" value="{{ $day['accommodation']['address'] ?? '' }}" placeholder="例如：大阪市浪速區元町1-4-4" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink focus:ring-2 focus:ring-muji-oak transition-all">
                                             </div>
                                             <div>
-                                                <label class="block text-sm font-bold text-muji-ash text-left mb-2">預訂價格</label>
+                                                <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">預訂價格</label>
                                                 <div class="flex relative rounded-xl border border-muji-edge overflow-hidden focus-within:ring-2 focus-within:ring-muji-oak bg-white shadow-muji-sm transition-all">
                                                     <select name="hotel_currency" class="bg-muji-base border-0 border-r border-muji-edge px-3 py-3 text-muji-ink font-black text-xs focus:ring-0 cursor-pointer appearance-none">
                                                         @php
@@ -516,18 +518,18 @@
                                                 </div>
                                             </div>
                                             <div>
-                                                <label class="block text-sm font-bold text-muji-ash text-left mb-2">入住時間</label>
+                                                <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">入住時間</label>
                                                 <input type="time" name="hotel_checkin" value="{{ $day['accommodation']['check_in'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink focus:ring-2 focus:ring-muji-oak">
                                             </div>
                                             <div class="sm:col-span-2">
-                                                <label class="block text-sm font-bold text-muji-ash text-left mb-2">住宿備註</label>
+                                                <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">住宿備註</label>
                                                 <input type="text" name="hotel_note" value="{{ $day['accommodation']['note'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink focus:ring-2 focus:ring-muji-oak" placeholder="例如：連住 4 晚">
                                             </div>
                                         </div> {{-- End of grid from line 481 --}}
                                     </div> {{-- End of pt-6 border-t from line 474 (CRITICAL FIX) --}}
-                                    <div class="pt-6 mt-8 border-t border-muji-edge flex gap-4">
-                                        <button type="button" onclick="safeCloseModal('daySummaryEditModal')" class="flex-1 h-[46px] flex items-center justify-center bg-muji-base text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-wheat/20 transition-all active:scale-95 text-sm">取消</button>
-                                        <button type="submit" class="flex-1 h-[46px] flex items-center justify-center bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 shadow-muji transition-all active:scale-95 text-sm">儲存設定</button>
+                                    <div class="pt-8 mt-8 border-t border-muji-edge flex gap-4">
+                                        <button type="button" onclick="safeCloseModal('daySummaryEditModal')" class="flex-1 h-[46px] flex items-center justify-center bg-muji-base text-muji-ash border border-muji-edge font-black rounded-[24px] hover:bg-muji-wheat/20 transition-all active:scale-95 text-sm">取消</button>
+                                        <button type="submit" class="flex-1 h-[46px] flex items-center justify-center bg-muji-oak text-white font-black rounded-[24px] hover:opacity-90 shadow-muji transition-all active:scale-95 text-sm">儲存設定</button>
                                     </div>
                                 </form>
                             </div> {{-- px-8 --}}
@@ -539,9 +541,16 @@
                 <div id="eventDetailsModal" class="fixed inset-0 z-[2000] hidden overflow-y-auto" role="dialog" aria-modal="true">
                     <div class="flex min-h-full items-center justify-center p-4 text-center">
                         <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="safeCloseModal('eventDetailsModal')"></div>
-                        <div class="relative transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-xl flex flex-col max-h-[90vh]">
-                            <div class="px-8 py-10 overflow-y-auto custom-scrollbar scroll-smooth">
-                                <div class="flex justify-between items-start mb-10">
+                        <div class="relative transform overflow-hidden rounded-[40px] bg-white text-left shadow-2xl transition-all w-full max-w-lg flex flex-col max-h-[90vh]">
+                            <!-- 統一右上角關閉按鈕 (X) - 移出捲軸容器 -->
+                            <button onclick="safeCloseModal('eventDetailsModal')" class="absolute top-6 right-6 text-muji-ash hover:text-muji-oak p-2 rounded-full hover:bg-white transition-all group z-50">
+                                <svg class="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+
+                            <div class="px-5 sm:px-8 py-8 sm:py-10 overflow-y-auto custom-scrollbar scroll-smooth">
+                                <div class="flex justify-between items-start mb-8 sm:mb-10 text-left">
                                     <div class="flex items-center gap-4">
                                         <div class="p-3 bg-muji-base rounded-2xl text-muji-oak shadow-muji-sm">
                                             <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -553,11 +562,6 @@
                                             <p class="text-[10px] font-bold text-muji-ash uppercase tracking-[0.2em] mt-1">規劃您的行程細節</p>
                                         </div>
                                     </div>
-                                    <button onclick="safeCloseModal('eventDetailsModal')" class="text-muji-ash hover:text-muji-ink p-2 rounded-full hover:bg-muji-base transition-all">
-                                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                    </button>
                                 </div>
                                 <form id="eventForm" 
                                       action="{{ route('events.store', ['user' => $trip->user, 'trip' => $trip, 'date' => request()->route('date')]) }}" 
@@ -569,29 +573,29 @@
                                     <div id="eventMethod"></div>
                                     <div class="space-y-6">
                                         <div>
-                                            <label class="block text-sm font-bold text-muji-ash text-left mb-2">活動時間 (例如: 09:00 - 10:30)</label>
+                                            <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">活動時間 (例如: 09:00 - 10:30)</label>
                                             <input type="text" name="time" id="event_time" required placeholder="例如：09:00 - 10:30" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-bold text-muji-ash text-left mb-2">活動名稱 / 地點</label>
+                                            <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">活動名稱 / 地點</label>
                                             <input type="text" name="activity" id="event_activity" required placeholder="例如：道頓堀散策" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-bold text-muji-ash text-left mb-2">細分目的地 (逗號隔開)</label>
+                                            <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">細分目的地 (逗號隔開)</label>
                                             <input type="text" name="sub_activities" id="event_subs" placeholder="例如：買藥妝、吃拉麵" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-bold text-muji-ash text-left mb-2">行程備註 / 說明</label>
+                                            <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">行程備註 / 說明</label>
                                             <textarea name="note" id="event_note" rows="2" placeholder="例如：從 3 號出口出來右轉即達" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium"></textarea>
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-bold text-muji-ash text-left mb-2">地圖關鍵字 (若不同於活動名稱)</label>
+                                            <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">地圖關鍵字 (若不同於活動名稱)</label>
                                             <input type="text" name="map_query" id="event_map" placeholder="例如：道頓堀固力果廣告牌" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
                                         </div>
                                     </div>
-                                    <div class="flex gap-4 pt-6 mt-8 border-t border-muji-edge">
-                                        <button type="button" onclick="safeCloseModal('eventDetailsModal')" class="flex-1 h-[46px] flex items-center justify-center bg-muji-base text-muji-ash border border-muji-edge font-black rounded-2xl hover:bg-muji-wheat/20 transition-all active:scale-95 text-sm">取消</button>
-                                        <button type="submit" class="flex-1 h-[46px] flex items-center justify-center bg-muji-oak text-white font-black rounded-2xl hover:opacity-90 shadow-muji transition-all active:scale-95 text-sm">儲存活動</button>
+                                    <div class="flex gap-4 pt-8 mt-8 border-t border-muji-edge">
+                                        <button type="button" onclick="safeCloseModal('eventDetailsModal')" class="flex-1 h-[46px] flex items-center justify-center bg-muji-base text-muji-ash border border-muji-edge font-black rounded-[24px] hover:bg-muji-wheat/20 transition-all active:scale-95 text-sm">取消</button>
+                                        <button type="submit" class="flex-1 h-[46px] flex items-center justify-center bg-muji-oak text-white font-black rounded-[24px] hover:opacity-90 shadow-muji transition-all active:scale-95 text-sm">儲存活動</button>
                                     </div>
                                 </form>
                             </div>

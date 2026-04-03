@@ -1,7 +1,7 @@
 @php $isShared = $isShared ?? false; @endphp
 @extends('layout')
 
-@section('title', '旅程儀表板')
+@section('title', '旅程足跡')
 
 @section('content')
 <div class="max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
@@ -114,11 +114,18 @@
 @auth
 <!-- Add Trip Modal -->
 <div id="add-trip-modal" class="fixed inset-0 z-[2000] hidden overflow-y-auto" role="dialog" aria-modal="true">
-    <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+    <div class="flex min-h-full items-center justify-center p-4 text-center">
         <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="safeCloseModal('add-trip-modal')"></div>
-        <div class="relative transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-xl flex flex-col max-h-[calc(100vh-160px)]">
-            <div class="px-8 py-10 overflow-y-auto custom-scrollbar scroll-smooth">
-                <div class="flex justify-between items-start mb-10">
+        <div class="relative transform overflow-hidden rounded-[40px] bg-white text-left shadow-2xl transition-all w-full max-w-lg flex flex-col max-h-[calc(100vh-160px)]">
+            <!-- 統一右上角關閉按鈕 (X) - 移出捲軸容器 -->
+            <button onclick="safeCloseModal('add-trip-modal')" class="absolute top-6 right-6 text-muji-ash hover:text-muji-oak p-2 rounded-full hover:bg-white transition-all group z-50">
+                <svg class="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="px-5 sm:px-8 py-8 sm:py-10 overflow-y-auto custom-scrollbar scroll-smooth">
+                <div class="flex justify-between items-start mb-8 sm:mb-10 text-left">
                     <div class="flex items-center gap-4">
                         <div class="p-3 bg-muji-base rounded-2xl text-muji-oak shadow-muji-sm font-black">
                             <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -130,85 +137,117 @@
                             <p class="text-[10px] font-bold text-muji-ash uppercase tracking-[0.2em] mt-1">開啟您的下一段全新冒險</p>
                         </div>
                     </div>
-                    <button onclick="safeCloseModal('add-trip-modal')" class="text-muji-ash hover:text-muji-ink p-2 rounded-full hover:bg-muji-base transition-all">
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
                 </div>
 
                 <form action="{{ route('trips.store', ['user' => auth()->user()]) }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <div class="space-y-6">
-                        <div>
-                            <label class="block text-sm font-bold text-muji-ash mb-2">旅程名稱</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-6 gap-6">
+                        <!-- 旅程名稱：佔滿全寬 -->
+                        <div class="col-span-full">
+                            <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">旅程名稱</label>
                             <input type="text" name="name" required placeholder="例如：2025 京阪神之旅" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
                         </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-bold text-muji-ash mb-2">開始日期</label>
-                                <input type="date" name="start_date" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold text-muji-ash mb-2">結束日期</label>
-                                <input type="date" name="end_date" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
-                            </div>
+
+                        <!-- 日期區塊：各佔一半 (3/6) -->
+                        <div class="col-span-full sm:col-span-3">
+                            <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">開始日期</label>
+                            <input type="date" name="start_date" required class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink focus:ring-2 focus:ring-muji-oak transition-all font-medium py-0 leading-none">
                         </div>
-                        <div class="grid grid-cols-3 gap-4 pt-2">
-                            @php
-                                $allCurrencies = [
-                                    'TWD' => '台幣', 'JPY' => '日幣', 'KRW' => '韓幣',
-                                    'USD' => '美金', 'EUR' => '歐元', 'GBP' => '英鎊',
-                                    'AUD' => '澳幣', 'CAD' => '加幣', 'HKD' => '港幣',
-                                    'SGD' => '新幣', 'CNY' => '人民幣', 'THB' => '泰銖',
-                                    'VND' => '越南盾', 'MYR' => '馬幣',
-                                ];
-                            @endphp
-                            <div>
-                                <label class="block text-sm font-bold text-muji-ash mb-2">本國貨幣</label>
-                                <select name="base_currency" required class="block w-full px-3 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink focus:ring-2 focus:ring-muji-oak text-center font-black">
-                                    @foreach($allCurrencies as $code => $label)
-                                        <option value="{{ $code }}" {{ $code == 'TWD' ? 'selected' : '' }}>{{ $code }} — {{ $label }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold text-muji-ash mb-2">當地貨幣</label>
-                                <select name="target_currency" required class="block w-full px-3 py-3 bg-muji-base border border-muji-edge rounded-xl text-muji-oak focus:ring-2 focus:ring-muji-oak text-center font-black">
-                                    @foreach($allCurrencies as $code => $label)
-                                        <option value="{{ $code }}" {{ $code == 'JPY' ? 'selected' : '' }}>{{ $code }} — {{ $label }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold text-muji-ash mb-2">預估匯率</label>
+                        <div class="col-span-full sm:col-span-3">
+                            <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">結束日期</label>
+                            <input type="date" name="end_date" required class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink focus:ring-2 focus:ring-muji-oak transition-all font-medium py-0 leading-none">
+                        </div>
+
+                        <!-- 貨幣與匯率：各佔 1/3 (2/6) -->
+                        @php
+                            $allCurrencies = [
+                                'TWD' => '台幣', 'JPY' => '日幣', 'KRW' => '韓幣',
+                                'USD' => '美金', 'EUR' => '歐元', 'GBP' => '英鎊',
+                                'AUD' => '澳幣', 'CAD' => '加幣', 'HKD' => '港幣',
+                                'SGD' => '新幣', 'CNY' => '人民幣', 'THB' => '泰銖',
+                                'VND' => '越南盾', 'MYR' => '馬幣',
+                            ];
+                        @endphp
+                        <div class="col-span-full sm:col-span-2">
+                            <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">本國貨幣</label>
+                            <select name="base_currency" required class="block w-full px-3 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink focus:ring-2 focus:ring-muji-oak text-center font-black text-xs">
+                                @foreach($allCurrencies as $code => $label)
+                                    <option value="{{ $code }}" {{ $code == 'TWD' ? 'selected' : '' }}>{{ $code }} — {{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-span-full sm:col-span-2">
+                            <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">當地貨幣</label>
+                            <select name="target_currency" required class="block w-full px-3 py-3 bg-muji-base border border-muji-edge rounded-xl text-muji-oak focus:ring-2 focus:ring-muji-oak text-center font-black text-xs">
+                                @foreach($allCurrencies as $code => $label)
+                                    <option value="{{ $code }}" {{ $code == 'JPY' ? 'selected' : '' }}>{{ $code }} — {{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-span-full sm:col-span-2">
+                            <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">預估匯率</label>
+                            <div class="relative">
                                 <input type="number" step="0.0001" name="exchange_rate" required value="0.21" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink focus:ring-2 focus:ring-muji-oak font-mono text-center font-black">
+                                <button type="button" onclick="fetchLiveRate(event)" class="mt-2 w-full py-2 bg-muji-base text-muji-oak text-[10px] font-black rounded-lg border border-muji-edge hover:bg-muji-wheat/20 transition-all flex items-center justify-center gap-1">
+                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                    獲取即時匯率
+                                </button>
                             </div>
                         </div>
 
-                        <!-- 旅程封面圖設定 -->
-                        <div class="mt-8 pt-6 border-t border-muji-edge">
-                            <div class="flex justify-between items-center mb-4">
-                                <label class="block text-sm font-bold text-muji-ash">旅程封面圖設定</label>
-                            </div>
-                            <div class="bg-muji-base/30 p-4 rounded-xl border border-muji-edge">
-                                <input type="file" name="cover_image" accept="image/*" class="block w-full text-xs text-muji-ash file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:bg-white file:text-muji-oak hover:file:bg-muji-base cursor-pointer transition-all">
-                                <p class="text-[10px] text-muji-ash mt-2 italic shadow-muji-sm p-2 bg-white/50 rounded-lg">※ 支援 JPG、PNG，目前上限 2MB（因主機設定）。建議使用清爽的風景照。</p>
-                            </div>
+                        <script>
+                            async function fetchLiveRate(e) {
+                                const btn = e.currentTarget;
+                                const form = btn.closest('form');
+                                const base = form.querySelector('select[name="base_currency"]').value;
+                                const target = form.querySelector('select[name="target_currency"]').value;
+                                const originalHtml = btn.innerHTML;
+                                
+                                btn.disabled = true;
+                                btn.innerHTML = '...';
+                                
+                                try {
+                                    const response = await fetch(`{{ route('trip.exchange_rate', ['user' => $user]) }}?base=${base}&target=${target}`);
+                                    const data = await response.json();
+                                    
+                                    if (data.rate) {
+                                        form.querySelector('input[name="exchange_rate"]').value = data.rate.toFixed(4);
+                                        showToast('匯率已更新！', 'success');
+                                    } else {
+                                        showToast(data.error || '無法取得匯率', 'error');
+                                    }
+                                } catch (e) {
+                                    showToast('請求失敗', 'error');
+                                } finally {
+                                    btn.disabled = false;
+                                    btn.innerHTML = originalHtml;
+                                }
+                            }
+                        </script>
+                    </div>
+
+                    <!-- 旅程封面圖設定 -->
+                    <div class="mt-8 pt-6 border-t border-muji-edge">
+                        <div class="flex justify-between items-center mb-4">
+                            <label class="block w-full text-left text-sm font-bold text-muji-ash ml-1">旅程封面圖設定</label>
                         </div>
-                        <div class="pt-6 mt-8 border-t border-muji-edge flex gap-4">
-                            <button type="button" onclick="safeCloseModal('add-trip-modal')" class="flex-1 px-4 py-4 border border-muji-edge rounded-2xl text-muji-ash bg-muji-paper hover:bg-muji-base transition-colors font-black">
-                                取消
-                            </button>
-                            <button type="submit" class="flex-1 px-4 py-4 border border-transparent rounded-2xl text-white bg-muji-oak hover:opacity-90 shadow-muji transition-all font-black active:scale-95">
-                                立即建立
-                            </button>
+                        <div class="bg-muji-base/30 p-4 rounded-xl border border-muji-edge">
+                            <input type="file" name="cover_image" accept="image/*" class="block w-full text-xs text-muji-ash file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:bg-white file:text-muji-oak hover:file:bg-muji-base cursor-pointer transition-all">
+                            <p class="text-[10px] text-muji-ash mt-2 italic shadow-muji-sm p-2 bg-white/50 rounded-lg">※ 支援 JPG、PNG，目前上限 2MB（因主機設定）。建議使用清爽的風景照。</p>
                         </div>
                     </div>
-                </form>
+                    <div class="pt-8 mt-8 border-t border-muji-edge flex gap-4">
+                        <button type="button" onclick="safeCloseModal('add-trip-modal')" class="flex-1 h-[46px] flex items-center justify-center border border-muji-edge rounded-[24px] text-muji-ash bg-muji-paper hover:bg-muji-base transition-colors font-black text-sm">
+                            取消
+                        </button>
+                        <button type="submit" class="flex-1 h-[46px] flex items-center justify-center border border-transparent rounded-[24px] text-white bg-muji-oak hover:opacity-90 shadow-muji transition-all font-black active:scale-95 text-sm">
+                            立即建立
+                        </button>
+                    </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 @endauth
 @endpush

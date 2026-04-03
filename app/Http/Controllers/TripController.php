@@ -205,10 +205,12 @@ class TripController extends Controller
             'flight_currency' => 'nullable|string|max:10',
             'baggage' => 'nullable|string|max:255',
             'outbound_date' => 'nullable|string|max:50',
-            'outbound_time' => 'nullable|string|max:100',
+            'outbound_time_start' => 'nullable|string|max:100',
+            'outbound_time_end' => 'nullable|string|max:100',
             'outbound_route' => 'nullable|string|max:100',
             'inbound_date' => 'nullable|string|max:50',
-            'inbound_time' => 'nullable|string|max:100',
+            'inbound_time_start' => 'nullable|string|max:100',
+            'inbound_time_end' => 'nullable|string|max:100',
             'inbound_route' => 'nullable|string|max:100',
         ]);
 
@@ -226,12 +228,14 @@ class TripController extends Controller
             'baggage' => $validated['baggage'] ?? '',
             'outbound' => [
                 'date' => $validated['outbound_date'] ?? '',
-                'time' => $validated['outbound_time'] ?? '',
+                'time_start' => $validated['outbound_time_start'] ?? '',
+                'time_end' => $validated['outbound_time_end'] ?? '',
                 'route' => $validated['outbound_route'] ?? ''
             ],
             'inbound' => [
                 'date' => $validated['inbound_date'] ?? '',
-                'time' => $validated['inbound_time'] ?? '',
+                'time_start' => $validated['inbound_time_start'] ?? '',
+                'time_end' => $validated['inbound_time_end'] ?? '',
                 'route' => $validated['inbound_route'] ?? ''
             ]
         ];
@@ -358,18 +362,15 @@ class TripController extends Controller
                 'bg_style' => 'full',
                 'bg_width' => 95,
             ]);
-            if ($request->ajax()) {
-                return response()->json(['message' => '設定已恢復預設！']);
-            }
 
             return back()->with('success', '已恢復預設背景與設定！');
         }
 
-        // 2. Handle Settings & Upload
-        $validated = $request->validate([
+        // 2. Handle Settings & Upload (iPhone Optimized)
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'name' => 'nullable|string|max:255',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-            'background_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'avatar' => 'nullable|max:30720',
+            'background_image' => 'nullable|max:30720',
             'bg_opacity' => 'nullable|integer|min:0|max:100',
             'bg_blur' => 'nullable|integer|min:0|max:20',
             'bg_style' => 'nullable|string|in:full,center',
@@ -377,6 +378,15 @@ class TripController extends Controller
             'current_password' => 'nullable|string|required_with:new_password',
             'new_password' => 'nullable|string|min:8|confirmed',
         ]);
+
+        if ($validator->fails()) {
+            if ($request->ajax()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+            return back()->withErrors($validator)->withInput();
+        }
+
+        $validated = $validator->validated();
 
         $updateData = [];
         if ($request->filled('name')) $updateData['name'] = $validated['name'];
@@ -460,5 +470,29 @@ class TripController extends Controller
             'mustBuyList' => $groupedChecklist['Must Buy'] ?? [],
             'itinerary' => $trip->days,
         ];
+    }
+
+    public function fetchExchangeRate(User $user, Request $request)
+    {
+        $base = strtoupper($request->query('base', 'TWD'));
+        $target = strtoupper($request->query('target', 'JPY'));
+
+        try {
+            // 使用支援廣泛幣別 (含 TWD) 的 API
+            $response = \Illuminate\Support\Facades\Http::timeout(5)->get("https://open.er-api.com/v6/latest/{$base}");
+
+            if ($response->successful()) {
+                $data = $response->json();
+                if ($data['result'] === 'success' && isset($data['rates'][$target])) {
+                    $rate = (float)$data['rates'][$target];
+                    return response()->json(['rate' => $rate]);
+                }
+            }
+            
+            return response()->json(['error' => '目前暫時無法取得該幣別匯率（來源限制）'], 404);
+        } catch (\Exception $e) {
+            \Log::error('Exchange error: ' . $e->getMessage());
+            return response()->json(['error' => 'API 連線失敗，請檢查網路狀態。'], 500);
+        }
     }
 }
