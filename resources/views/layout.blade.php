@@ -243,60 +243,83 @@
 
     <script>
         (function () {
-            let startY = 0; let pullDist = 0; let active = false;
-            const threshold = 70;
+            let startY = 0; let startX = 0; let pullDist = 0; let active = false; let isGestureCancelled = false;
+            const threshold = 85; 
             const indicator = document.getElementById('ptr-indicator');
             const icon = document.getElementById('ptr-icon');
+
+            // 輔助函式：檢查目前是否有任何 Modal 開啟
+            const isModalOpen = () => {
+                const modals = ['loginModal', 'registerModal', 'globalProfileConfigModal', 'mapModal', 'expenseModal', 'daySummaryEditModal', 'eventDetailsModal', 'tripTransportModal', 'tripSettingsModal', 'add-trip-modal'];
+                return modals.some(id => {
+                    const m = document.getElementById(id);
+                    return m && !m.classList.contains('hidden') && m.style.display !== 'none';
+                });
+            };
+
             document.addEventListener('touchstart', (e) => {
-                if (window.scrollY === 0) {
-                    startY = e.touches[0].pageY; active = true;
-                    indicator.style.transition = 'none'; // 開始拉動：關閉動畫，避免抖動
+                // 如果在 Modal 內，或不在頁面頂端，則不啟動重整
+                if (window.scrollY === 0 && !isModalOpen()) {
+                    startY = e.touches[0].pageY;
+                    startX = e.touches[0].pageX;
+                    active = true;
+                    isGestureCancelled = false;
+                    indicator.style.transition = 'none';
+                } else {
+                    active = false;
                 }
             }, { passive: true });
 
             document.addEventListener('touchmove', (e) => {
-                if (!active || window.scrollY > 0) return;
-                const rawDist = (e.touches[0].pageY - startY);
-                if (rawDist > 0) {
-                    pullDist = rawDist * 0.55;
-                    indicator.style.transform = `translate3d(0, ${Math.min(pullDist, 160)}px, 0)`;
+                if (!active || isGestureCancelled || window.scrollY > 0 || isModalOpen()) return;
+                
+                const currentY = e.touches[0].pageY;
+                const currentX = e.touches[0].pageX;
+                const diffY = currentY - startY;
+                const diffX = Math.abs(currentX - startX);
 
-                    // 1. 線性比例分配 (從 0.8 到 1.8)
+                if (diffX > Math.abs(diffY) && diffX > 10) {
+                    isGestureCancelled = true;
+                    active = false;
+                    indicator.style.transform = 'translate3d(0, 0, 0)';
+                    return;
+                }
+
+                if (diffY > 0) {
+                    if (diffY < 15) {
+                        indicator.style.transform = 'translate3d(0, 0, 0)';
+                        return;
+                    }
+                    
+                    pullDist = (diffY - 15) * 0.45; 
+                    indicator.style.transform = `translate3d(0, ${Math.min(pullDist, 140)}px, 0)`;
+
                     const scale = 1 + (pullDist / threshold) * 0.2;
-
-                    // 2. 線性顏色漸變 (灰色 #9c8c7c -> 紅色 #9c8c7c)
-                    // 我們動態計算 RGB 的插值
-                    const colorRatio = Math.min(1.2, pullDist / threshold);
-                    const r = Math.round(156 + (156 - 156) * colorRatio);
-                    const g = Math.round(140 + (140 - 140) * colorRatio);
-                    const b = Math.round(124 + (124 - 124) * colorRatio);
-
-                    icon.style.color = `rgb(${r}, ${g}, ${b})`;
-                    icon.style.transform = `rotate(${rawDist * 0.6}deg) scale(${scale})`;
+                    icon.style.transform = `rotate(${diffY * 0.6}deg) scale(${scale})`;
 
                     if (pullDist > threshold) {
                         if (!icon._hapt && window.navigator.vibrate) {
-                            window.navigator.vibrate(15); 
+                            window.navigator.vibrate(12);
                             icon._hapt = true;
                         }
                     } else {
                         icon._hapt = false;
                     }
-                    if (rawDist > 10) e.preventDefault();
+                    if (diffY > 10) e.preventDefault();
                 }
             }, { passive: false });
 
             document.addEventListener('touchend', () => {
-                indicator.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)'; // 放開：恢復平滑動畫
+                indicator.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)';
                 indicator.style.transform = 'translate3d(0, 0, 0)';
 
-                if (active && pullDist > threshold) {
+                if (active && !isGestureCancelled && pullDist > threshold) {
                     icon.classList.add('animate-spin');
                     setTimeout(() => window.location.reload(), 200);
                 } else {
                     icon.style.transform = 'rotate(0deg) scale(1)';
                 }
-                startY = 0; pullDist = 0; active = false;
+                startY = 0; startX = 0; pullDist = 0; active = false; isGestureCancelled = false;
             });
         })();
     </script>
