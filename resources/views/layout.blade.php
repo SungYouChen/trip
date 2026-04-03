@@ -361,15 +361,9 @@
 
     <style id="bg-live-styles">
         :root {
-            --bg-opacity:
-                {{ $bgOpacityValue }}
-            ;
-            --bg-blur:
-                {{ $bgBlurValue }}
-                px;
-            --bg-width:
-                {{ $bgWidthValue }}
-                %;
+            --bg-opacity: {{ $bgOpacityValue }};
+            --bg-blur: {{ $bgBlurValue }}px;
+            --bg-width: {{ $bgWidthValue }}%;
         }
 
         @media (max-width: 768px) {
@@ -1293,7 +1287,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: '系統錯誤',
-                        text: '網路連線異常，請稍後再試。',
+                        html: '<div class="text-sm text-muji-ash">' + (error.message || '連線異常，請稍後再試。') + '</div>',
                         confirmButtonColor: '#9c8c7c',
                         customClass: { popup: 'rounded-[32px]' }
                     });

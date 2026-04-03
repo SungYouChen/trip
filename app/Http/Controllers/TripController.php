@@ -345,8 +345,8 @@ class TripController extends Controller
 
     public function updateProfile(User $user, Request $request)
     {
-        // 1. Handle Restore Default
-        if ($request->has('restore_default')) {
+        // 1. Handle Restore Default (Explicit '1' check)
+        if ($request->input('restore_default') == '1') {
             if ($user->background_image && str_contains($user->background_image, 'backgrounds/')) {
                 Storage::disk('public')->delete(str_replace('/storage/', '', $user->background_image));
             }
@@ -354,15 +354,17 @@ class TripController extends Controller
                 Storage::disk('public')->delete(str_replace('/storage/', '', $user->avatar));
             }
             $user->update([
-                'name' => 'Elk User',
                 'avatar' => null,
                 'background_image' => null,
-                'bg_opacity' => 100,
-                'bg_blur' => 0,
-                'bg_style' => 'full',
-                'bg_width' => 95,
+                'bg_opacity' => 40,    // Muji Default
+                'bg_blur' => 5,        // Muji Default
+                'bg_style' => 'center',
+                'bg_width' => 45,      // Muji Default
             ]);
 
+            if ($request->ajax()) {
+                return response()->json(['message' => '已恢復官方預設設定！']);
+            }
             return back()->with('success', '已恢復預設背景與設定！');
         }
 
@@ -439,6 +441,9 @@ class TripController extends Controller
             return back()->with('success', '個人帳號與設定已更新！');
         }
 
+        if ($request->ajax()) {
+            return response()->json(['message' => '未偵測到任何變更。']);
+        }
         return back()->with('info', '未變更任何設定。');
     }
 

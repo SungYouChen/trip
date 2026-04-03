@@ -114,21 +114,37 @@
                                         </svg>
                                         視覺自定義
                                     </h4>
-                                    @if(auth()->user()->background_image || auth()->user()->avatar)
-                                        <button type="button" onclick="performRestoreDefault(this)" class="text-[10px] text-red-400 font-bold hover:underline transition-all active:scale-95">恢復預設</button>
-                                        <input type="hidden" name="restore_default" id="restore_default_input" value="0">
-                                        <script>
-                                            function performRestoreDefault(btn) {
-                                                if(confirm('確定要恢復預設顯示（移除背景圖與頭像）嗎？')) {
-                                                    const input = document.getElementById('restore_default_input');
-                                                    const form = btn.closest('form');
-                                                    input.value = "1";
-                                                    const event = new Event('submit', { cancelable: true });
-                                                    form.dispatchEvent(event);
+                                    <button type="button" onclick="performRestoreDefault(this)" class="px-3 py-1.5 bg-red-50 text-red-500 text-[10px] font-black rounded-lg border border-red-100 hover:bg-red-500 hover:text-white transition-all active:scale-95 uppercase tracking-widest">恢復系統預設</button>
+                                    <input type="hidden" name="restore_default" id="restore_default_input" value="0">
+                                    <script>
+                                        function performRestoreDefault(btn) {
+                                            if(confirm('確定要恢復官方預設顯示嗎？\n(將移除自定義圖片並還原透明度/模糊/寬度設定)')) {
+                                                const form = btn.closest('form');
+                                                
+                                                // 1. 設置後端標記
+                                                document.getElementById('restore_default_input').value = "1";
+                                                
+                                                // 2. 即時 UI 復位 (回饋感)
+                                                if(document.getElementById('range-bg-opacity')) document.getElementById('range-bg-opacity').value = 40;
+                                                if(document.getElementById('range-bg-blur')) document.getElementById('range-bg-blur').value = 5;
+                                                if(document.getElementById('range-bg-width')) document.getElementById('range-bg-width').value = 45;
+                                                
+                                                // 觸發預覽更新
+                                                if(typeof previewBackground === 'function') previewBackground();
+                                                if(document.getElementById('avatar-preview')) {
+                                                    const userName = "{{ auth()->user()->name }}";
+                                                    document.getElementById('avatar-preview').src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(userName) + '&background=9c8c7c&color=fff';
+                                                }
+                                                
+                                                // 3. 觸發提交
+                                                if(typeof form.requestSubmit === 'function') {
+                                                    form.requestSubmit();
+                                                } else {
+                                                    form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
                                                 }
                                             }
-                                        </script>
-                                    @endif
+                                        }
+                                    </script>
                                 </div>
 
                                 <div class="space-y-6 bg-muji-base/10 p-6 rounded-[32px] border border-muji-edge/50">
