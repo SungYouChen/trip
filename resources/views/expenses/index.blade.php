@@ -112,7 +112,7 @@
                                                 {{ $expense->is_base_currency ? $trip->base_currency : $trip->target_currency }} {{ number_format($expense->amount) }}
                                             </span>
                                             @if(!$expense->is_base_currency)
-                                                <p class="text-[10px] text-muji-ash font-medium italic">≈ {{ $trip->base_currency }} {{ number_format($expense->amount * $trip->exchange_rate) }}</p>
+                                                <p class="text-[10px] text-muji-ash font-medium italic">≈ {{ $trip->base_currency }} {{ number_format($expense->amount / max($trip->exchange_rate, 0.0001)) }}</p>
                                             @endif
                                         </div>
                                     </div>

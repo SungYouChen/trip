@@ -43,16 +43,16 @@ class ExpenseController extends Controller
         foreach ($expenses as $expense) {
             if ($expense->is_base_currency) {
                 $totalBase += $expense->amount;
-                $totalTarget += $expense->amount / $rate;
+                $totalTarget += $expense->amount * $rate;
             } else {
                 $totalTarget += $expense->amount;
-                $totalBase += $expense->amount * $rate;
+                $totalBase += $expense->amount / $rate;
             }
         }
 
         $byCategory = $expenses->groupBy('category')->map(function ($group) use ($rate) {
             return $group->sum(function ($expense) use ($rate) {
-                return $expense->is_base_currency ? $expense->amount : ($expense->amount * $rate);
+                return $expense->is_base_currency ? $expense->amount : ($expense->amount / $rate);
             });
         })->toArray(); // Ensure it's an array for easy updates
 
@@ -94,7 +94,7 @@ class ExpenseController extends Controller
             $externalTotals[$parsed['currency']] = ($externalTotals[$parsed['currency']] ?? 0) + $parsed['amount'];
             
             // Add to byCategory (Flight -> Transport)
-            $catAmount = ($parsed['currency'] == $tripBase) ? $parsed['amount'] : ($parsed['amount'] * $rate);
+            $catAmount = ($parsed['currency'] == $tripBase) ? $parsed['amount'] : ($parsed['amount'] / $rate);
             $byCategory['Transport'] = ($byCategory['Transport'] ?? 0) + $catAmount;
         }
 
@@ -108,7 +108,7 @@ class ExpenseController extends Controller
                 $externalTotals[$parsed['currency']] = ($externalTotals[$parsed['currency']] ?? 0) + $parsed['amount'];
                 
                 // Add to byCategory (Accommodation)
-                $catAmount = ($parsed['currency'] == $tripBase) ? $parsed['amount'] : ($parsed['amount'] * $rate);
+                $catAmount = ($parsed['currency'] == $tripBase) ? $parsed['amount'] : ($parsed['amount'] / $rate);
                 $byCategory['Accommodation'] = ($byCategory['Accommodation'] ?? 0) + $catAmount;
             }
         }
@@ -117,10 +117,10 @@ class ExpenseController extends Controller
         foreach ($externalTotals as $currency => $amount) {
             if ($currency == $tripBase) {
                 $totalBase += $amount;
-                $totalTarget += $amount / $rate;
+                $totalTarget += $amount * $rate;
             } else {
                 $totalTarget += $amount;
-                $totalBase += $amount * $rate;
+                $totalBase += $amount / $rate;
             }
         }
 
