@@ -184,51 +184,80 @@
                         backgroundColor: [
                             '#9c8c7c', // Muji Oak
                             '#dcd3c1', // Muji Wheat
-                            '#e8e4db', // Muji Edge
+                            '#c0b4a4', // Muji Earth
                             '#757575', // Muji Ash
                             '#333333', // Muji Ink
-                            '#f8f5f0', // Muji Base
-                            '#c0b4a4'  // Muji Earth
+                            '#e8e4db'  // Muji Edge
                         ],
                         borderWidth: 0,
-                        hoverOffset: 8
+                        hoverOffset: 12,
+                        borderRadius: 10,
+                        spacing: 4,
+                        cutout: '82%'
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    animation: {
+                        animateRotate: true,
+                        animateScale: true,
+                        duration: 1500,
+                        easing: 'easeOutQuart'
+                    },
                     layout: {
-                        padding: 12
+                        padding: 15
                     },
                     plugins: {
                         legend: {
                             display: false
                         },
                         tooltip: {
-                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
                             titleColor: '#333333',
+                            titleFont: { size: 14, weight: 'bold' },
                             bodyColor: '#757575',
                             borderColor: '#e8e4db',
                             borderWidth: 1,
                             padding: 12,
-                            cornerRadius: 12,
-                            bodyFont: {
-                                size: 10,
-                                weight: 'bold'
-                            },
+                            cornerRadius: 16,
+                            displayColors: true,
+                            usePointStyle: true,
                             callbacks: {
                                 label: function(context) {
-                                    let label = context.label || '';
-                                    if (label) label += ': ';
                                     const val = context.raw;
-                                    label += '{{ $trip->base_currency }} ' + val.toLocaleString();
-                                    return label;
+                                    return ' ' + context.label.split(' ')[0] + ': {{ $trip->base_currency }} ' + val.toLocaleString();
                                 }
                             }
                         }
-                    },
-                    cutout: '65%'
-                }
+                    }
+                },
+                plugins: [{
+                    id: 'centerText',
+                    afterDraw: function(chart) {
+                        const { ctx, chartArea: { top, bottom, left, right, width, height } } = chart;
+                        ctx.save();
+                        
+                        // Draw Label
+                        ctx.font = 'bold 10px Inter, system-ui';
+                        ctx.textAlign = 'center';
+                        ctx.fillStyle = '#757575';
+                        ctx.letterSpacing = '2px';
+                        ctx.fillText('TOTAL SPENT', left + width / 2, top + height / 2 - 12);
+                        
+                        // Draw Amount
+                        ctx.font = '900 18px Inter, system-ui';
+                        ctx.fillStyle = '#333333';
+                        ctx.fillText('{{ number_format($totalBase) }}', left + width / 2, top + height / 2 + 10);
+                        
+                        // Draw Currency
+                        ctx.font = 'bold 8px Inter, system-ui';
+                        ctx.fillStyle = '#9c8c7c';
+                        ctx.fillText('{{ $trip->base_currency }}', left + width / 2, top + height / 2 + 25);
+                        
+                        ctx.restore();
+                    }
+                }]
             });
         });
     </script>
