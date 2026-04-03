@@ -560,7 +560,9 @@
                             <form action="{{ route('logout') }}" method="POST" class="inline">
                                 @csrf
                                 <button type="submit" class="p-2 text-muji-ash hover:text-red-500 transition-colors border-0 bg-transparent cursor-pointer">
-                                    <svg class="w-5 h-5 font-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                                    <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+                                    </svg>
                                 </button>
                             </form>
                         @else
@@ -613,12 +615,15 @@
             @endauth
 
             <!-- Navigation Links -->
+            @if(auth()->check() || isset($trip))
             <div class="space-y-1">
                 <p class="text-[10px] font-black text-muji-ash/40 uppercase tracking-[0.2em] pl-4 mb-2">計畫行程</p>
-                <a href="{{ auth()->check() ? route('home', ['user' => auth()->user()]) : '/' }}" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-muji-base transition-all {{ request()->routeIs('home') ? 'bg-muji-wheat/30 text-muji-ink' : 'text-muji-ash' }}">
+                @auth
+                <a href="{{ route('home', ['user' => auth()->user()]) }}" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-muji-base transition-all {{ request()->routeIs('home') ? 'bg-muji-wheat/30 text-muji-ink' : 'text-muji-ash' }}">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                     <span class="text-sm font-bold">旅程足跡</span>
                 </a>
+                @endauth
                 
                 @if(isset($trip))
                     <a href="{{ $isShared ? route('expenses.index_shared', ['token' => $trip->share_token]) : route('expenses.index', ['user' => $trip->user, 'trip' => $trip]) }}" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-muji-base transition-all {{ request()->routeIs('expenses.index*') ? 'bg-muji-wheat/30 text-muji-ink' : 'text-muji-ash' }}">
@@ -627,15 +632,16 @@
                     </a>
                 @endif
 
-                <a href="{{ auth()->check() ? route('feedback.index', ['user' => auth()->user()]) : '#' }}" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-muji-base transition-all {{ request()->routeIs('feedback.index') ? 'bg-muji-wheat/30 text-muji-ink' : 'text-muji-ash' }}">
+                @auth
+                <a href="{{ route('feedback.index', ['user' => auth()->user()]) }}" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-muji-base transition-all {{ request()->routeIs('feedback.index') ? 'bg-muji-wheat/30 text-muji-ink' : 'text-muji-ash' }}">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
                     <span class="text-sm font-bold">產品意見回饋</span>
                 </a>
+                @endauth
             </div>
+            @endif
 
-            <div class="pt-10 mt-6 border-t-2 border-muji-base space-y-2 relative">
-                <!-- 另一種做法：加入一條實體 hr -->
-                <div class="absolute top-0 left-4 right-4 h-px bg-muji-edge/80"></div>
+            <div class="pt-10 mt-6 space-y-2 relative">
                 <p class="text-[10px] font-black text-muji-ash/40 uppercase tracking-[0.2em] pl-4 mb-2">帳戶設定</p>
                 @auth
                     <button onclick="toggleMobileMenu(false); safeOpenModal('globalProfileConfigModal')" class="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-muji-base text-muji-ink transition-all text-left border-0 bg-transparent cursor-pointer">
@@ -645,15 +651,27 @@
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
                         @csrf
                         <button type="submit" class="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-red-50 text-red-500 transition-all text-left border-0 bg-transparent cursor-pointer">
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                            <svg class="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+                            </svg>
                             <span class="text-sm font-black">登出此帳號</span>
                         </button>
                     </form>
                 @else
-                    <button onclick="toggleMobileMenu(false); safeOpenModal('loginModal')" class="w-full flex items-center gap-4 p-5 rounded-3xl bg-muji-oak text-white transition-all text-left shadow-muji active:scale-[0.98] border-0 cursor-pointer">
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
-                        <span class="text-sm font-black uppercase tracking-widest">登入 / 註冊 Trip Planner</span>
-                    </button>
+                    <div class="flex flex-col gap-3 py-2">
+                        <button onclick="toggleMobileMenu(false); safeOpenModal('loginModal')" class="w-full flex items-center gap-4 p-4 rounded-2xl bg-muji-base/50 text-muji-ink hover:bg-muji-base transition-all text-left border-0 cursor-pointer group">
+                            <div class="p-2 bg-white rounded-xl shadow-muji-sm text-muji-oak group-hover:scale-110 transition-transform">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+                            </div>
+                            <span class="text-sm font-black uppercase tracking-widest">登入帳號</span>
+                        </button>
+                        <button onclick="toggleMobileMenu(false); safeOpenModal('registerModal')" class="w-full flex items-center gap-4 p-4 rounded-2xl bg-muji-oak text-white transition-all text-left shadow-muji active:scale-[0.98] border-0 cursor-pointer group">
+                            <div class="p-2 bg-white/20 rounded-xl text-white group-hover:scale-110 transition-transform">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                            </div>
+                            <span class="text-sm font-black uppercase tracking-widest">註冊新帳號</span>
+                        </button>
+                    </div>
                 @endauth
             </div>
         </div>
