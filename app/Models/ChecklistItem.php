@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ChecklistItem extends Model
 {
     use SoftDeletes, \Illuminate\Database\Eloquent\Factories\HasFactory;
-    protected $fillable = ['type', 'category', 'name', 'trip_id'];
+    protected $fillable = ['type', 'category', 'name', 'trip_id', 'is_completed'];
+    protected $casts = ['is_completed' => 'boolean'];
 
     public function trip()
     {

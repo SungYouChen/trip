@@ -51,6 +51,22 @@ class TripController extends Controller
         return back()->with('success', 'Item added!');
     }
 
+    public function toggleItem(User $user, Trip $trip, $id, Request $request)
+    {
+        $item = $trip->checklistItems()->findOrFail($id);
+        $item->is_completed = !$item->is_completed;
+        $item->save();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'message' => $item->is_completed ? '已完成！' : '已取消完成。',
+                'is_completed' => $item->is_completed
+            ]);
+        }
+
+        return back();
+    }
+
     public function deleteItem(User $user, Trip $trip, $id)
     {
         $trip->checklistItems()->findOrFail($id)->delete(); // soft delete

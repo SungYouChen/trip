@@ -18,39 +18,65 @@
         </a>
     </div>
 
-    <div class="mb-8 flex flex-col md:flex-row items-stretch gap-6">
-        <div class="flex-1 flex flex-col justify-center">
-            <h1 class="text-3xl font-black text-muji-ink tracking-tight">花費統計</h1>
-            <p class="text-muji-ash mt-1 font-medium italic opacity-60">讓每一分錢都花得清清楚楚</p>
-            
-            <div class="mt-6 bg-muji-base/50 p-6 rounded-3xl border border-muji-edge shadow-muji-sm">
-                <span class="text-[10px] font-black text-muji-ash uppercase tracking-widest block mb-2">預計總花費</span>
-                <span class="text-5xl font-black text-muji-oak leading-none">{{ $trip->base_currency }} {{ number_format($totalBase) }}</span>
-                <p class="text-xs font-black text-muji-ash uppercase tracking-tight mt-3">約合 {{ $trip->target_currency }} {{ number_format($totalTarget) }}</p>
+    <div class="mb-10 bg-white/40 backdrop-blur-md rounded-[2.5rem] border border-muji-edge p-8 md:p-10 shadow-muji">
+        <div class="flex flex-col lg:flex-row items-center gap-10">
+            <!-- Chart Container -->
+            <div class="relative w-64 h-64 md:w-80 md:h-80 flex-shrink-0">
+                <canvas id="expenseChart"></canvas>
             </div>
-        </div>
-        
-        <div class="w-full md:w-72 h-72 bg-white/40 backdrop-blur-sm rounded-3xl border border-muji-edge p-6 flex items-center justify-center shadow-muji">
-            <canvas id="expenseChart"></canvas>
+            
+            <!-- Summary Area -->
+            <div class="flex-1 w-full">
+                <div class="mb-8">
+                    <h1 class="text-3xl md:text-4xl font-black text-muji-ink tracking-tight">花費統計</h1>
+                    <p class="text-muji-ash font-medium italic opacity-60">讓每一分錢都花得清清楚楚</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
+                    @php 
+                        $chartColors = ['#9c8c7c', '#dcd3c1', '#c0b4a4', '#757575', '#333333', '#e8e4db'];
+                        $colorIdx = 0;
+                    @endphp
+                    @foreach($byCategory as $cat => $amount)
+                        <div class="flex items-center justify-between py-2 border-b border-muji-edge/30 transition-all hover:bg-muji-base/30 px-2 rounded-lg group">
+                            <div class="flex items-center gap-3">
+                                <span class="w-2.5 h-2.5 rounded-full shadow-sm" style="background-color: {{ $chartColors[$colorIdx % count($chartColors)] }}"></span>
+                                <span class="text-sm font-black text-muji-ink">
+                                    @if($cat == 'Food') 飲食 🍔
+                                    @elseif($cat == 'Transport') 交通 🚇
+                                    @elseif($cat == 'Shopping') 購物 🛍️
+                                    @elseif($cat == 'Accommodation') 住宿 🏨
+                                    @elseif($cat == 'Flight') 機票 ✈️
+                                    @elseif($cat == 'Entertainment') 娛樂 🎡
+                                    @else 其他 💡
+                                    @endif
+                                </span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-sm font-black text-muji-oak">{{ $trip->base_currency }} {{ number_format($amount) }}</span>
+                                <span class="text-[10px] font-black text-muji-ash/40 ml-2">{{ round(($amount / max($totalBase, 1)) * 100) }}%</span>
+                            </div>
+                        </div>
+                        @php $colorIdx++; @endphp
+                    @endforeach
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-muji-edge flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div class="bg-muji-base/50 px-4 py-2 rounded-2xl border border-muji-edge">
+                        <span class="text-[10px] font-black text-muji-ash uppercase tracking-widest block mb-0.5">預計外幣總額</span>
+                        <span class="text-lg font-black text-muji-ink font-mono">{{ $trip->target_currency }} {{ number_format($totalTarget) }}</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-[10px] font-black text-muji-ash uppercase tracking-widest block mb-1">匯率參考 (1:{{ $trip->exchange_rate }})</span>
+                        <div class="flex items-center gap-2 justify-end">
+                            <span class="text-xs font-black text-muji-oak px-2 py-0.5 bg-muji-wheat/30 rounded border border-muji-edge">1 {{ $trip->base_currency }} ≈ {{ $trip->exchange_rate }} {{ $trip->target_currency }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Category Breakdown -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        @foreach($byCategory as $cat => $amount)
-            <div class="muji-card p-4 rounded-2xl border border-muji-edge shadow-muji-sm bg-white/60">
-                <p class="text-[10px] text-muji-ash uppercase font-black tracking-widest mb-2">
-                    @if($cat == 'Food') 飲食
-                    @elseif($cat == 'Transport') 交通
-                    @elseif($cat == 'Shopping') 購物
-                    @elseif($cat == 'Accommodation') 住宿
-                    @else 其他
-                    @endif
-                </p>
-                <p class="text-xl font-black text-muji-ink">{{ $trip->base_currency }} {{ number_format($amount) }}</p>
-            </div>
-        @endforeach
-    </div>
 
     @if(count($externalCosts) > 0)
     <!-- External Costs -->
@@ -238,22 +264,26 @@
                         const { ctx, chartArea: { top, bottom, left, right, width, height } } = chart;
                         ctx.save();
                         
+                        const centerX = left + width / 2;
+                        const centerY = top + height / 2;
+
                         // Draw Label
-                        ctx.font = 'bold 10px Inter, system-ui';
+                        ctx.font = 'bold 12px Inter, system-ui';
                         ctx.textAlign = 'center';
                         ctx.fillStyle = '#757575';
-                        ctx.letterSpacing = '2px';
-                        ctx.fillText('TOTAL SPENT', left + width / 2, top + height / 2 - 12);
+                        ctx.letterSpacing = '3px';
+                        ctx.fillText('TOTAL SPENT', centerX, centerY - 25);
                         
                         // Draw Amount
-                        ctx.font = '900 18px Inter, system-ui';
+                        ctx.font = '900 32px Inter, system-ui';
                         ctx.fillStyle = '#333333';
-                        ctx.fillText('{{ number_format($totalBase) }}', left + width / 2, top + height / 2 + 10);
+                        ctx.fillText('{{ number_format($totalBase) }}', centerX, centerY + 10);
                         
                         // Draw Currency
-                        ctx.font = 'bold 8px Inter, system-ui';
+                        ctx.font = 'bold 12px Inter, system-ui';
                         ctx.fillStyle = '#9c8c7c';
-                        ctx.fillText('{{ $trip->base_currency }}', left + width / 2, top + height / 2 + 25);
+                        ctx.letterSpacing = '1px';
+                        ctx.fillText('{{ $trip->base_currency }}', centerX, centerY + 35);
                         
                         ctx.restore();
                     }

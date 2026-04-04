@@ -39,6 +39,7 @@ Route::middleware(['auth', 'user.scope'])->group(function () {
     Route::delete('/{user}/expenses/{expense}', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
     Route::post('/{user}/trip/{trip}/checklist', [TripController::class, 'addItem'])->name('checklist.store');
     Route::delete('/{user}/trip/{trip}/checklist/{id}', [TripController::class, 'deleteItem'])->name('checklist.destroy');
+    Route::post('/{user}/trip/{trip}/checklist/{id}/toggle', [TripController::class, 'toggleItem'])->name('checklist.toggle');
     Route::put('/{user}/trip/{trip}/day/{date}', [ItineraryDayController::class, 'updateDay'])->name('day.update');
     Route::post('/{user}/trip/{trip}/day/{date}/events', [ItineraryDayController::class, 'addEvent'])->name('events.store');
     Route::put('/{user}/events/{event}', [ItineraryDayController::class, 'updateEvent'])->name('events.update');

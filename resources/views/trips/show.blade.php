@@ -514,9 +514,13 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg></span>
                             @else
-                            <input type="checkbox" class="mt-1 rounded text-muji-oak focus:ring-muji-oak persist-chk disabled:opacity-50 disabled:cursor-not-allowed" data-key="chk_{{ $item->id }}" @if(!auth()->check() || $isShared) disabled @endif>
+                            <input type="checkbox" 
+                                   class="mt-1 rounded text-muji-oak focus:ring-muji-oak sync-chk disabled:opacity-50 disabled:cursor-not-allowed" 
+                                   onchange="toggleChecklistItem(this, '{{ route('checklist.toggle', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}')"
+                                   @if($item->is_completed) checked @endif
+                                   @if(!auth()->check() || $isShared) disabled @endif>
                             @endif
-                            <span class="{{ (!auth()->check() || $isShared) ? 'text-muji-ash/50' : '' }} {{ $isItemArchived ? 'text-red-800 font-bold' : '' }}">{{ $item->name }}</span>
+                            <span class="{{ (!auth()->check() || $isShared) ? 'text-muji-ash/50' : '' }} {{ $isItemArchived ? 'text-red-800 font-bold' : '' }} {{ $item->is_completed ? 'line-through opacity-40' : '' }}">{{ $item->name }}</span>
                         </div>
                         @if(!$isShared)
                         @auth
@@ -628,9 +632,13 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                                 @if($isItemArchived)
                                 <span class="text-red-400 mt-1"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></span>
                                 @else
-                                <input type="checkbox" class="mt-1 rounded text-muji-oak focus:ring-muji-oak persist-chk disabled:opacity-50 disabled:cursor-not-allowed" data-key="chk_{{ $item->id }}" @if(!auth()->check() || $isShared) disabled @endif>
+                                <input type="checkbox" 
+                                       class="mt-1 rounded text-muji-oak focus:ring-muji-oak sync-chk disabled:opacity-50 disabled:cursor-not-allowed" 
+                                       onchange="toggleChecklistItem(this, '{{ route('checklist.toggle', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}')"
+                                       @if($item->is_completed) checked @endif
+                                       @if(!auth()->check() || $isShared) disabled @endif>
                                 @endif
-                                <span class="{{ (!auth()->check() || $isShared) ? 'text-muji-ash/50' : '' }} {{ $isItemArchived ? 'text-red-800 font-bold' : '' }}">{{ $item->name }}</span>
+                                <span class="{{ (!auth()->check() || $isShared) ? 'text-muji-ash/50' : '' }} {{ $isItemArchived ? 'text-red-800 font-bold' : '' }} {{ $item->is_completed ? 'line-through opacity-40' : '' }}">{{ $item->name }}</span>
                             </div>
                             @if(!$isShared)
                             @auth
@@ -1202,14 +1210,43 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            // General Checkbox Persistence
-            const checkboxes = document.querySelectorAll('.persist-chk');
-            checkboxes.forEach(chk => {
-                const key = chk.getAttribute('data-key');
-                const saved = localStorage.getItem(key);
-                if (saved === 'true') chk.checked = true;
-                chk.addEventListener('change', function () { localStorage.setItem(key, this.checked); });
-            });
+            // --- NEW: Sync Checklist Item to DB ---
+            window.toggleChecklistItem = async function(checkbox, url) {
+                const label = checkbox.nextElementSibling;
+                // Pre-update visual feedback
+                if (checkbox.checked) {
+                    label.classList.add('line-through', 'opacity-40');
+                } else {
+                    label.classList.remove('line-through', 'opacity-40');
+                }
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    });
+
+                    if (!response.ok) throw new Error('Network fail');
+                    const data = await response.json();
+                    
+                    // Show subtle toast for feedback
+                    if (typeof showToast === 'function') {
+                        showToast(data.message, 'success');
+                    }
+                } catch (e) {
+                    // Revert on error
+                    checkbox.checked = !checkbox.checked;
+                    if (checkbox.checked) {
+                        label.classList.add('line-through', 'opacity-40');
+                    } else {
+                        label.classList.remove('line-through', 'opacity-40');
+                    }
+                    if (typeof showToast === 'function') showToast('同步失敗', 'error');
+                }
+            };
 
             // Transport Mode Listeners
             document.querySelectorAll('#tripTransportModal input[name="transport_type"]').forEach(radio => {
