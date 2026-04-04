@@ -18,7 +18,7 @@
 
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#9c8c7c">
-    
+
     <!-- iOS support -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -218,19 +218,23 @@
                 cursor: pointer;
             }
         }
+
         /* Mobile Menu Drawer Styles */
         #mobileMenuDrawer {
             transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             transform: translateX(100%);
         }
+
         #mobileMenuDrawer.active {
             transform: translateX(0);
         }
+
         #mobileMenuBackdrop {
             transition: opacity 0.3s ease;
             opacity: 0;
             pointer-events: none;
         }
+
         #mobileMenuBackdrop.active {
             opacity: 1;
             pointer-events: auto;
@@ -251,7 +255,7 @@
     <script>
         (function () {
             let startY = 0; let startX = 0; let pullDist = 0; let active = false; let isGestureCancelled = false;
-            const threshold = 85; 
+            const threshold = 85;
             const indicator = document.getElementById('ptr-indicator');
             const icon = document.getElementById('ptr-icon');
 
@@ -279,7 +283,7 @@
 
             document.addEventListener('touchmove', (e) => {
                 if (!active || isGestureCancelled || window.scrollY > 0 || isModalOpen()) return;
-                
+
                 const currentY = e.touches[0].pageY;
                 const currentX = e.touches[0].pageX;
                 const diffY = currentY - startY;
@@ -297,8 +301,8 @@
                         indicator.style.transform = 'translate3d(0, 0, 0)';
                         return;
                     }
-                    
-                    pullDist = (diffY - 15) * 0.45; 
+
+                    pullDist = (diffY - 15) * 0.45;
                     indicator.style.transform = `translate3d(0, ${Math.min(pullDist, 140)}px, 0)`;
 
                     const scale = 1 + (pullDist / threshold) * 0.2;
@@ -368,9 +372,15 @@
 
     <style id="bg-live-styles">
         :root {
-            --bg-opacity: {{ $bgOpacityValue }};
-            --bg-blur: {{ $bgBlurValue }}px;
-            --bg-width: {{ $bgWidthValue }}%;
+            --bg-opacity:
+                {{ $bgOpacityValue }}
+            ;
+            --bg-blur:
+                {{ $bgBlurValue }}
+                px;
+            --bg-width:
+                {{ $bgWidthValue }}
+                %;
         }
 
         @media (max-width: 768px) {
@@ -387,8 +397,7 @@
 
     <!-- Global Background Wrapper -->
     <div id="bg-wrapper" class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none select-none" style="background-color: #f5f4f2;">
-        <div id="global-bg-element" class="absolute inset-y-0 bg-cover bg-center bg-no-repeat transition-all duration-700 ease-in-out" 
-             style="background-image: url('{{ $bgUrl }}'); 
+        <div id="global-bg-element" class="absolute inset-y-0 bg-cover bg-center bg-no-repeat transition-all duration-700 ease-in-out" style="background-image: url('{{ $bgUrl }}'); 
                     opacity: {{ $bgOpacityValue }}; 
                     filter: blur({{ $bgBlurValue }}px);
                     width: var(--bg-width, {{ $bgWidthValue }}%);
@@ -576,12 +585,16 @@
                 <!-- Mobile View Trigger (Visible only on mobile) -->
                 <div class="flex sm:hidden items-center gap-2">
                     @if(isset($trip) && (request()->routeIs('expenses.index') || request()->routeIs('expenses.index_shared')))
-                         <a href="{{ $isShared ? route('trip.index_shared', ['token' => $trip->share_token]) : route('trip.show', ['user' => $trip->user, 'trip' => $trip]) }}" class="p-2.5 bg-muji-base rounded-2xl text-muji-ink active:scale-90 transition-transform">
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>
-                         </a>
+                        <a href="{{ $isShared ? route('trip.index_shared', ['token' => $trip->share_token]) : route('trip.show', ['user' => $trip->user, 'trip' => $trip]) }}" class="p-2.5 bg-muji-base rounded-2xl text-muji-ink active:scale-90 transition-transform">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                            </svg>
+                        </a>
                     @endif
                     <button type="button" onclick="toggleMobileMenu(true)" class="p-2.5 text-muji-ash active:scale-90 transition-transform">
-                        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+                        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
+                        </svg>
                     </button>
                 </div>
             </nav>
@@ -590,12 +603,14 @@
 
     <!-- Mobile Side Menu (Slider - Vanilla JS Version) -->
     <div id="mobileMenuBackdrop" class="fixed inset-0 z-[2000] sm:hidden bg-muji-ink/30 backdrop-blur-sm" onclick="toggleMobileMenu(false)"></div>
-    
+
     <div id="mobileMenuDrawer" class="fixed right-0 top-0 bottom-0 z-[2001] w-[85%] max-w-sm bg-muji-paper shadow-2xl flex flex-col sm:hidden rounded-l-[32px] overflow-hidden">
         <div class="p-6 flex items-center justify-between border-b border-muji-edge bg-white/50 backdrop-blur-sm">
             <span class="text-xs font-black text-muji-ash uppercase tracking-widest">選單導覽</span>
             <button onclick="toggleMobileMenu(false)" class="p-2 text-muji-ash active:rotate-90 transition-transform">
-                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
             </button>
         </div>
 
@@ -617,36 +632,45 @@
 
             <!-- Navigation Links -->
             @if(auth()->check() || isset($trip))
-            <div class="space-y-1">
-                <p class="text-[10px] font-black text-muji-ash/40 uppercase tracking-[0.2em] pl-4 mb-2">計畫行程</p>
-                @auth
-                <a href="{{ route('home', ['user' => auth()->user()]) }}" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-muji-base transition-all {{ request()->routeIs('home') ? 'bg-muji-wheat/30 text-muji-ink' : 'text-muji-ash' }}">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                    <span class="text-sm font-bold">旅程足跡</span>
-                </a>
-                @endauth
-                
-                @if(isset($trip))
-                    <a href="{{ $isShared ? route('expenses.index_shared', ['token' => $trip->share_token]) : route('expenses.index', ['user' => $trip->user, 'trip' => $trip]) }}" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-muji-base transition-all {{ request()->routeIs('expenses.index*') ? 'bg-muji-wheat/30 text-muji-ink' : 'text-muji-ash' }}">
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        <span class="text-sm font-bold">花費統計</span>
-                    </a>
-                @endif
+                <div class="space-y-1">
+                    <p class="text-[10px] font-black text-muji-ash/40 uppercase tracking-[0.2em] pl-4 mb-2">計畫行程</p>
+                    @auth
+                        <a href="{{ route('home', ['user' => auth()->user()]) }}" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-muji-base transition-all {{ request()->routeIs('home') ? 'bg-muji-wheat/30 text-muji-ink' : 'text-muji-ash' }}">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                            </svg>
+                            <span class="text-sm font-bold">旅程足跡</span>
+                        </a>
+                    @endauth
 
-                @auth
-                <a href="{{ route('feedback.index', ['user' => auth()->user()]) }}" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-muji-base transition-all {{ request()->routeIs('feedback.index') ? 'bg-muji-wheat/30 text-muji-ink' : 'text-muji-ash' }}">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
-                    <span class="text-sm font-bold">產品意見回饋</span>
-                </a>
-                @endauth
-            </div>
+                    @if(isset($trip))
+                        <a href="{{ $isShared ? route('expenses.index_shared', ['token' => $trip->share_token]) : route('expenses.index', ['user' => $trip->user, 'trip' => $trip]) }}" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-muji-base transition-all {{ request()->routeIs('expenses.index*') ? 'bg-muji-wheat/30 text-muji-ink' : 'text-muji-ash' }}">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span class="text-sm font-bold">花費統計</span>
+                        </a>
+                    @endif
+
+                    @auth
+                        <a href="{{ route('feedback.index', ['user' => auth()->user()]) }}" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-muji-base transition-all {{ request()->routeIs('feedback.index') ? 'bg-muji-wheat/30 text-muji-ink' : 'text-muji-ash' }}">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                            </svg>
+                            <span class="text-sm font-bold">產品意見回饋</span>
+                        </a>
+                    @endauth
+                </div>
             @endif
 
             <div class="pt-10 mt-6 space-y-2 relative">
                 <p class="text-[10px] font-black text-muji-ash/40 uppercase tracking-[0.2em] pl-4 mb-2">帳戶設定</p>
                 @auth
                     <button onclick="toggleMobileMenu(false); safeOpenModal('globalProfileConfigModal')" class="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-muji-base text-muji-ink transition-all text-left border-0 bg-transparent cursor-pointer">
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
                         <span class="text-sm font-bold">帳號與設定</span>
                     </button>
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
@@ -662,13 +686,17 @@
                     <div class="flex flex-col gap-3 py-2">
                         <button onclick="toggleMobileMenu(false); safeOpenModal('loginModal')" class="w-full flex items-center gap-4 p-4 rounded-2xl bg-muji-base/50 text-muji-ink hover:bg-muji-base transition-all text-left border-0 cursor-pointer group">
                             <div class="p-2 bg-white rounded-xl shadow-muji-sm text-muji-oak group-hover:scale-110 transition-transform">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                                </svg>
                             </div>
                             <span class="text-sm font-black uppercase tracking-widest">登入帳號</span>
                         </button>
                         <button onclick="toggleMobileMenu(false); safeOpenModal('registerModal')" class="w-full flex items-center gap-4 p-4 rounded-2xl bg-muji-oak text-white transition-all text-left shadow-muji active:scale-[0.98] border-0 cursor-pointer group">
                             <div class="p-2 bg-white/20 rounded-xl text-white group-hover:scale-110 transition-transform">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                                </svg>
                             </div>
                             <span class="text-sm font-black uppercase tracking-widest">註冊新帳號</span>
                         </button>
@@ -943,7 +971,7 @@
         // Expense Modal Functions
         function openExpenseModal(data = null) {
             @auth
-                                                                            const modal = document.getElementById('expenseModal');
+                                                                                const modal = document.getElementById('expenseModal');
                 if (!modal) return;
 
                 const form = document.getElementById('expenseForm');
@@ -1173,7 +1201,7 @@
             if (isOpen) {
                 drawer.classList.add('active');
                 backdrop.classList.add('active');
-                document.body.style.overflow = 'hidden'; 
+                document.body.style.overflow = 'hidden';
             } else {
                 drawer.classList.remove('active');
                 backdrop.classList.remove('active');
@@ -1326,6 +1354,13 @@
         window.addEventListener('load', updateOnlineStatus);
     </script>
 
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[7000] w-10 h-10 bg-white/40 backdrop-blur-md border border-muji-edge/40 rounded-full shadow-muji-sm flex items-center justify-center text-muji-oak opacity-0 translate-y-10 transition-all duration-500 hover:bg-white/80 active:scale-95 group pointer-events-none">
+        <svg class="w-5 h-5 group-hover:-translate-y-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7" />
+        </svg>
+    </button>
+
     <!-- Offline Banner: Muji Style -->
     <div id="offline-banner" class="fixed top-0 left-0 w-full z-[9999] transform translate-y-[-100%] transition-transform duration-500 pointer-events-none">
         <div class="bg-muji-oak/90 backdrop-blur-md text-white text-[10px] font-black tracking-widest uppercase py-2 flex items-center justify-center gap-2 border-b border-muji-edge/20 shadow-lg">
@@ -1363,7 +1398,9 @@
                 <div>
                     <h4 class="text-sm font-black text-muji-ink">在 iPhone 上安裝 ElkTrip</h4>
                     <p class="text-[10px] text-muji-ash font-medium mt-2 leading-relaxed">
-                        點擊下方導覽列的 <span class="inline-block p-1 bg-muji-base rounded"><svg class="w-3 h-3 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg></span>
+                        點擊下方導覽列的 <span class="inline-block p-1 bg-muji-base rounded"><svg class="w-3 h-3 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                            </svg></span>
                         接著向上捲動並點擊「<span class="font-black text-muji-oak">加入主畫面</span>」
                     </p>
                 </div>
@@ -1382,7 +1419,7 @@
             e.preventDefault();
             // Stash the event so it can be triggered later.
             deferredPrompt = e;
-            
+
             // Show the custom prompt if not dismissed before
             if (!localStorage.getItem('pwa_dismissed')) {
                 setTimeout(() => {
@@ -1419,6 +1456,19 @@
                 iosPrompt.classList.remove('translate-y-full');
             }, 5000);
         }
+
+        // Back to Top Logic
+        const backToTop = document.getElementById('back-to-top');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 400) {
+                backToTop.classList.remove('opacity-0', 'translate-y-10', 'pointer-events-none');
+            } else {
+                backToTop.classList.add('opacity-0', 'translate-y-10', 'pointer-events-none');
+            }
+        });
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
     </script>
 </body>
 
