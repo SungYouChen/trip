@@ -13,13 +13,13 @@ class TripController extends Controller
     {
         $trips = Trip::withTrashed()
             ->with(['user', 'collaborators'])
-            ->where(function($q) use ($user) {
+            ->where(function ($q) use ($user) {
                 $q->where('user_id', $user->id)
-                  ->orWhereHas('collaborators', fn($cq) => $cq->where('user_id', $user->id));
+                    ->orWhereHas('collaborators', fn ($cq) => $cq->where('user_id', $user->id));
             })
             ->orderBy('start_date', 'desc')
             ->get();
-            
+
         return view('trips.index', compact('trips', 'user'));
     }
 
@@ -124,13 +124,13 @@ class TripController extends Controller
             'outbound' => ['date' => '', 'time' => '', 'route' => ''],
             'inbound' => ['date' => '', 'time' => '', 'route' => '']
         ];
-        
+
         $trip = Trip::create($validated);
 
         // Auto-generate days
         $start = \Carbon\Carbon::parse($trip->start_date);
         $end = \Carbon\Carbon::parse($trip->end_date);
-        
+
         while ($start <= $end) {
             $trip->days()->create([
                 'date' => $start->toDateString(),
@@ -152,7 +152,7 @@ class TripController extends Controller
     public function addDay(User $user, Trip $trip)
     {
         $lastDay = $trip->days()->orderBy('date', 'desc')->first();
-        
+
         if ($lastDay) {
             $newDate = \Carbon\Carbon::parse($lastDay->date)->addDay();
         } else {
@@ -184,7 +184,7 @@ class TripController extends Controller
     public function restore(User $user, $tripId)
     {
         $trip = Trip::withTrashed()
-            ->where(fn($q) => $q->where('id', $tripId))
+            ->where(fn ($q) => $q->where('id', $tripId))
             ->firstOrFail();
         $trip->restore();
         if (request()->ajax()) return response()->json(['message' => '旅程已還原！']);
@@ -193,7 +193,7 @@ class TripController extends Controller
 
     public function forceDelete(User $user, $tripId)
     {
-        $trip = Trip::withTrashed()->where(fn($q) => $q->where('id', $tripId)->where('user_id', auth()->id()))->firstOrFail();
+        $trip = Trip::withTrashed()->where(fn ($q) => $q->where('id', $tripId)->where('user_id', auth()->id()))->firstOrFail();
         if ($trip->cover_image) {
             \Illuminate\Support\Facades\Storage::disk('public')->delete($trip->cover_image);
         }
@@ -308,7 +308,7 @@ class TripController extends Controller
         ]);
 
         if ($request->ajax()) {
-            return response()->json(['message' => 'Trip settings updated successfully!']);
+            return response()->json(['message' => '旅程設定與封面已更新！']);
         }
 
         return back()->with('success', '旅程設定與封面已更新！');
@@ -330,8 +330,8 @@ class TripController extends Controller
     public function indexShared($token)
     {
         /** @var Trip $trip */
-        $trip = Trip::where(fn($q) => $q->where('share_token', $token)->where('is_public', true))->firstOrFail();
-        
+        $trip = Trip::where(fn ($q) => $q->where('share_token', $token)->where('is_public', true))->firstOrFail();
+
         $data = $this->getTripShowData($trip);
         $data['isShared'] = true;
         $data['user'] = $trip->user; // Pass owner
@@ -344,13 +344,18 @@ class TripController extends Controller
             'email' => 'required|email|exists:users,email',
         ]);
 
-        $collaborator = \App\Models\User::where(fn($q) => $q->where('email', $validated['email']))->first();
+        $collaborator = \App\Models\User::where(fn ($q) => $q->where('email', $validated['email']))->first();
 
         if ($collaborator->id == $trip->user_id) {
             return back()->with('error', '您已經是此行程的擁有者了。');
         }
 
-        $trip->collaborators()->syncWithoutDetaching([$collaborator->id => ['role' => 'editor']]);
+        $trip->collaborators()->syncWithoutDetaching([
+            $collaborator->id => [
+                'role' => 'editor',
+                'is_notified' => false
+            ]
+        ]);
 
         if ($request->ajax()) {
             return response()->json(['message' => '協作者已加入！']);
@@ -473,18 +478,28 @@ class TripController extends Controller
         return back()->with('success', '已移除協作者。');
     }
 
+    public function markCollaborationAsNotified(User $user, Trip $trip)
+    {
+        if (auth()->id() !== $user->id) abort(403);
+
+        $user->collaboratingTrips()->updateExistingPivot($trip->id, ['is_notified' => true]);
+
+        return response()->json(['success' => true]);
+    }
+
     private function getTripShowData($trip)
     {
-        $trip->load(['days' => function ($q) { $q->withTrashed()->orderBy('date'); }, 'collaborators']);
+        $trip->load(['days' => function ($q) {
+            $q->withTrashed()->orderBy('date'); }, 'collaborators']);
         $checklistItems = $trip->checklistItems()->withTrashed()->get();
         $groupedChecklist = $checklistItems->groupBy('category')->map(function ($items) {
-            return $items->mapWithKeys(fn($i) => [$i->id => ['name' => $i->name, 'trashed' => $i->trashed()]])->toArray();
+            return $items->mapWithKeys(fn ($i) => [$i->id => ['name' => $i->name, 'trashed' => $i->trashed()]])->toArray();
         });
 
         return [
             'trip' => $trip,
-            'flightInfo' => $trip->flight_info, 
-            'shoppingList' => $groupedChecklist['藥妝'] ?? [], 
+            'flightInfo' => $trip->flight_info,
+            'shoppingList' => $groupedChecklist['藥妝'] ?? [],
             'foodList' => $groupedChecklist['食物'] ?? [],
             'clothingList' => $groupedChecklist['衣物'] ?? [],
             'mustGoList' => $groupedChecklist['Must Go'] ?? [],
@@ -509,7 +524,7 @@ class TripController extends Controller
                     return response()->json(['rate' => $rate]);
                 }
             }
-            
+
             return response()->json(['error' => '目前暫時無法取得該幣別匯率（來源限制）'], 404);
         } catch (\Exception $e) {
             \Log::error('Exchange error: ' . $e->getMessage());

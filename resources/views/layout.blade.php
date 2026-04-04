@@ -1435,6 +1435,78 @@
         </div>
     </div>
 
+    <!-- 協作者通知系統 (Collaborator Notifications) -->
+    @auth
+        @php
+            $newInvs = auth()->user()->collaboratingTrips()->wherePivot('is_notified', false)->with(['user'])->get();
+        @endphp
+        @if($newInvs->count() > 0)
+            <div id="collaboration-notifications" class="fixed bottom-6 right-6 z-[8500] flex flex-col gap-4 pointer-events-none">
+                @foreach($newInvs as $inv)
+                <div id="inv-{{ $inv->id }}" class="max-w-[320px] muji-glass rounded-[32px] p-6 shadow-2xl border border-muji-edge/40 pointer-events-auto transform translate-y-20 opacity-0 transition-all duration-700 notification-card">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full border-2 border-muji-wheat/50 overflow-hidden shadow-muji-sm">
+                            <img src="{{ $inv->user->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($inv->user->name).'&color=9c8c7c&background=f0eae0' }}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-grow">
+                            <h4 class="text-xs font-black text-muji-ink">新的旅程邀請！</h4>
+                            <p class="text-[10px] text-muji-ash font-medium mt-1 leading-relaxed">
+                                <span class="text-muji-oak font-black">{{ $inv->user->name }}</span> 邀請您參加：
+                                <br>
+                                <span class="bg-muji-base/50 px-2 py-0.5 rounded text-muji-ink italic">「{{ $inv->name }}」</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 mt-5">
+                        <a href="{{ route('trip.show', ['user' => auth()->user(), 'trip' => $inv]) }}" 
+                           onclick="markInvitationNotified('{{ $inv->id }}', this)"
+                           class="flex-1 h-9 flex items-center justify-center bg-muji-oak text-white text-[10px] font-black rounded-full shadow-muji hover:opacity-90 active:scale-95 transition-all">
+                            查看旅程
+                        </a>
+                        <button onclick="markInvitationNotified('{{ $inv->id }}', this)" 
+                                class="w-20 h-9 flex items-center justify-center bg-muji-paper text-muji-ash border border-muji-edge text-[10px] font-black rounded-full hover:bg-muji-base transition-all active:scale-95">
+                            我知道了
+                        </button>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    setTimeout(() => {
+                        document.querySelectorAll('.notification-card').forEach((card, i) => {
+                            setTimeout(() => {
+                                card.classList.remove('translate-y-20', 'opacity-0');
+                                card.classList.add('translate-y-0', 'opacity-100');
+                            }, i * 200);
+                        });
+                    }, 1000);
+                });
+
+                async function markInvitationNotified(tripId, el) {
+                    const card = el.closest('.notification-card');
+                    try {
+                        const response = await fetch(`{{ url('/') }}/{{ auth()->user()->username }}/collaborations/${tripId}/mark-as-notified`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            card.classList.add('translate-x-20', 'opacity-0');
+                            setTimeout(() => card.remove(), 700);
+                        }
+                    } catch (err) {
+                        console.error('Failed to mark notification:', err);
+                    }
+                }
+            </script>
+        @endif
+    @endauth
+
     <script>
         let deferredPrompt;
         const pwaPrompt = document.getElementById('pwa-install-prompt');

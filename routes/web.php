@@ -53,6 +53,7 @@ Route::middleware(['auth', 'user.scope'])->group(function () {
     Route::get('/{user}/feedback', [FeedbackController::class, 'index'])->name('feedback.index');
     Route::post('/{user}/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
     Route::delete('/{user}/feedback/{feedback}', [FeedbackController::class, 'destroy'])->name('feedback.destroy');
+    Route::post('/{user}/collaborations/{trip}/mark-as-notified', [TripController::class, 'markCollaborationAsNotified'])->name('collaboration.mark_as_notified');
 
     // Restore & Force Delete Routes
     Route::patch('/{user}/trips/{tripId}/restore', [TripController::class, 'restore'])->name('trips.restore');

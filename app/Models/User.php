@@ -72,7 +72,7 @@ class User extends Authenticatable
     public function collaboratingTrips()
     {
         return $this->belongsToMany(Trip::class, 'trip_user')
-                    ->withPivot('role')
+                    ->withPivot('role', 'is_notified')
                     ->withTimestamps();
     }
 }
