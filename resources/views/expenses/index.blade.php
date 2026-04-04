@@ -18,7 +18,7 @@
         </a>
     </div>
 
-    <div class="mb-10 bg-white/40 backdrop-blur-md rounded-[2.5rem] border border-muji-edge p-8 md:p-10 shadow-muji">
+    <div class="mb-10 muji-card p-8 md:p-10 shadow-muji" style="border-radius: 2.5rem;">
         <div class="flex flex-col lg:flex-row items-center gap-10">
             <!-- Chart Container -->
             <div class="relative w-64 h-64 md:w-80 md:h-80 flex-shrink-0">
@@ -80,7 +80,7 @@
 
     @if(count($externalCosts) > 0)
     <!-- External Costs -->
-    <div class="bg-muji-base/40 backdrop-blur-sm rounded-3xl p-8 mb-8 border border-muji-edge shadow-muji">
+    <div class="muji-card p-8 mb-8 shadow-muji" style="border-radius: 1.5rem;">
         <h2 class="text-xl font-black text-muji-ink mb-6 flex items-center gap-3">
             <svg class="w-6 h-6 text-muji-oak" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />

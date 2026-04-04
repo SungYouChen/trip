@@ -172,9 +172,10 @@
 
         /* MUJI Style Glass Overlay */
         .muji-glass {
-            background-color: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(8px);
-            border: 1px solid #e8e4db;
+            background-color: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(232, 228, 219, 0.4);
         }
 
         .muji-button-primary {
@@ -188,10 +189,37 @@
         }
 
         .muji-card {
-            background: #ffffff;
-            border: 1px solid #e8e4db;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(232, 228, 219, 0.5);
+            border-radius: 20px;
             box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        /* NEW: Premium Glass Inputs */
+        .muji-input {
+            background: rgba(255, 255, 255, 0.4) !important;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(232, 228, 219, 0.8) !important;
+            border-radius: 12px !important;
+            transition: all 0.3s ease !important;
+            color: #333333 !important;
+            font-weight: 500 !important;
+        }
+
+        .muji-input:focus {
+            background: rgba(255, 255, 255, 0.8) !important;
+            border-color: #9c8c7c !important;
+            box-shadow: 0 0 0 4px rgba(156, 140, 124, 0.15) !important;
+            outline: none !important;
+            transform: translateY(-1px);
+        }
+
+        .muji-input::placeholder {
+            color: rgba(117, 117, 117, 0.6) !important;
+            font-size: 13px;
         }
 
         /* Essential Fix: Ensure Swal stays on top of all modals */
@@ -372,15 +400,13 @@
 
     <style id="bg-live-styles">
         :root {
-            --bg-opacity:
-                {{ $bgOpacityValue }}
-            ;
-            --bg-blur:
-                {{ $bgBlurValue }}
-                px;
-            --bg-width:
-                {{ $bgWidthValue }}
-                %;
+            --bg-opacity: {{ $bgOpacityValue }};
+            --bg-blur: {{ $bgBlurValue }}px;
+            --bg-width: {{ $bgWidthValue }}%;
+        }
+
+        html, body {
+            background-color: transparent !important;
         }
 
         @media (max-width: 768px) {
@@ -398,8 +424,8 @@
     <!-- Global Background Wrapper -->
     <div id="bg-wrapper" class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none select-none" style="background-color: #f5f4f2;">
         <div id="global-bg-element" class="absolute inset-y-0 bg-cover bg-center bg-no-repeat transition-all duration-700 ease-in-out" style="background-image: url('{{ $bgUrl }}'); 
-                    opacity: {{ $bgOpacityValue }}; 
-                    filter: blur({{ $bgBlurValue }}px);
+                    opacity: var(--bg-opacity, {{ $bgOpacityValue }}); 
+                    filter: blur(var(--bg-blur, {{ $bgBlurValue }}px));
                     width: var(--bg-width, {{ $bgWidthValue }}%);
                     left: 50%;
                     transform: translateX(-50%);"></div>
@@ -408,8 +434,8 @@
     <!-- Login Modal -->
     <div id="loginModal" class="fixed inset-0 z-[2000] overflow-y-auto" style="display: none;" role="dialog" aria-modal="true">
         <div class="flex min-h-full items-center justify-center p-4 text-center">
-            <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="safeCloseModal('loginModal')"></div>
-            <div class="relative transform overflow-hidden bg-white rounded-[40px] w-full max-w-lg p-8 shadow-2xl flex flex-col transition-all">
+            <div class="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onclick="safeCloseModal('loginModal')"></div>
+            <div class="relative transform overflow-hidden muji-glass rounded-[40px] w-full max-w-lg p-8 shadow-2xl flex flex-col transition-all">
                 <div class="flex justify-between items-center mb-8">
                     <div class="flex items-center gap-3">
                         <div class="p-2.5 bg-muji-base rounded-xl text-muji-oak shadow-muji-sm">
@@ -433,11 +459,11 @@
                     <div class="space-y-6">
                         <div>
                             <label class="block text-sm font-bold text-muji-ash text-left mb-2">電子郵件</label>
-                            <input type="email" name="email" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：elk@example.com">
+                            <input type="email" name="email" required class="block w-full px-4 py-3 muji-input" placeholder="例如：elk@example.com">
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-muji-ash text-left mb-2">密碼</label>
-                            <input type="password" name="password" autocomplete="current-password" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="請輸入密碼">
+                            <input type="password" name="password" autocomplete="current-password" required class="block w-full px-4 py-3 muji-input" placeholder="請輸入密碼">
                         </div>
 
                         <div class="flex gap-4 pt-6 mt-4 border-t border-muji-edge/50">
@@ -460,8 +486,8 @@
 
     <div id="registerModal" class="fixed inset-0 z-[2000] overflow-y-auto" style="display: none;" role="dialog" aria-modal="true">
         <div class="flex min-h-full items-center justify-center p-4 text-center">
-            <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="safeCloseModal('registerModal')"></div>
-            <div class="relative transform overflow-hidden bg-white rounded-[40px] w-full max-w-lg p-8 shadow-2xl flex flex-col transition-all">
+            <div class="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onclick="safeCloseModal('registerModal')"></div>
+            <div class="relative transform overflow-hidden muji-glass rounded-[40px] w-full max-w-lg p-8 shadow-2xl flex flex-col transition-all">
                 <div class="flex justify-between items-center mb-8">
                     <div class="flex items-center gap-3">
                         <div class="p-2.5 bg-muji-base rounded-xl text-muji-oak shadow-muji-sm">
@@ -486,19 +512,19 @@
                         <div class="space-y-6">
                             <div>
                                 <label class="block text-sm font-bold text-muji-ash text-left mb-2">姓名</label>
-                                <input type="text" name="name" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：王小明">
+                                <input type="text" name="name" required class="block w-full px-4 py-3 muji-input" placeholder="例如：王小明">
                             </div>
                             <div>
                                 <label class="block text-sm font-bold text-muji-ash text-left mb-2">帳號 ID</label>
-                                <input type="text" name="username" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：elk_trip" pattern="[a-zA-Z0-9_\-]+">
+                                <input type="text" name="username" required class="block w-full px-4 py-3 muji-input" placeholder="例如：elk_trip" pattern="[a-zA-Z0-9_\-]+">
                             </div>
                             <div>
                                 <label class="block text-sm font-bold text-muji-ash text-left mb-2">電子郵件</label>
-                                <input type="email" name="email" required class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：elk@example.com">
+                                <input type="email" name="email" required class="block w-full px-4 py-3 muji-input" placeholder="例如：elk@example.com">
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <input type="password" name="password" required placeholder="請輸入密碼" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
-                                <input type="password" name="password_confirmation" required placeholder="請再次輸入密碼" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
+                                <input type="password" name="password" required placeholder="請輸入密碼" class="block w-full px-4 py-3 muji-input">
+                                <input type="password" name="password_confirmation" required placeholder="請再次輸入密碼" class="block w-full px-4 py-3 muji-input">
                             </div>
 
                             <div class="flex gap-4 pt-6 mt-4 border-t border-muji-edge/50">
@@ -724,16 +750,16 @@
     <div id="mapModal" class="fixed inset-0 z-[2000] hidden overflow-y-auto" role="dialog" aria-modal="true">
         <div class="flex min-h-full items-center justify-center p-4 text-center">
             <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="safeCloseModal('mapModal')"></div>
-            <div class="relative transform overflow-hidden bg-white rounded-[40px] w-full max-w-4xl h-[80vh] shadow-2xl flex flex-col transition-all p-4">
-                <div class="flex justify-between items-center mb-4 px-2">
-                    <h3 id="mapTitle" class="text-xl font-bold text-gray-900 truncate pr-4">地點 (地圖)</h3>
-                    <button onclick="safeCloseModal('mapModal')" class="p-2 rounded-full hover:bg-gray-100 transition-colors">
-                        <svg class="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="relative transform overflow-hidden muji-glass rounded-[40px] w-full max-w-4xl h-[80vh] shadow-2xl flex flex-col transition-all p-8">
+                <div class="flex justify-between items-center mb-6 px-2">
+                    <h3 id="mapTitle" class="text-2xl font-black text-muji-ink truncate pr-8">地點 (地圖)</h3>
+                    <button onclick="safeCloseModal('mapModal')" class="absolute top-8 right-8 p-2 rounded-full text-muji-ash hover:bg-muji-base transition-all group z-50">
+                        <svg class="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
-                <div class="flex-grow w-full h-full bg-gray-100 rounded-xl overflow-hidden relative">
+                <div class="flex-grow w-full h-full bg-muji-base/20 rounded-2xl overflow-hidden relative border border-muji-edge">
                     <iframe id="mapFrame" class="absolute inset-0 w-full h-full" frameborder="0" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                 </div>
             </div>
@@ -778,7 +804,7 @@
     <div id="expenseModal" class="fixed inset-0 z-[2000] hidden overflow-y-auto" role="dialog" aria-modal="true">
         <div class="flex min-h-full items-center justify-center p-4 text-center">
             <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="safeCloseModal('expenseModal')"></div>
-            <div class="relative transform overflow-hidden rounded-[40px] bg-white text-left shadow-2xl transition-all w-full max-w-lg flex flex-col max-h-[90vh]">
+            <div class="relative transform overflow-hidden muji-glass rounded-[40px] w-full max-w-lg shadow-2xl flex flex-col transition-all max-h-[90vh]">
                 <!-- 統一右上角關閉按鈕 (X) - 移出捲軸容器 -->
                 <button onclick="safeCloseModal('expenseModal')" class="absolute top-6 right-6 text-muji-ash hover:text-muji-oak p-2 rounded-full hover:bg-muji-base transition-all group z-50">
                     <svg class="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -808,12 +834,12 @@
                             <div class="space-y-6">
                                 <div>
                                     <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">支出項目說明</label>
-                                    <input type="text" id="expenseDescription" name="description" required class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：午餐拉麵">
+                                    <input type="text" id="expenseDescription" name="description" required class="w-full px-4 py-3 muji-input" placeholder="例如：午餐拉麵">
                                 </div>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
                                         <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">支出金額</label>
-                                        <div class="flex relative h-[46px] rounded-xl border border-muji-edge overflow-hidden focus-within:ring-2 focus-within:ring-muji-oak bg-white group transition-all">
+                                        <div class="flex relative h-[46px] rounded-xl border border-muji-edge overflow-hidden focus-within:ring-2 focus-within:ring-muji-oak muji-input group transition-all">
                                             <select id="expenseCurrency" name="is_base_currency" class="bg-muji-base h-full border-0 border-r border-muji-edge px-3 text-muji-ink font-black text-xs focus:ring-0 cursor-pointer appearance-none">
                                                 <option value="0">{{ isset($trip) ? $trip->target_currency : '當地幣' }}</option>
                                                 <option value="1">{{ isset($trip) ? $trip->base_currency : '本國幣' }}</option>

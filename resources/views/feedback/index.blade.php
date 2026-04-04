@@ -20,7 +20,7 @@
 
     <!-- 2. Posting Action Card (Symmetrical Standard) -->
     @if(!$isAdmin)
-    <div class="muji-card p-8 bg-muji-paper/50 shadow-muji border-muji-edge border relative overflow-hidden rounded-[28px]">
+    <div class="muji-card p-8 relative overflow-hidden rounded-[28px]">
         <div class="absolute top-0 left-0 w-1.5 h-full bg-muji-oak/20"></div>
         <form action="{{ route('feedback.store', ['user' => auth()->user()]) }}" 
               method="POST" 
@@ -29,7 +29,7 @@
               onsubmit="handleAjaxSubmit(event, this, null)">
             @csrf
             <div>
-                <textarea name="content" rows="3" required class="block w-full px-5 py-4 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-inner focus:ring-muji-oak/20 transition-all font-medium placeholder-muji-wheat/60 leading-relaxed text-sm outline-none" placeholder="有任何建議或問題嗎？"></textarea>
+                <textarea name="content" rows="3" required class="block w-full px-5 py-4 muji-input leading-relaxed text-sm" placeholder="有任何建議或問題嗎？"></textarea>
             </div>
             <div class="flex flex-col sm:flex-row items-center gap-4 justify-between">
                 <label class="group flex items-center gap-2 px-4 h-[44px] bg-white border border-muji-edge rounded-xl cursor-pointer hover:bg-muji-base transition-all shadow-muji-sm">
@@ -51,7 +51,7 @@
     <div class="space-y-3 pt-2">
         <h4 class="text-[10px] font-black text-muji-ash uppercase tracking-[0.25em] pl-4 mb-3">對話列表</h4>
         @forelse($feedbacks as $feedback)
-            <div id="thread-{{ $feedback->id }}" class="muji-card bg-muji-paper/50 shadow-muji border-muji-edge border relative overflow-hidden transition-all duration-400 feedback-thread {{ $loop->first ? 'active' : '' }} rounded-[28px]" onclick="toggleThread('{{ $feedback->id }}', event)">
+            <div id="thread-{{ $feedback->id }}" class="muji-card relative overflow-hidden transition-all duration-400 feedback-thread {{ $loop->first ? 'active' : '' }} rounded-[28px]" onclick="toggleThread('{{ $feedback->id }}', event)">
                 <div class="absolute top-0 left-0 w-1 h-full bg-muji-wheat/40"></div>
                 
                 <div class="thread-inner transition-all duration-400 px-6 py-4">
@@ -144,7 +144,7 @@
                                 @csrf
                                 <input type="hidden" name="parent_id" value="{{ $feedback->id }}">
                                 <div class="flex flex-col gap-4">
-                                    <textarea name="content" rows="1" required class="block w-full px-5 py-3.5 bg-white border border-muji-edge rounded-xl text-muji-ink text-[13px] font-medium focus:ring-muji-oak/20 transition-all outline-none shadow-inner resize-none overflow-hidden" placeholder="寫下你的回覆..." oninput="autoResize(this)"></textarea>
+                                    <textarea name="content" rows="1" required class="block w-full px-5 py-3.5 muji-input text-[13px] resize-none overflow-hidden" placeholder="寫下你的回覆..." oninput="autoResize(this)"></textarea>
                                     <div class="flex items-center justify-between gap-3">
                                         <label class="group flex items-center gap-2 px-4 h-[44px] bg-white border border-muji-edge rounded-xl cursor-pointer hover:bg-muji-base transition-all shadow-muji-sm">
                                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>

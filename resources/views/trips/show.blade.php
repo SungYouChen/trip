@@ -481,7 +481,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 <!-- Checklists Section (Standardized space-y-8 / gap-8) -->
 <div class="grid md:grid-cols-2 gap-8 mt-8">
     <!-- Must Buy List (p-8) -->
-    <div class="muji-card shadow-muji border-muji-edge p-8 bg-muji-paper/50 relative flex flex-col min-h-[400px]">
+    <div class="muji-card shadow-muji p-8 relative flex flex-col min-h-[400px]">
         <h3 class="text-xl font-black text-muji-ink mb-6 flex items-center gap-2">
             <span class="w-8 h-8 rounded-lg bg-muji-base flex items-center justify-center text-muji-oak shadow-muji-sm">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -599,7 +599,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
     </div>
 
     <!-- Must Go List -->
-    <div class="muji-card shadow-muji border-muji-edge p-8 bg-muji-paper/50 relative flex flex-col min-h-[400px]">
+    <div class="muji-card shadow-muji p-8 relative flex flex-col min-h-[400px]">
         <h3 class="text-xl font-black text-muji-ink mb-6 flex items-center gap-2">
             <span class="w-8 h-8 rounded-lg bg-muji-base flex items-center justify-center text-muji-oak shadow-muji-sm">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -709,7 +709,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 <div id="tripTransportModal" class="fixed inset-0 z-[2000]" style="display: none;" role="dialog" aria-modal="true">
     <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
         <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity z-0" onclick="safeCloseModal('tripTransportModal')"></div>
-        <div class="relative z-10 transform overflow-hidden rounded-[40px] bg-white text-left shadow-2xl transition-all w-full max-w-lg flex flex-col max-h-[calc(100vh-160px)]">
+        <div class="relative z-10 transform overflow-hidden rounded-[40px] muji-glass text-left shadow-2xl transition-all w-full max-w-lg flex flex-col max-h-[calc(100vh-160px)]">
             <!-- 統一右上角關閉按鈕 (X) - 移出捲軸容器 -->
             <button onclick="safeCloseModal('tripTransportModal')" class="absolute top-6 right-6 text-muji-ash hover:text-muji-oak p-2 rounded-full hover:bg-muji-base transition-all group z-50">
                 <svg class="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -777,7 +777,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         <div id="fields-flight" class="mode-fields {{ ($transportType ?? 'flight') == 'flight' ? '' : 'hidden' }} grid grid-cols-1 gap-6">
                             <div>
                                 <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">航空公司 / 航班編號</label>
-                                <input type="text" name="airline" value="{{ $flightInfo['airline'] ?? '' }}" class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：星宇航空 JX800">
+                                <input type="text" name="airline" value="{{ $flightInfo['airline'] ?? '' }}" class="w-full px-4 py-3 muji-input" placeholder="例如：星宇航空 JX800">
                             </div>
                         </div>
 
@@ -786,11 +786,11 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">列車名稱 / 車次</label>
-                                    <input type="text" name="train_no" value="{{ $flightInfo['train_no'] ?? '' }}" class="w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl focus:ring-2 focus:ring-muji-oak shadow-muji-sm text-muji-ink font-medium" placeholder="例如：JR 新幹線 希望號">
+                                    <input type="text" name="train_no" value="{{ $flightInfo['train_no'] ?? '' }}" class="w-full px-4 py-3 muji-input" placeholder="例如：JR 新幹線 希望號">
                                 </div>
                                 <div>
                                     <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">座位資訊</label>
-                                    <input type="text" name="train_seat" value="{{ $flightInfo['train_seat'] ?? '' }}" class="w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl focus:ring-2 focus:ring-muji-oak shadow-muji-sm text-muji-ink font-medium" placeholder="例如：5車 12A">
+                                    <input type="text" name="train_seat" value="{{ $flightInfo['train_seat'] ?? '' }}" class="w-full px-4 py-3 muji-input" placeholder="例如：5車 12A">
                                 </div>
                             </div>
                         </div>
@@ -824,7 +824,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                             <div>
                                 <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">估計總費用</label>
                                 <div class="flex relative rounded-xl border border-muji-edge overflow-hidden focus-within:ring-2 focus-within:ring-muji-oak bg-white group transition-all">
-                                    <select name="flight_currency" class="bg-muji-base border-0 border-r border-muji-edge px-3 py-3 text-muji-ink font-black text-xs focus:ring-0 cursor-pointer appearance-none">
+                                    <select name="flight_currency" class="bg-muji-base/30 border-0 border-r border-muji-edge px-3 py-3 text-muji-ink font-black text-xs focus:ring-0 cursor-pointer appearance-none">
                                         @php
                                         $fPrice = $flightInfo['price'] ?? '';
                                         preg_match('/^([^\d]+)?([\d,.]+)/u', $fPrice, $fm);
@@ -839,7 +839,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                             </div>
                             <div>
                                 <label id="mode-label-baggage" class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">行李 / 備註規定</label>
-                                <input type="text" name="baggage" id="mode-input-baggage" value="{{ $flightInfo['baggage'] }}" class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium" placeholder="例如：23kg x 2">
+                                <input type="text" name="baggage" id="mode-input-baggage" value="{{ $flightInfo['baggage'] }}" class="w-full px-4 py-3 muji-input" placeholder="例如：23kg x 2">
                             </div>
                         </div>
                     </div>
@@ -937,7 +937,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 <div id="tripSettingsModal" class="fixed inset-0 z-[2000]" style="display: none;" role="dialog" aria-modal="true">
     <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
         <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity z-0" onclick="safeCloseModal('tripSettingsModal')"></div>
-        <div class="relative z-10 transform overflow-hidden rounded-[40px] bg-white text-left shadow-2xl transition-all w-full max-w-lg flex flex-col max-h-[calc(100vh-160px)]">
+        <div class="relative z-10 transform overflow-hidden rounded-[40px] muji-glass text-left shadow-2xl transition-all w-full max-w-lg flex flex-col max-h-[calc(100vh-160px)]">
             <!-- 統一右上角關閉按鈕 (X) - 移出捲軸容器 -->
             <button onclick="safeCloseModal('tripSettingsModal')" class="absolute top-6 right-6 text-muji-ash hover:text-muji-oak p-2 rounded-full hover:bg-muji-base transition-all group z-50">
                 <svg class="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -984,17 +984,17 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         <!-- 旅程名稱 -->
                         <div class="col-span-full">
                             <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">旅程名稱</label>
-                            <input type="text" name="name" required value="{{ $trip->name }}" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
+                            <input type="text" name="name" required value="{{ $trip->name }}" class="w-full px-4 py-3 muji-input">
                         </div>
 
                         <!-- 日期 -->
                         <div class="col-span-full sm:col-span-3">
                             <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">開始日期</label>
-                            <input type="date" name="start_date" required value="{{ $trip->start_date ? $trip->start_date->format('Y-m-d') : '' }}" class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink focus:ring-2 focus:ring-muji-oak transition-all font-medium py-0 leading-none">
+                            <input type="date" name="start_date" required value="{{ $trip->start_date ? $trip->start_date->format('Y-m-d') : '' }}" class="w-full h-[46px] px-4 muji-input">
                         </div>
                         <div class="col-span-full sm:col-span-3">
                             <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">結束日期</label>
-                            <input type="date" name="end_date" required value="{{ $trip->end_date ? $trip->end_date->format('Y-m-d') : '' }}" class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink focus:ring-2 focus:ring-muji-oak transition-all font-medium py-0 leading-none">
+                            <input type="date" name="end_date" required value="{{ $trip->end_date ? $trip->end_date->format('Y-m-d') : '' }}" class="w-full h-[46px] px-4 muji-input">
                         </div>
 
                         <!-- 貨幣 -->
@@ -1009,7 +1009,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         @endphp
                         <div class="col-span-full sm:col-span-2">
                             <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">本國貨幣</label>
-                            <select name="base_currency" required class="block w-full px-3 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink focus:ring-2 focus:ring-muji-oak text-center font-black text-xs">
+                            <select name="base_currency" required class="w-full px-4 py-3 muji-input text-center font-black">
                                 @foreach($allCurrencies as $code => $label)
                                     <option value="{{ $code }}" {{ $trip->base_currency == $code ? 'selected' : '' }}>{{ $code }} — {{ $label }}</option>
                                 @endforeach
@@ -1017,7 +1017,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         </div>
                         <div class="col-span-full sm:col-span-2">
                             <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">當地貨幣</label>
-                            <select name="target_currency" required class="block w-full px-3 py-3 bg-muji-base border border-muji-edge rounded-xl text-muji-oak focus:ring-2 focus:ring-muji-oak text-center font-black text-xs">
+                            <select name="target_currency" required class="w-full px-4 py-3 muji-input text-center font-black bg-muji-base/30">
                                 @foreach($allCurrencies as $code => $label)
                                     <option value="{{ $code }}" {{ $trip->target_currency == $code ? 'selected' : '' }}>{{ $code }} — {{ $label }}</option>
                                 @endforeach
@@ -1026,7 +1026,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         <div class="col-span-full sm:col-span-2">
                             <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">預估匯率</label>
                             <div class="relative">
-                                <input type="number" step="0.0001" id="exchange_rate_input" name="exchange_rate" required value="{{ $trip->exchange_rate }}" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink focus:ring-2 focus:ring-muji-oak font-mono text-center font-black">
+                                <input type="number" step="0.0001" id="exchange_rate_input" name="exchange_rate" required value="{{ $trip->exchange_rate }}" class="w-full px-4 py-3 muji-input text-center font-mono font-black">
                                 <button type="button" onclick="fetchLiveRate(event)" class="mt-2 w-full py-2 bg-muji-base text-muji-oak text-[10px] font-black rounded-lg border border-muji-edge hover:bg-muji-wheat/20 transition-all flex items-center justify-center gap-1">
                                     <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                                     獲取即時匯率

@@ -43,7 +43,7 @@
             @php $isArchived = $t->trashed(); @endphp
             <div class="relative group">
                 <a href="{{ $isArchived ? '#' : route('trip.show', ['user' => auth()->user(), 'trip' => $t]) }}" 
-                   class="block relative muji-card border-muji-edge overflow-hidden transition-all duration-500 transform hover:-translate-y-2 hover:shadow-muji {{ $isArchived ? 'border-2 border-dashed border-muji-ash grayscale opacity-60' : '' }}">
+                   class="block relative muji-card overflow-hidden transition-all duration-500 transform hover:-translate-y-2 hover:shadow-muji {{ $isArchived ? 'border-2 border-dashed border-muji-ash grayscale opacity-60' : '' }}">
                     <div class="aspect-w-3 aspect-h-2 w-full overflow-hidden">
                         <img src="{{ $t->cover_image ? asset('storage/' . $t->cover_image) : asset('bg.jpg') }}" 
                              onerror="this.src='https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=2070&auto=format&fit=crop'"
@@ -116,9 +116,9 @@
 <div id="add-trip-modal" class="fixed inset-0 z-[2000] hidden overflow-y-auto" role="dialog" aria-modal="true">
     <div class="flex min-h-full items-center justify-center p-4 text-center">
         <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="safeCloseModal('add-trip-modal')"></div>
-        <div class="relative transform overflow-hidden rounded-[40px] bg-white text-left shadow-2xl transition-all w-full max-w-lg flex flex-col max-h-[calc(100vh-160px)]">
+        <div class="relative transform overflow-hidden rounded-[40px] muji-glass text-left shadow-2xl transition-all w-full max-w-lg flex flex-col max-h-[calc(100vh-160px)]">
             <!-- 統一右上角關閉按鈕 (X) - 移出捲軸容器 -->
-            <button onclick="safeCloseModal('add-trip-modal')" class="absolute top-6 right-6 text-muji-ash hover:text-muji-oak p-2 rounded-full hover:bg-white transition-all group z-50">
+            <button onclick="safeCloseModal('add-trip-modal')" class="absolute top-6 right-6 text-muji-ash hover:text-muji-oak p-2 rounded-full hover:bg-muji-base transition-all group z-50">
                 <svg class="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -151,11 +151,11 @@
                         <!-- 日期區塊：各佔一半 (3/6) -->
                         <div class="col-span-full sm:col-span-3">
                             <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">開始日期</label>
-                            <input type="date" name="start_date" required class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink focus:ring-2 focus:ring-muji-oak transition-all font-medium py-0 leading-none">
+                            <input type="date" name="start_date" required class="w-full h-[46px] px-4 muji-input">
                         </div>
                         <div class="col-span-full sm:col-span-3">
                             <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">結束日期</label>
-                            <input type="date" name="end_date" required class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink focus:ring-2 focus:ring-muji-oak transition-all font-medium py-0 leading-none">
+                            <input type="date" name="end_date" required class="w-full h-[46px] px-4 muji-input">
                         </div>
 
                         <!-- 貨幣與匯率：各佔 1/3 (2/6) -->
@@ -170,7 +170,7 @@
                         @endphp
                         <div class="col-span-full sm:col-span-2">
                             <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">本國貨幣</label>
-                            <select name="base_currency" required class="block w-full px-3 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink focus:ring-2 focus:ring-muji-oak text-center font-black text-xs">
+                            <select name="base_currency" required class="w-full px-4 py-3 muji-input text-center font-black">
                                 @foreach($allCurrencies as $code => $label)
                                     <option value="{{ $code }}" {{ $code == 'TWD' ? 'selected' : '' }}>{{ $code }} — {{ $label }}</option>
                                 @endforeach
@@ -178,7 +178,7 @@
                         </div>
                         <div class="col-span-full sm:col-span-2">
                             <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">當地貨幣</label>
-                            <select name="target_currency" required class="block w-full px-3 py-3 bg-muji-base border border-muji-edge rounded-xl text-muji-oak focus:ring-2 focus:ring-muji-oak text-center font-black text-xs">
+                            <select name="target_currency" required class="w-full px-4 py-3 muji-input text-center font-black bg-muji-base/30">
                                 @foreach($allCurrencies as $code => $label)
                                     <option value="{{ $code }}" {{ $code == 'JPY' ? 'selected' : '' }}>{{ $code }} — {{ $label }}</option>
                                 @endforeach
@@ -187,7 +187,7 @@
                         <div class="col-span-full sm:col-span-2">
                             <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">預估匯率</label>
                             <div class="relative">
-                                <input type="number" step="0.0001" name="exchange_rate" required value="0.21" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink focus:ring-2 focus:ring-muji-oak font-mono text-center font-black">
+                                <input type="number" step="0.0001" name="exchange_rate" required value="0.21" class="w-full px-4 py-3 muji-input font-mono text-center font-black">
                                 <button type="button" onclick="fetchLiveRate(event)" class="mt-2 w-full py-2 bg-muji-base text-muji-oak text-[10px] font-black rounded-lg border border-muji-edge hover:bg-muji-wheat/20 transition-all flex items-center justify-center gap-1">
                                     <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                                     獲取即時匯率

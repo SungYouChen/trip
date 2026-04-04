@@ -2,7 +2,7 @@
         <div id="globalProfileConfigModal" class="fixed inset-0 z-[2000] overflow-y-auto" style="display: none;" role="dialog" aria-modal="true">
             <div class="flex min-h-full items-center justify-center p-4 text-center">
                 <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="safeCloseModal('globalProfileConfigModal')"></div>
-                <div class="relative transform overflow-hidden bg-white rounded-[40px] w-full max-w-lg shadow-2xl flex flex-col transition-all">
+                <div class="relative transform overflow-hidden muji-glass rounded-[40px] w-full max-w-lg shadow-2xl flex flex-col transition-all">
                     <!-- 統一右上角關閉按鈕 (X) - 移出捲軸容器 -->
                     <button onclick="safeCloseModal('globalProfileConfigModal')" class="absolute top-6 right-6 text-muji-ash hover:text-muji-oak p-2 rounded-full hover:bg-muji-base transition-all group z-50">
                         <svg class="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -71,7 +71,7 @@
                                     <div class="flex-grow space-y-4 w-full text-left">
                                         <div class="space-y-1.5">
                                             <label class="text-[10px] font-black text-muji-ash uppercase tracking-widest pl-1">顯示名稱</label>
-                                            <input type="text" name="name" value="{{ auth()->user()->name }}" class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink font-bold focus:ring-muji-oak transition-all outline-none">
+                                            <input type="text" name="name" value="{{ auth()->user()->name }}" class="w-full px-4 py-3 muji-input">
                                         </div>
                                         <div class="space-y-1.5 opacity-60">
                                             <label class="text-[10px] font-black text-muji-ash uppercase tracking-widest pl-1">電子郵件 (不可修改)</label>
@@ -92,15 +92,15 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div class="space-y-1.5">
                                         <label class="text-[10px] font-black text-muji-ash uppercase tracking-widest pl-1">目前的密碼</label>
-                                        <input type="password" name="current_password" placeholder="若要修改請輸入舊密碼" class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink font-medium focus:ring-muji-oak transition-all outline-none">
+                                        <input type="password" name="current_password" placeholder="若要修改請輸入舊密碼" class="muji-input w-full px-4 py-3">
                                     </div>
                                     <div class="space-y-1.5">
                                         <label class="text-[10px] font-black text-muji-ash uppercase tracking-widest pl-1">新的密碼</label>
-                                        <input type="password" name="new_password" placeholder="請輸入 8 位以上新密碼" class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink font-medium focus:ring-muji-oak transition-all outline-none">
+                                        <input type="password" name="new_password" placeholder="請輸入 8 位以上新密碼" class="muji-input w-full px-4 py-3">
                                     </div>
                                     <div class="sm:col-span-2 space-y-1.5">
                                         <label class="text-[10px] font-black text-muji-ash uppercase tracking-widest pl-1">確認新密碼</label>
-                                        <input type="password" name="new_password_confirmation" placeholder="請再次輸入新密碼" class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink font-medium focus:ring-muji-oak transition-all outline-none">
+                                        <input type="password" name="new_password_confirmation" placeholder="請再次輸入新密碼" class="muji-input w-full px-4 py-3">
                                     </div>
                                 </div>
                             </div>
