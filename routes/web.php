@@ -21,7 +21,7 @@ Route::get('/story', function() {
     return view('welcome_or_login');
 })->name('story');
 
-Route::middleware(['auth', 'user.scope'])->group(function () {
+Route::middleware(['auth', 'user.scope', 'verified'])->group(function () {
     Route::get('/{user}', [TripController::class, 'index'])->name('home');
     Route::get('/{user}/trips', function($user) { return redirect()->route('home', ['user' => $user]); })->name('trips.index');
     Route::get('/{user}/trip/{trip}', [TripController::class, 'show'])->name('trip.show');
@@ -80,3 +80,21 @@ Route::get('/login', function() {
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Password Reset Routes
+Route::post('/password/email', [AuthController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('/password/reset/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');
+Route::post('/password/reset', [AuthController::class, 'resetPassword'])->name('password.update');
+
+// Email Verification Routes
+Route::get('/email/verify', function () {
+    return auth()->user()->hasVerifiedEmail() 
+        ? redirect()->route('home', ['user' => auth()->user()])
+        : view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');
+
+Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])
+    ->middleware(['auth', 'signed'])->name('verification.verify');
+
+Route::post('/email/verification-notification', [AuthController::class, 'resendVerificationEmail'])
+    ->middleware(['auth', 'throttle:6,1'])->name('verification.send');

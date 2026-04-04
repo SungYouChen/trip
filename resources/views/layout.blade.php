@@ -69,8 +69,10 @@
 
         // Safe Modal Engine (Standardized Visibility Control)
         function safeOpenModal(id) {
-            console.log('Safe Modal Error: Not found ->', id);
             try {
+                // Ensure Login Modal defaults to login view
+                if (id === 'loginModal') toggleAuthView('login');
+
                 // Force close potential overlaps if they exist
                 ['loginModal', 'registerModal', 'globalProfileConfigModal', 'mapModal', 'expenseModal', 'daySummaryEditModal', 'eventDetailsModal'].forEach(mId => {
                     const otherM = document.getElementById(mId);
@@ -93,6 +95,20 @@
 
                 if (typeof lockScroll === 'function') lockScroll();
             } catch (e) { console.error('Modal Open Error:', e); }
+        }
+
+        function toggleAuthView(view) {
+            const loginContent = document.getElementById('loginContent');
+            const forgotPasswordContent = document.getElementById('forgotPasswordContent');
+            if (!loginContent || !forgotPasswordContent) return;
+
+            if (view === 'forgotPassword') {
+                loginContent.style.display = 'none';
+                forgotPasswordContent.style.display = 'block';
+            } else {
+                loginContent.style.display = 'block';
+                forgotPasswordContent.style.display = 'none';
+            }
         }
 
         function safeCloseModal(id) {
@@ -454,32 +470,61 @@
                     </button>
                 </div>
 
-                <form action="{{ route('login.post') }}" method="POST" onsubmit="handleAjaxSubmit(event, this, 'loginModal')">
-                    @csrf
-                    <div class="space-y-6">
-                        <div>
-                            <label class="block text-sm font-bold text-muji-ash text-left mb-2">電子郵件</label>
-                            <input type="email" name="email" required class="block w-full px-4 py-3 muji-input" placeholder="例如：elk@example.com">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-muji-ash text-left mb-2">密碼</label>
-                            <input type="password" name="password" autocomplete="current-password" required class="block w-full px-4 py-3 muji-input" placeholder="請輸入密碼">
-                        </div>
+                <div id="loginContent">
+                    <form action="{{ route('login.post') }}" method="POST" onsubmit="handleAjaxSubmit(event, this, 'loginModal')">
+                        @csrf
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-bold text-muji-ash text-left mb-2">電子郵件</label>
+                                <input type="email" name="email" required class="block w-full px-4 py-3 muji-input" placeholder="例如：elk@example.com">
+                            </div>
+                            <div class="relative">
+                                <label class="block text-sm font-bold text-muji-ash text-left mb-2">密碼</label>
+                                <input type="password" name="password" autocomplete="current-password" required class="block w-full px-4 py-3 muji-input" placeholder="請輸入密碼">
+                                <div class="text-right mt-2">
+                                    <button type="button" onclick="toggleAuthView('forgotPassword')" class="text-[10px] font-black text-muji-ash hover:text-muji-oak transition-colors">忘記密碼？</button>
+                                </div>
+                            </div>
 
-                        <div class="flex gap-4 pt-6 mt-4 border-t border-muji-edge/50">
-                            <button type="button" onclick="safeCloseModal('loginModal')" class="flex-1 h-[46px] flex items-center justify-center bg-muji-paper text-muji-ash border border-muji-edge font-black rounded-[24px] hover:bg-muji-base transition-all active:scale-95 text-sm">
-                                取消
-                            </button>
-                            <button type="submit" class="flex-1 h-[46px] flex items-center justify-center bg-muji-oak text-white font-black rounded-[24px] hover:opacity-90 transition-all shadow-muji active:scale-95 text-sm">
-                                登入
-                            </button>
-                        </div>
+                            <div class="flex gap-4 pt-6 mt-4 border-t border-muji-edge/50">
+                                <button type="button" onclick="safeCloseModal('loginModal')" class="flex-1 h-[46px] flex items-center justify-center bg-muji-paper text-muji-ash border border-muji-edge font-black rounded-[24px] hover:bg-muji-base transition-all active:scale-95 text-sm">
+                                    取消
+                                </button>
+                                <button type="submit" class="flex-1 h-[46px] flex items-center justify-center bg-muji-oak text-white font-black rounded-[24px] hover:opacity-90 transition-all shadow-muji active:scale-95 text-sm">
+                                    登入
+                                </button>
+                            </div>
 
-                        <div class="text-sm text-center mt-6 text-muji-ash pt-6 border-t border-muji-edge">
-                            還沒有帳號？ <button type="button" onclick="safeCloseModal('loginModal'); setTimeout(() => safeOpenModal('registerModal'), 300)" class="text-muji-oak font-black hover:underline">立即註冊</button>
+                            <div class="text-sm text-center mt-6 text-muji-ash pt-6 border-t border-muji-edge">
+                                還沒有帳號？ <button type="button" onclick="safeCloseModal('loginModal'); setTimeout(() => safeOpenModal('registerModal'), 300)" class="text-muji-oak font-black hover:underline">立即註冊</button>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
+
+                <div id="forgotPasswordContent" style="display: none;">
+                    <form action="{{ route('password.email') }}" method="POST" onsubmit="handleAjaxSubmit(event, this, 'loginModal')">
+                        @csrf
+                        <div class="space-y-6">
+                            <div class="mb-2">
+                                <p class="text-sm text-muji-ash text-left leading-relaxed">不必擔心，請輸入您的電子郵件，我們將發送密碼重設連結給您。</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-muji-ash text-left mb-2">電子郵件</label>
+                                <input type="email" name="email" required class="block w-full px-4 py-3 muji-input" placeholder="例如：elk@example.com">
+                            </div>
+
+                            <div class="flex gap-4 pt-6 mt-4 border-t border-muji-edge/50">
+                                <button type="button" onclick="toggleAuthView('login')" class="flex-1 h-[46px] flex items-center justify-center bg-muji-paper text-muji-ash border border-muji-edge font-black rounded-[24px] hover:bg-muji-base transition-all active:scale-95 text-sm">
+                                    返回登入
+                                </button>
+                                <button type="submit" class="flex-1 h-[46px] flex items-center justify-center bg-muji-oak text-white font-black rounded-[24px] hover:opacity-90 transition-all shadow-muji active:scale-95 text-sm">
+                                    發送連結
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

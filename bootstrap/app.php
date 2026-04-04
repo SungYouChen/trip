@@ -11,6 +11,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->trustProxies(at: '*');
         $middleware->alias([
             'simple.auth' => \App\Http\Middleware\SimpleAuth::class,
             'user.scope' => \App\Http\Middleware\UserScope::class,

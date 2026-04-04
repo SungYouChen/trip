@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 class AuthController extends Controller
 {
@@ -63,15 +65,83 @@ class AuthController extends Controller
             'password' => Hash::make($credentials['password']),
         ]);
 
+        event(new Registered($user));
+
         auth()->login($user);
 
         if ($request->ajax()) {
             return response()->json([
-                'message' => '註冊成功！',
-                'redirect' => route('home', ['user' => $user])
+                'message' => '註冊成功！請檢查您的信箱進行驗證。',
+                'redirect' => route('verification.notice')
             ]);
         }
 
-        return redirect()->route('home', ['user' => $user])->with('success', '註冊成功！');
+        return redirect()->route('verification.notice')->with('success', '註冊成功！請檢查您的信箱進行驗證。');
+    }
+
+    public function verifyEmail(EmailVerificationRequest $request)
+    {
+        $request->fulfill();
+        return redirect('/')->with('success', '您的電子郵件已成功驗證！');
+    }
+
+    public function resendVerificationEmail(Request $request)
+    {
+        if ($request->user()->hasVerifiedEmail()) {
+            return response()->json(['message' => '您的電子郵件已經驗證過了。']);
+        }
+
+        $request->user()->sendEmailVerificationNotification();
+
+        return response()->json(['message' => '驗證連結已重新發送至您的信箱！']);
+    }
+
+    public function sendResetLinkEmail(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $status = \Password::sendResetLink(
+            $request->only('email')
+        );
+
+        if ($status === \Password::RESET_LINK_SENT) {
+            return response()->json(['message' => '重設密碼連結已發送至您的信箱！請檢查信箱（包含垃圾郵件箱）。']);
+        }
+
+        return response()->json(['message' => '無法處理此信箱的重設請求，請檢查信箱是否正確。'], 422);
+    }
+
+    public function showResetForm(Request $request, $token = null)
+    {
+        return view('auth.reset-password')->with(
+            ['token' => $token, 'email' => $request->email]
+        );
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        $status = \Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password)
+                ])->setRememberToken(\Str::random(60));
+
+                $user->save();
+            }
+        );
+
+        if ($status === \Password::PASSWORD_RESET) {
+            return redirect('/')->with('success', '密碼已成功重設！請重新登入。');
+        }
+
+        return back()->withInput($request->only('email'))
+                     ->withErrors(['email' => __($status)]);
     }
 }
