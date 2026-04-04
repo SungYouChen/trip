@@ -17,6 +17,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
 
     <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#9c8c7c">
+    
+    <!-- iOS support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="ElkTrip">
+    <link rel="apple-touch-icon" href="/icon_logo.png">
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -1328,6 +1335,91 @@
             離線模式：目前存取的是本地快取版本
         </div>
     </div>
+
+    <!-- PWA Install Prompt: Muji Minimalist -->
+    <div id="pwa-install-prompt" class="fixed bottom-0 left-0 w-full z-[8000] transform translate-y-full transition-transform duration-700 ease-out p-4 pointer-events-none md:p-6">
+        <div class="max-w-md mx-auto bg-white/95 backdrop-blur-md border border-muji-edge rounded-[2.5rem] shadow-2xl p-6 pointer-events-auto flex items-center gap-4 group">
+            <div class="w-12 h-12 bg-muji-base rounded-2xl flex-shrink-0 flex items-center justify-center text-muji-oak shadow-muji-sm group-hover:scale-105 transition-transform">
+                <img src="/icon_logo.png" class="w-8 h-8 object-contain">
+            </div>
+            <div class="flex-grow">
+                <h4 class="text-sm font-black text-muji-ink">將旅程規劃安裝至桌面</h4>
+                <p class="text-[10px] text-muji-ash font-medium mt-1">享受更快速、穩定的無邊框體驗</p>
+            </div>
+            <div class="flex flex-col gap-2">
+                <button id="pwa-install-btn" class="px-4 py-2 bg-muji-oak text-white text-[10px] font-black rounded-full shadow-muji hover:opacity-90 active:scale-95 transition-all">立即安裝</button>
+                <button onclick="dismissPWA()" class="text-[10px] text-muji-ash font-bold hover:text-muji-ink">下次再說</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- iOS Install Hint (For Safari) -->
+    <div id="ios-install-hint" class="fixed bottom-0 left-0 w-full z-[8000] transform translate-y-full transition-transform duration-700 ease-out p-4 pointer-events-none">
+        <div class="max-w-md mx-auto bg-white/95 backdrop-blur-md border border-muji-edge rounded-[2.5rem] shadow-2xl p-6 pointer-events-auto text-center">
+            <div class="flex flex-col items-center gap-4">
+                <div class="w-14 h-14 bg-muji-base rounded-2xl flex items-center justify-center text-muji-oak shadow-muji-sm">
+                    <img src="/icon_logo.png" class="w-10 h-10 object-contain">
+                </div>
+                <div>
+                    <h4 class="text-sm font-black text-muji-ink">在 iPhone 上安裝 ElkTrip</h4>
+                    <p class="text-[10px] text-muji-ash font-medium mt-2 leading-relaxed">
+                        點擊下方導覽列的 <span class="inline-block p-1 bg-muji-base rounded"><svg class="w-3 h-3 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg></span>
+                        接著向上捲動並點擊「<span class="font-black text-muji-oak">加入主畫面</span>」
+                    </p>
+                </div>
+                <button onclick="dismissIOS()" class="mt-2 text-[10px] text-muji-ash font-bold hover:text-muji-ink">我明白了</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let deferredPrompt;
+        const pwaPrompt = document.getElementById('pwa-install-prompt');
+        const iosPrompt = document.getElementById('ios-install-hint');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent Chrome 67 and earlier from automatically showing the prompt
+            e.preventDefault();
+            // Stash the event so it can be triggered later.
+            deferredPrompt = e;
+            
+            // Show the custom prompt if not dismissed before
+            if (!localStorage.getItem('pwa_dismissed')) {
+                setTimeout(() => {
+                    pwaPrompt.classList.remove('translate-y-full');
+                }, 3000);
+            }
+        });
+
+        document.getElementById('pwa-install-btn')?.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            pwaPrompt.classList.add('translate-y-full');
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`User responded to the install prompt: ${outcome}`);
+            deferredPrompt = null;
+        });
+
+        function dismissPWA() {
+            pwaPrompt.classList.add('translate-y-full');
+            localStorage.setItem('pwa_dismissed', 'true');
+        }
+
+        function dismissIOS() {
+            iosPrompt.classList.add('translate-y-full');
+            localStorage.setItem('ios_pwa_dismissed', 'true');
+        }
+
+        // Logic for iOS custom prompt
+        const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+        if (isIos && !isStandalone && !localStorage.getItem('ios_pwa_dismissed')) {
+            setTimeout(() => {
+                iosPrompt.classList.remove('translate-y-full');
+            }, 5000);
+        }
+    </script>
 </body>
 
 
