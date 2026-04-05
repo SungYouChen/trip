@@ -19,58 +19,78 @@
         </a>
     </div>
 
-    <div class="mb-10 muji-card p-8 md:p-10 shadow-muji" style="border-radius: 2.5rem;">
-        <div class="flex flex-col lg:flex-row items-center gap-10">
-            <!-- Chart Container -->
-            <div class="relative w-64 h-64 md:w-80 md:h-80 flex-shrink-0">
+    <div class="mb-10 muji-card p-4 sm:p-8 md:p-10 shadow-muji bg-muji-paper/80 backdrop-blur-xl relative overflow-hidden" style="border-radius: 3rem;">
+        <!-- Subtle Background Accent -->
+        <div class="absolute -top-24 -right-24 w-64 h-64 bg-muji-oak/5 rounded-full blur-3xl"></div>
+        
+        <div class="flex flex-col lg:flex-row items-center gap-10 relative z-10">
+            <!-- Chart Container - Compact Hero -->
+            <div class="relative w-64 h-64 md:w-[320px] md:h-[320px] flex-shrink-0 group">
                 <canvas id="expenseChart"></canvas>
             </div>
             
-            <!-- Summary Area -->
+            <!-- Summary Area - Restructured for No-Overflow -->
             <div class="flex-1 w-full">
-                <div class="mb-8">
-                    <h1 class="text-3xl md:text-4xl font-black text-muji-ink tracking-tight">花費統計</h1>
-                    <p class="text-muji-ash font-medium italic opacity-60">讓每一分錢都花得清清楚楚</p>
+                <div class="mb-8 text-center lg:text-left">
+                    <h1 class="text-3xl md:text-4xl font-black text-muji-ink tracking-tighter mb-1">花費統計</h1>
+                    <p class="text-muji-ash font-medium italic opacity-50 tracking-widest text-[9px] uppercase">Financial Data Visualization</p>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1.5">
                     @php 
-                        $chartColors = ['#9c8c7c', '#dcd3c1', '#c0b4a4', '#757575', '#333333', '#e8e4db'];
+                        $chartColors = [
+                            '#9c8c7c', '#8a8a8a', '#a5ad94', '#b59b9b', '#dcd3c1', '#4b453d', '#757575'
+                        ];
                         $colorIdx = 0;
                     @endphp
                     @foreach($byCategory as $cat => $amount)
-                        <div class="flex items-center justify-between py-2 border-b border-muji-edge/30 transition-all hover:bg-muji-base/30 px-2 rounded-lg group">
-                            <div class="flex items-center gap-3">
-                                <span class="w-2.5 h-2.5 rounded-full shadow-sm" style="background-color: {{ $chartColors[$colorIdx % count($chartColors)] }}"></span>
-                                <span class="text-sm font-black text-muji-ink">
-                                    @if($cat == 'Food') 飲食 🍔
-                                    @elseif($cat == 'Transport') 交通 🚇
-                                    @elseif($cat == 'Shopping') 購物 🛍️
-                                    @elseif($cat == 'Accommodation') 住宿 🏨
-                                    @elseif($cat == 'Flight') 機票 ✈️
-                                    @elseif($cat == 'Entertainment') 娛樂 🎡
-                                    @else 其他 💡
-                                    @endif
-                                </span>
+                        <div class="expense-row flex items-center justify-between py-2.5 border-b border-muji-edge/20 transition-all hover:bg-muji-base/50 px-3 rounded-2xl group cursor-help overflow-hidden" 
+                             data-index="{{ $colorIdx }}" 
+                             onmouseenter="highlightChartSegment({{ $colorIdx }})" 
+                             onmouseleave="resetChartHighlight()">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <div class="w-2.5 h-2.5 rounded-full shadow-sm ring-2 ring-white flex-shrink-0" style="background-color: {{ $chartColors[$colorIdx % count($chartColors)] }}"></div>
+                                <div class="flex items-baseline gap-2 min-w-0">
+                                    <span class="text-xs font-black text-muji-ink truncate max-w-[80px]">
+                                        @if($cat == 'Food') 飲食
+                                        @elseif($cat == 'Transport') 交通
+                                        @elseif($cat == 'Shopping') 購物
+                                        @elseif($cat == 'Accommodation') 住宿
+                                        @elseif($cat == 'Flight') 機票
+                                        @elseif($cat == 'Entertainment') 娛樂
+                                        @else 其他
+                                        @endif
+                                    </span>
+                                    <span class="text-[9px] text-muji-ash/50 font-black tracking-tighter">{{ round(($amount / max($totalBase, 1)) * 100) }}%</span>
+                                </div>
                             </div>
-                            <div class="text-right">
-                                <span class="text-sm font-black text-muji-oak">{{ $trip->base_currency }} {{ number_format($amount) }}</span>
-                                <span class="text-[10px] font-black text-muji-ash/40 ml-2">{{ round(($amount / max($totalBase, 1)) * 100) }}%</span>
+                            <div class="text-right flex-shrink-0">
+                                <span class="text-[12px] font-black text-muji-oak font-mono">{{ number_format($amount) }}</span>
                             </div>
                         </div>
                         @php $colorIdx++; @endphp
                     @endforeach
                 </div>
 
-                <div class="mt-8 pt-6 border-t border-muji-edge flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div class="bg-muji-base/50 px-4 py-2 rounded-2xl border border-muji-edge">
-                        <span class="text-[10px] font-black text-muji-ash uppercase tracking-widest block mb-0.5">預計外幣總額</span>
-                        <span class="text-lg font-black text-muji-ink font-mono">{{ $trip->target_currency }} {{ number_format($totalTarget) }}</span>
+                <div class="mt-10 pt-6 border-t border-muji-edge/20 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div class="bg-white/90 backdrop-blur-xl px-6 py-3.5 rounded-[2rem] border border-muji-edge shadow-muji-sm flex flex-col min-w-[200px]">
+                        <span class="text-[9px] font-black text-muji-ash uppercase tracking-widest block mb-0.5">ESTIMATED TOTAL {{ $trip->target_currency }}</span>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-xl font-black text-muji-ink font-mono tracking-tighter">{{ number_format($totalTarget) }}</span>
+                            <span class="text-[10px] font-black text-muji-oak">{{ $trip->target_currency }}</span>
+                        </div>
                     </div>
-                    <div class="text-right">
-                        <span class="text-[10px] font-black text-muji-ash uppercase tracking-widest block mb-1">匯率參考 (1:{{ $trip->exchange_rate }})</span>
+                    
+                    <div class="flex flex-col text-right px-2">
+                        <span class="text-[8px] font-black text-muji-ash uppercase tracking-[0.2em] mb-2 opacity-50">Exchange Rate System</span>
                         <div class="flex items-center gap-2 justify-end">
-                            <span class="text-xs font-black text-muji-oak px-2 py-0.5 bg-muji-wheat/30 rounded border border-muji-edge">1 {{ $trip->base_currency }} ≈ {{ $trip->exchange_rate }} {{ $trip->target_currency }}</span>
+                            <div class="bg-muji-ink text-white px-3 py-1 rounded-full text-[9px] font-black scale-90 origin-right">
+                                1 {{ $trip->base_currency }}
+                            </div>
+                            <svg class="w-3 h-3 text-muji-ash" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                            <div class="bg-white border border-muji-edge px-3 py-1 rounded-full text-[9px] font-black text-muji-ink shadow-sm scale-90 origin-right">
+                                {{ $trip->exchange_rate }} {{ $trip->target_currency }}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -80,105 +100,116 @@
 
 
     @if(count($externalCosts) > 0)
-    <!-- External Costs -->
-    <div class="muji-card p-8 mb-8 shadow-muji" style="border-radius: 1.5rem;">
-        <h2 class="text-xl font-black text-muji-ink mb-6 flex items-center gap-3">
-            <svg class="w-6 h-6 text-muji-oak" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            機票與住宿 (外部預訂)
-        </h2>
-        <div class="space-y-4 mb-6">
+    <!-- External Costs Section -->
+    <div class="mb-10 mt-16">
+        <div class="flex items-center gap-4 mb-8 pl-4">
+            <div class="h-px bg-muji-edge flex-1"></div>
+            <h2 class="text-xs font-black text-muji-ash uppercase tracking-[0.5em] whitespace-nowrap">大型外部支出紀錄</h2>
+            <div class="h-px bg-muji-edge flex-1"></div>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($externalCosts as $cost)
-                <div class="flex justify-between items-center bg-muji-paper/60 p-4 rounded-xl border border-muji-edge shadow-muji-sm">
-                    <span class="font-black text-muji-ink">{{ $cost['name'] }}</span>
-                    <span class="font-mono text-muji-oak font-black text-lg">{{ $cost['raw'] }}</span>
+                <div class="muji-card p-6 bg-muji-paper/50 rounded-[2rem] border border-muji-edge/30 shadow-muji-sm group hover:scale-[1.02] transition-all">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-2.5 bg-muji-base rounded-xl text-muji-oak shadow-muji-sm group-hover:bg-muji-oak group-hover:text-white transition-colors">
+                            @if(\Illuminate\Support\Str::contains($cost['name'], '機票'))
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+                            @else
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                            @endif
+                        </div>
+                    </div>
+                    <p class="text-xs font-black text-muji-ash uppercase tracking-widest mb-1">{{ \Illuminate\Support\Str::contains($cost['name'], '機票') ? 'FLIGHT' : 'STAY' }}</p>
+                    <h3 class="text-sm font-black text-muji-ink mb-4">{{ $cost['name'] }}</h3>
+                    <div class="pt-4 border-t border-muji-edge/30 text-right">
+                        <span class="font-mono text-lg font-black text-muji-oak">{{ $cost['raw'] }}</span>
+                    </div>
                 </div>
             @endforeach
-        </div>
-        <div class="border-t border-muji-edge pt-4 flex flex-wrap gap-4 mt-2">
-            <span class="text-xs font-black text-muji-ash uppercase tracking-widest">各幣別加總 Total by Currency：</span>
-            <div class="flex flex-wrap gap-2">
-                @foreach($externalTotals as $currency => $amount)
-                    <span class="text-muji-ink font-black font-mono bg-muji-wheat px-4 py-1.5 rounded-full border border-muji-edge shadow-muji-sm text-sm">
-                        {{ $currency }} {{ number_format($amount) }}
-                    </span>
-                @endforeach
-            </div>
         </div>
     </div>
     @endif
 
-    <!-- Quick Add Form (Inline alternative or just rely on FAB) -->
-    <!-- Let's just list recent expenses -->
-    <div class="bg-muji-paper/40 backdrop-blur-md rounded-2xl shadow-sm border border-muji-edge/20 overflow-hidden">
-        <div class="p-6 border-b border-muji-edge">
-            <h2 class="text-lg font-bold text-muji-ink">帳單紀錄明細</h2>
+    <!-- Transaction List Section -->
+    <div class="mt-20">
+        <div class="flex justify-between items-end mb-8 px-6">
+            <div>
+                <h2 class="text-2xl font-black text-muji-ink tracking-tight">消費明細</h2>
+                <p class="text-[10px] text-muji-ash font-black uppercase tracking-[0.2em] mt-1">Detailed Transaction History</p>
+            </div>
+            <div class="hidden sm:block">
+                <span class="text-[11px] font-black text-muji-ash/30 uppercase tracking-[0.3em]">Transactions: {{ count($expenses) }}</span>
+            </div>
         </div>
 
-                        <div class="grid md:grid-cols-2 gap-4 p-4 mt-2">
-                            @forelse($expenses as $expense)
-                                <div class="muji-card p-5 rounded-2xl border border-muji-edge shadow-muji-sm bg-muji-paper/60 hover:shadow-muji transition-all relative group">
-                                    <div class="flex justify-between items-start mb-4">
-                                        <div class="flex items-center gap-3">
-                                            <span class="w-10 h-10 bg-muji-base rounded-xl flex items-center justify-center text-xl shadow-muji-sm">
-                                                @if($expense->category == 'Food') 🍔
-                                                @elseif($expense->category == 'Transport') 🚇
-                                                @elseif($expense->category == 'Shopping') 🛍️
-                                                @elseif($expense->category == 'Accommodation') 🏨
-                                                @else 💸
-                                                @endif
-                                            </span>
-                                            <div>
-                                                <p class="font-black text-muji-ink">{{ $expense->description }}</p>
-                                                <p class="text-[10px] font-black text-muji-ash uppercase tracking-widest mt-1">{{ $expense->date->format('Y/m/d') }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="text-right">
-                                            <span class="font-mono font-black text-lg {{ $expense->is_base_currency ? 'text-muji-oak' : 'text-muji-ink' }}">
-                                                {{ $expense->is_base_currency ? $trip->base_currency : $trip->target_currency }} {{ number_format($expense->amount) }}
-                                            </span>
-                                            @if(!$expense->is_base_currency)
-                                                <p class="text-[10px] text-muji-ash font-medium italic">≈ {{ $trip->base_currency }} {{ number_format($expense->amount / max($trip->exchange_rate, 0.0001)) }}</p>
-                                            @endif
-                                        </div>
-                                    </div>
-                                    <div class="flex justify-between items-center pt-4 border-t border-muji-edge">
-                                        <span class="text-[10px] font-black px-2.5 py-1 rounded-lg bg-muji-base/50 text-muji-oak border border-muji-edge uppercase tracking-widest">
-                                            @if($expense->category == 'Food') 飲食
-                                            @elseif($expense->category == 'Transport') 交通
-                                            @elseif($expense->category == 'Shopping') 購物
-                                            @elseif($expense->category == 'Accommodation') 住宿
-                                            @else 其他
-                                            @endif
-                                        </span>
-
-                        @if(!$isShared)
-                            <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                @auth
-                                    @php $exTotalDelFormId = 'del-ex-total-' . $expense->id; @endphp
-                                    <button onclick='openExpenseModal(@json($expense))' class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="編輯">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                        </svg>
-                                    </button>
-                                    <form id="{{ $exTotalDelFormId }}" action="{{ route('expenses.destroy', ['user' => $trip->user, 'expense' => $expense->id]) }}" method="POST" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="button" onclick="confirmDelete('刪除消費紀錄？', '確定要刪除「{{ $expense->description }}」這筆花費嗎？', '{{ $exTotalDelFormId }}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="刪除">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                            </svg>
-                                        </button>
-                                    </form>
-                                @endauth
+        <div class="grid md:grid-cols-2 gap-6">
+            @forelse($expenses as $expense)
+                <div class="muji-card p-6 bg-white/60 backdrop-blur rounded-[2.5rem] border border-muji-edge/30 shadow-muji-sm hover:shadow-muji transition-all relative group">
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-center gap-5">
+                            <div class="w-12 h-12 bg-muji-base rounded-2xl flex items-center justify-center text-2xl shadow-muji-sm group-hover:scale-110 transition-transform">
+                                @if($expense->category == 'Food') 🍔
+                                @elseif($expense->category == 'Transport') 🚇
+                                @elseif($expense->category == 'Shopping') 🛍️
+                                @elseif($expense->category == 'Accommodation') 🏨
+                                @elseif($expense->category == 'Flight') ✈️
+                                @elseif($expense->category == 'Entertainment') 🎡
+                                @else 💸
+                                @endif
                             </div>
-                        @endif
+                            <div>
+                                <h4 class="text-base font-black text-muji-ink leading-tight">{{ $expense->description }}</h4>
+                                <div class="flex items-center gap-2 mt-1.5">
+                                    <span class="text-[9px] font-black text-muji-ash uppercase tracking-widest">{{ $expense->date->format('M d, Y') }}</span>
+                                    <span class="w-1 h-1 bg-muji-edge rounded-full"></span>
+                                    <span class="text-[9px] font-black text-muji-oak uppercase tracking-widest">
+                                        @switch($expense->category)
+                                            @case('Food') 飲食 @break
+                                            @case('Transport') 交通 @break
+                                            @case('Shopping') 購物 @break
+                                            @case('Accommodation') 住宿 @break
+                                            @case('Flight') 機票 @break
+                                            @case('Entertainment') 娛樂 @break
+                                            @default 其他
+                                        @endswitch
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-mono font-black text-xl {{ $expense->is_base_currency ? 'text-muji-oak' : 'text-muji-ink' }}">
+                                <span class="text-[10px] font-black uppercase mr-1">{{ $expense->is_base_currency ? $trip->base_currency : $trip->target_currency }}</span>{{ number_format($expense->amount) }}
+                            </p>
+                            @if(!$expense->is_base_currency)
+                                <p class="text-[10px] text-muji-ash font-black opacity-40 mt-1">≈ {{ $trip->base_currency }} {{ number_format($expense->amount / max($trip->exchange_rate, 0.0001)) }}</p>
+                            @endif
+                        </div>
                     </div>
+
+                    @if(!$isShared)
+                        <div class="absolute top-4 right-4 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                            @auth
+                                @php $exTotalDelFormId = 'del-ex-total-' . $expense->id; @endphp
+                                <button onclick='openExpenseModal(@json($expense))' class="p-2 text-muji-ash hover:text-muji-oak hover:bg-muji-base rounded-full transition-all" title="編輯">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                                </button>
+                                <form id="{{ $exTotalDelFormId }}" action="{{ route('expenses.destroy', ['user' => $trip->user, 'expense' => $expense->id]) }}" method="POST" class="inline">
+                                    @csrf @method('DELETE')
+                                    <button type="button" onclick="confirmDelete('刪除紀錄', '確定要刪除這筆開銷嗎？', '{{ $exTotalDelFormId }}')" class="p-2 text-muji-ash hover:text-red-500 hover:bg-red-50 rounded-full transition-all" title="刪除">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    </button>
+                                </form>
+                            @endauth
+                        </div>
+                    @endif
                 </div>
             @empty
-                <div class="col-span-full p-8 text-center text-gray-400">
-                    目前沒有紀錄。
+                <div class="col-span-full muji-card p-20 text-center bg-muji-base/20 border-2 border-dashed border-muji-edge rounded-[3rem]">
+                    <div class="w-16 h-16 bg-muji-base rounded-full flex items-center justify-center mx-auto mb-6 text-muji-edge">
+                        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <p class="text-muji-ash font-black uppercase tracking-widest text-xs">目前尚無任何花費紀錄</p>
                 </div>
             @endforelse
         </div>
@@ -186,74 +217,70 @@
 
     @push('modals')
     <script>
+        let myChart = null;
+
+        function highlightChartSegment(index) {
+            if (!myChart) return;
+            myChart.setActiveElements([{ datasetIndex: 0, index: index }]);
+            myChart.update();
+        }
+
+        function resetChartHighlight() {
+            if (!myChart) return;
+            myChart.setActiveElements([]);
+            myChart.update();
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const ctx = document.getElementById('expenseChart');
             if(!ctx) return;
             
             const categoryData = @json($byCategory);
             const labels = Object.keys(categoryData).map(cat => {
-                if(cat == 'Food') return '飲食 🍔';
-                if(cat == 'Transport') return '交通 🚇';
-                if(cat == 'Shopping') return '購物 🛍️';
-                if(cat == 'Accommodation') return '住宿 🏨';
-                if(cat == 'Flight') return '機票 ✈️';
-                if(cat == 'Entertainment') return '娛樂 🎡';
-                return '其他 💡';
+                if(cat == 'Food') return '飲食';
+                if(cat == 'Transport') return '交通';
+                if(cat == 'Shopping') return '購物';
+                if(cat == 'Accommodation') return '住宿';
+                if(cat == 'Flight') return '機票';
+                if(cat == 'Entertainment') return '娛樂';
+                return '其他';
             });
             const values = Object.values(categoryData);
+            
+            const chartColors = [
+                '#9c8c7c', '#8a8a8a', '#a5ad94', '#b59b9b', '#dcd3c1', '#4b453d', '#757575'
+            ];
 
-            new Chart(ctx.getContext('2d'), {
+            myChart = new Chart(ctx.getContext('2d'), {
                 type: 'doughnut',
                 data: {
                     labels: labels,
                     datasets: [{
                         data: values,
-                        backgroundColor: [
-                            '#9c8c7c', // Muji Oak
-                            '#dcd3c1', // Muji Wheat
-                            '#c0b4a4', // Muji Earth
-                            '#757575', // Muji Ash
-                            '#333333', // Muji Ink
-                            '#e8e4db'  // Muji Edge
-                        ],
+                        backgroundColor: chartColors,
                         borderWidth: 0,
-                        hoverOffset: 12,
-                        borderRadius: 10,
-                        spacing: 4,
-                        cutout: '82%'
+                        hoverOffset: 20,
+                        borderRadius: 15,
+                        spacing: 8,
+                        cutout: '80%'
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    animation: {
-                        animateRotate: true,
-                        animateScale: true,
-                        duration: 1500,
-                        easing: 'easeOutQuart'
-                    },
-                    layout: {
-                        padding: 15
-                    },
+                    layout: { padding: 25 },
                     plugins: {
-                        legend: {
-                            display: false
-                        },
+                        legend: { display: false },
                         tooltip: {
-                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                            titleColor: '#333333',
-                            titleFont: { size: 14, weight: 'bold' },
-                            bodyColor: '#757575',
+                            backgroundColor: 'white',
+                            titleColor: '#333',
+                            bodyColor: '#666',
                             borderColor: '#e8e4db',
                             borderWidth: 1,
-                            padding: 12,
-                            cornerRadius: 16,
-                            displayColors: true,
-                            usePointStyle: true,
+                            padding: 10,
                             callbacks: {
                                 label: function(context) {
-                                    const val = context.raw;
-                                    return ' ' + context.label.split(' ')[0] + ': {{ $trip->base_currency }} ' + val.toLocaleString();
+                                    return ` ${context.label}: {{ $trip->base_currency }} ${context.raw.toLocaleString()}`;
                                 }
                             }
                         }
@@ -264,28 +291,31 @@
                     afterDraw: function(chart) {
                         const { ctx, chartArea: { top, bottom, left, right, width, height } } = chart;
                         ctx.save();
-                        
                         const centerX = left + width / 2;
                         const centerY = top + height / 2;
-
-                        // Draw Label
-                        ctx.font = 'bold 12px Inter, system-ui';
                         ctx.textAlign = 'center';
+                        
+                        // Label
+                        ctx.font = 'bold 10px Inter';
                         ctx.fillStyle = '#757575';
-                        ctx.letterSpacing = '3px';
-                        ctx.fillText('TOTAL SPENT', centerX, centerY - 25);
+                        ctx.letterSpacing = '4px';
+                        ctx.fillText('TOTAL EXPENDITURE', centerX, centerY - 30);
                         
-                        // Draw Amount
-                        ctx.font = '900 32px Inter, system-ui';
+                        // Amount
+                        const amount = '{{ number_format($totalBase) }}';
+                        let fontSize = 38;
+                        if (amount.length > 9) fontSize = 24;
+                        else if (amount.length > 7) fontSize = 30;
+                        
+                        ctx.font = `900 ${fontSize}px Inter`;
                         ctx.fillStyle = '#333333';
-                        ctx.fillText('{{ number_format($totalBase) }}', centerX, centerY + 10);
+                        ctx.letterSpacing = '-1px';
+                        ctx.fillText(amount, centerX, centerY + 10);
                         
-                        // Draw Currency
-                        ctx.font = 'bold 12px Inter, system-ui';
+                        // Currency
+                        ctx.font = 'bold 12px Inter';
                         ctx.fillStyle = '#9c8c7c';
-                        ctx.letterSpacing = '1px';
-                        ctx.fillText('{{ $trip->base_currency }}', centerX, centerY + 35);
-                        
+                        ctx.fillText('{{ $trip->base_currency }} ESTIMATED', centerX, centerY + 35);
                         ctx.restore();
                     }
                 }]
