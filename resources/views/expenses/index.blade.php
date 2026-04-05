@@ -73,7 +73,7 @@
                 </div>
 
                 <div class="mt-10 pt-6 border-t border-muji-edge/20 flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <div class="bg-white/90 backdrop-blur-xl px-6 py-3.5 rounded-[2rem] border border-muji-edge shadow-muji-sm flex flex-col min-w-[200px]">
+                    <div class="bg-muji-paper/90 backdrop-blur-xl px-6 py-3.5 rounded-[2rem] border border-muji-edge shadow-muji-sm flex flex-col min-w-[200px]">
                         <span class="text-[9px] font-black text-muji-ash uppercase tracking-widest block mb-0.5">ESTIMATED TOTAL {{ $trip->target_currency }}</span>
                         <div class="flex items-baseline gap-2">
                             <span class="text-xl font-black text-muji-ink font-mono tracking-tighter">{{ number_format($totalTarget) }}</span>
@@ -84,11 +84,11 @@
                     <div class="flex flex-col text-right px-2">
                         <span class="text-[8px] font-black text-muji-ash uppercase tracking-[0.2em] mb-2 opacity-50">Exchange Rate System</span>
                         <div class="flex items-center gap-2 justify-end">
-                            <div class="bg-muji-ink text-white px-3 py-1 rounded-full text-[9px] font-black scale-90 origin-right">
+                            <div class="bg-muji-ink text-white dark:text-muji-base px-3 py-1 rounded-full text-[9px] font-black scale-90 origin-right transition-colors">
                                 1 {{ $trip->base_currency }}
                             </div>
                             <svg class="w-3 h-3 text-muji-ash" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                            <div class="bg-white border border-muji-edge px-3 py-1 rounded-full text-[9px] font-black text-muji-ink shadow-sm scale-90 origin-right">
+                            <div class="bg-muji-paper border border-muji-edge px-3 py-1 rounded-full text-[9px] font-black text-muji-ink shadow-sm scale-90 origin-right">
                                 {{ $trip->exchange_rate }} {{ $trip->target_currency }}
                             </div>
                         </div>
@@ -145,7 +145,7 @@
 
         <div class="grid md:grid-cols-2 gap-6">
             @forelse($expenses as $expense)
-                <div class="muji-card p-6 bg-white/60 backdrop-blur rounded-[2.5rem] border border-muji-edge/30 shadow-muji-sm hover:shadow-muji transition-all relative group">
+                <div class="muji-card p-6 bg-muji-paper/60 backdrop-blur-xl rounded-[2.5rem] border border-muji-edge/30 shadow-muji-sm hover:shadow-muji transition-all relative group">
                     <div class="flex justify-between items-start">
                         <div class="flex items-center gap-5">
                             <div class="w-12 h-12 bg-muji-base rounded-2xl flex items-center justify-center text-2xl shadow-muji-sm group-hover:scale-110 transition-transform">
@@ -272,7 +272,7 @@
                     plugins: {
                         legend: { display: false },
                         tooltip: {
-                            backgroundColor: 'white',
+                            backgroundColor: document.documentElement.classList.contains('dark') ? '#2b2a27' : 'white',
                             titleColor: '#333',
                             bodyColor: '#666',
                             borderColor: '#e8e4db',
@@ -293,13 +293,14 @@
                         ctx.save();
                         const centerX = left + width / 2;
                         const centerY = top + height / 2;
+                        const isDark = document.documentElement.classList.contains('dark');
                         ctx.textAlign = 'center';
                         
                         // Label
                         ctx.font = 'bold 10px Inter';
-                        ctx.fillStyle = '#757575';
+                        ctx.fillStyle = isDark ? '#a1a1aa' : '#757575';
                         ctx.letterSpacing = '4px';
-                        ctx.fillText('TOTAL EXPENDITURE', centerX, centerY - 30);
+                        ctx.fillText('TOTAL', centerX, centerY - 30);
                         
                         // Amount
                         const amount = '{{ number_format($totalBase) }}';
@@ -308,14 +309,14 @@
                         else if (amount.length > 7) fontSize = 30;
                         
                         ctx.font = `900 ${fontSize}px Inter`;
-                        ctx.fillStyle = '#333333';
+                        ctx.fillStyle = isDark ? '#f8f5f0' : '#333333';
                         ctx.letterSpacing = '-1px';
                         ctx.fillText(amount, centerX, centerY + 10);
                         
                         // Currency
                         ctx.font = 'bold 12px Inter';
                         ctx.fillStyle = '#9c8c7c';
-                        ctx.fillText('{{ $trip->base_currency }} ESTIMATED', centerX, centerY + 35);
+                        ctx.fillText('{{ $trip->base_currency }}', centerX, centerY + 35);
                         ctx.restore();
                     }
                 }]
