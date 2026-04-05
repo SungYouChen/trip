@@ -61,7 +61,8 @@
             --muji-edge: #3f3f46;
             --muji-glass: rgba(0, 0, 0, 0.4);
             --muji-glass-border: rgba(255, 255, 255, 0.1);
-            --muji-wheat: #4b453d; /* Warmer dark wheat */
+            --muji-wheat: #4b453d;
+            /* Warmer dark wheat */
             --text-main: #dcd3c1;
         }
     </style>
@@ -157,6 +158,23 @@
             }
         }
 
+        function toggleUserDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('userDropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('hidden');
+            }
+        }
+
+        // Global click handler to close dropdowns
+        document.addEventListener('click', function (event) {
+            const userDropdown = document.getElementById('userDropdown');
+            const container = document.getElementById('userDropdownContainer');
+            if (userDropdown && container && !container.contains(event.target)) {
+                userDropdown.classList.add('hidden');
+            }
+        });
+
         function safeCloseModal(id) {
             try {
                 const m = document.getElementById(id);
@@ -238,6 +256,20 @@
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--muji-glass-border);
+        }
+
+        /* User Dropdown Animation */
+        #userDropdown {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        #userDropdown.hidden {
+            display: block !important;
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none;
         }
 
         .muji-button-primary {
@@ -640,71 +672,97 @@
     <!-- Profile Settings Modal (Global) -->
     @include('profile_modal_partial')
 
-    <header class="bg-muji-paper/90 border-b border-muji-edge sticky top-0 z-50 backdrop-blur-md w-full overflow-hidden">
-        <div class="max-w-4xl mx-auto px-2 sm:px-6 lg:px-8 h-16 flex items-center justify-between overflow-hidden">
-            <a href="{{ auth()->check() ? route('home', ['user' => auth()->user()]) : '/' }}" class="flex items-center gap-2 group">
+    <header class="bg-muji-paper/90 border-b border-muji-edge sticky top-0 z-50 backdrop-blur-md w-full">
+        <div class="max-w-4xl mx-auto px-2 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <a href="{{ auth()->check() ? route('home', ['user' => auth()->user()]) : '/' }}" class="flex items-center gap-2 flex-shrink-0 group">
                 <div class="w-10 h-10 rounded-lg bg-muji-base flex items-center justify-center shadow-muji-sm group-hover:scale-105 transition-transform overflow-hidden relative">
                     <img src="/icon_logo.png?v={{ time() }}" alt="Logo" class="w-full h-full object-contain p-1 z-10 relative">
                 </div>
-                <h1 class="text-sm sm:text-xl font-bold text-muji-ink truncate max-w-[120px] xs:max-w-[200px] sm:max-w-none">
-                    {{ isset($trip) ? $trip->name : 'Trip Planner' }}
+                <h1 class="text-sm sm:text-lg font-black text-muji-ink truncate max-w-[150px] xs:max-w-[200px] md:max-w-[400px] tracking-tight">
+                    @yield('header_title', config('app.name'))
                 </h1>
             </a>
 
             <nav class="flex items-center justify-end gap-1 sm:gap-4 text-muji-ash font-black">
-                <!-- Theme Toggle -->
-                <button onclick="toggleTheme()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-muji-base hover:bg-muji-edge transition-all group/theme" title="切換深淺模式">
-                    <svg class="w-5 h-5 text-muji-oak block dark:hidden group-hover/theme:rotate-12 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                    </svg>
-                    <svg class="w-5 h-5 text-muji-wheat hidden dark:block group-hover/theme:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 9H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                </button>
                 <!-- Desktop View (Visible on sm or larger) -->
-                <div class="hidden sm:flex items-center gap-4">
+                <div class="hidden sm:flex items-center gap-2">
                     @if(isset($trip))
                         @if($isShared)
-                            <a href="{{ route('trip.index_shared', ['token' => $trip->share_token]) }}" class="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-muji-base transition-all {{ request()->routeIs('trip.index_shared') ? 'text-muji-ink bg-muji-base' : '' }}">
-                                <span class="text-xs">總覽</span>
+                            <a href="{{ route('trip.index_shared', ['token' => $trip->share_token]) }}" class="flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-muji-base transition-all {{ request()->routeIs('trip.index_shared') ? 'text-muji-ink bg-muji-base' : '' }}">
+                                <span class="text-xs font-black">總覽</span>
                             </a>
-                            <a href="{{ route('expenses.index_shared', ['token' => $trip->share_token]) }}" class="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-muji-base transition-all {{ request()->routeIs('expenses.index_shared') ? 'text-muji-ink bg-muji-base' : '' }}">
-                                <span class="text-xs">花費統計</span>
+                            <a href="{{ route('expenses.index_shared', ['token' => $trip->share_token]) }}" class="flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-muji-base transition-all {{ request()->routeIs('expenses.index_shared') ? 'text-muji-ink bg-muji-base' : '' }}">
+                                <span class="text-xs font-black">花費統計</span>
                             </a>
                         @else
-                            <a href="{{ route('trip.show', ['user' => $trip->user, 'trip' => $trip]) }}" class="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-muji-base transition-all {{ request()->routeIs('trip.show') ? 'text-muji-ink bg-muji-base' : '' }}">
-                                <span class="text-xs">旅程計劃</span>
+                            <a href="{{ route('trip.show', ['user' => $trip->user, 'trip' => $trip]) }}" class="flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-muji-base transition-all {{ request()->routeIs('trip.show') ? 'text-muji-ink bg-muji-base' : '' }}">
+                                <span class="text-xs font-black">旅程計劃</span>
                             </a>
-                            <a href="{{ route('expenses.index', ['user' => $trip->user, 'trip' => $trip]) }}" class="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-muji-base transition-all {{ request()->routeIs('expenses.index') ? 'text-muji-ink bg-muji-base' : '' }}">
-                                <span class="text-xs">花費統計</span>
+                            <a href="{{ route('expenses.index', ['user' => $trip->user, 'trip' => $trip]) }}" class="flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-muji-base transition-all {{ request()->routeIs('expenses.index') ? 'text-muji-ink bg-muji-base' : '' }}">
+                                <span class="text-xs font-black">花費統計</span>
                             </a>
                         @endif
                     @endif
 
                     @if(!$isShared)
+                        <div class="h-6 w-[1px] bg-muji-edge/20 mx-2"></div>
                         @auth
-                            <a href="{{ route('feedback.index', ['user' => auth()->user()]) }}" class="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-muji-base transition-all {{ request()->routeIs('feedback.index') ? 'text-muji-ink bg-muji-base' : '' }}">
-                                <span class="text-xs">產品意見回饋</span>
+                            <a href="{{ route('home', ['user' => auth()->user()]) }}" class="tooltip tooltip-bottom flex items-center justify-center w-10 h-10 rounded-xl hover:bg-muji-base transition-all {{ request()->routeIs('home') ? 'text-muji-ink bg-muji-base shadow-muji-sm' : 'text-muji-ash' }}" data-tip="旅程足跡">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
                             </a>
-                            <a href="{{ route('home', ['user' => auth()->user()]) }}" class="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-muji-base transition-all {{ request()->routeIs('home') ? 'text-muji-ink bg-muji-base' : '' }}">
-                                <span class="text-xs">旅程足跡</span>
-                            </a>
-                            <button type="button" onclick="safeOpenModal('globalProfileConfigModal')" class="flex items-center gap-2 group border-0 bg-transparent cursor-pointer">
-                                <div class="w-8 h-8 rounded-full overflow-hidden border border-muji-edge shadow-muji-sm group-hover:scale-110 transition-transform">
+
+                            <!-- User Dropdown Menu -->
+                            <div class="relative ml-2" id="userDropdownContainer">
+                                <button onclick="toggleUserDropdown(event)" class="tooltip tooltip-bottom w-10 h-10 flex items-center justify-center rounded-full overflow-hidden border border-muji-edge shadow-muji-sm hover:scale-105 transition-all bg-muji-base hover:border-muji-oak/30 p-0 cursor-pointer" data-tip="帳戶設定">
                                     <img src="{{ auth()->user()->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&background=9c8c7c&color=fff' }}" class="w-full h-full object-cover">
-                                </div>
-                            </button>
-                            <form action="{{ route('logout') }}" method="POST" class="inline">
-                                @csrf
-                                <button type="submit" class="p-2 text-muji-ash hover:text-red-500 transition-colors border-0 bg-transparent cursor-pointer">
-                                    <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
-                                    </svg>
                                 </button>
-                            </form>
+
+                                <div id="userDropdown" class="absolute top-14 right-0 w-48 bg-muji-paper rounded-[24px] shadow-2xl border border-muji-edge/50 py-2 hidden origin-top-right transition-all z-[100] overflow-hidden">
+                                    <div class="px-4 py-2 border-b border-muji-edge/30 mb-1">
+                                        <p class="text-[10px] font-black text-muji-ash uppercase tracking-widest">目前帳戶</p>
+                                        <p class="text-xs font-bold text-muji-ink truncate">{{ auth()->user()->name }}</p>
+                                    </div>
+                                    <button onclick="toggleUserDropdown(event); safeOpenModal('globalProfileConfigModal')" class="w-full flex items-center gap-3 px-4 py-2.5 text-left text-xs font-black text-muji-ash hover:text-muji-ink hover:bg-muji-base transition-all border-0 bg-transparent cursor-pointer">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                        </svg>
+                                        偏好設置
+                                    </button>
+                                    <button onclick="toggleTheme()" class="w-full flex items-center gap-3 px-4 py-2.5 text-left text-xs font-black text-muji-ash hover:text-muji-ink hover:bg-muji-base transition-all border-0 bg-transparent cursor-pointer group/mode">
+                                        <div class="relative w-4 h-4">
+                                            <svg class="absolute inset-0 w-4 h-4 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                                            </svg>
+                                            <svg class="absolute inset-0 w-4 h-4 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                                            </svg>
+                                        </div>
+                                        <span class="block dark:hidden">深色模式</span>
+                                        <span class="hidden dark:block">亮色模式</span>
+                                    </button>
+                                    <a href="{{ route('feedback.index', ['user' => auth()->user()]) }}" class="flex items-center gap-3 px-4 py-2.5 text-xs font-black text-muji-ash hover:text-muji-ink hover:bg-muji-base transition-all">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                        </svg>
+                                        產品意見回饋
+                                    </a>
+                                    <div class="my-1 border-t border-muji-edge/30"></div>
+                                    <form action="{{ route('logout') }}" method="POST" class="w-full">
+                                        @csrf
+                                        <button type="submit" class="w-full flex items-center gap-3 px-4 py-2 text-left text-xs font-black text-muji-ash hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-all border-0 bg-transparent cursor-pointer">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+                                            </svg>
+                                            登出
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
                         @else
-                            <button type="button" onclick="safeOpenModal('loginModal')" class="px-4 py-2 text-xs font-black text-muji-ash hover:text-muji-ink transition-all">登入</button>
-                            <button type="button" onclick="safeOpenModal('registerModal')" class="px-4 py-2 text-xs font-black bg-muji-oak text-white rounded-xl shadow-muji active:scale-95 transition-all">註冊帳號</button>
+                            <button type="button" onclick="safeOpenModal('loginModal')" class="px-4 py-2 text-[11px] font-black text-muji-ash hover:text-muji-ink transition-all uppercase tracking-widest leading-none">登入</button>
+                            <button type="button" onclick="safeOpenModal('registerModal')" class="px-5 py-2.5 text-[11px] font-black bg-muji-oak text-white rounded-full shadow-muji active:scale-95 transition-all uppercase tracking-widest leading-none">註冊帳號</button>
                         @endauth
                     @endif
                 </div>
@@ -798,7 +856,19 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
-                        <span class="text-sm font-bold">帳號與設定</span>
+                        <span class="text-sm font-bold">偏好設置</span>
+                    </button>
+                    <button onclick="toggleTheme()" class="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-muji-base text-muji-ink transition-all text-left border-0 bg-transparent cursor-pointer">
+                        <div class="relative w-6 h-6">
+                            <svg class="absolute inset-0 w-6 h-6 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                            </svg>
+                            <svg class="absolute inset-0 w-6 h-6 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                        </div>
+                        <span class="text-sm font-bold block dark:hidden">深色模式</span>
+                        <span class="text-sm font-bold hidden dark:block">亮色模式</span>
                     </button>
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
                         @csrf
@@ -806,7 +876,7 @@
                             <svg class="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
                             </svg>
-                            <span class="text-sm font-black">登出此帳號</span>
+                            <span class="text-sm font-black">登出</span>
                         </button>
                     </form>
                 @else
@@ -1098,7 +1168,7 @@
         // Expense Modal Functions
         function openExpenseModal(data = null) {
             @auth
-                                                                                const modal = document.getElementById('expenseModal');
+                                                                                            const modal = document.getElementById('expenseModal');
                 if (!modal) return;
 
                 const form = document.getElementById('expenseForm');
@@ -1544,32 +1614,29 @@
         @if($newInvs->count() > 0)
             <div id="collaboration-notifications" class="fixed bottom-6 right-6 z-[8500] flex flex-col gap-4 pointer-events-none">
                 @foreach($newInvs as $inv)
-                <div id="inv-{{ $inv->id }}" class="max-w-[320px] muji-glass rounded-[32px] p-6 shadow-2xl border border-muji-edge/40 pointer-events-auto transform translate-y-20 opacity-0 transition-all duration-700 notification-card">
-                    <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-full border-2 border-muji-wheat/50 overflow-hidden shadow-muji-sm">
-                            <img src="{{ $inv->user->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($inv->user->name).'&color=9c8c7c&background=f0eae0' }}" class="w-full h-full object-cover">
+                    <div id="inv-{{ $inv->id }}" class="max-w-[320px] muji-glass rounded-[32px] p-6 shadow-2xl border border-muji-edge/40 pointer-events-auto transform translate-y-20 opacity-0 transition-all duration-700 notification-card">
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-full border-2 border-muji-wheat/50 overflow-hidden shadow-muji-sm">
+                                <img src="{{ $inv->user->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode($inv->user->name) . '&color=9c8c7c&background=f0eae0' }}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-grow">
+                                <h4 class="text-xs font-black text-muji-ink">新的旅程邀請！</h4>
+                                <p class="text-[10px] text-muji-ash font-medium mt-1 leading-relaxed">
+                                    <span class="text-muji-oak font-black">{{ $inv->user->name }}</span> 邀請您參加：
+                                    <br>
+                                    <span class="bg-muji-base/50 px-2 py-0.5 rounded text-muji-ink italic">「{{ $inv->name }}」</span>
+                                </p>
+                            </div>
                         </div>
-                        <div class="flex-grow">
-                            <h4 class="text-xs font-black text-muji-ink">新的旅程邀請！</h4>
-                            <p class="text-[10px] text-muji-ash font-medium mt-1 leading-relaxed">
-                                <span class="text-muji-oak font-black">{{ $inv->user->name }}</span> 邀請您參加：
-                                <br>
-                                <span class="bg-muji-base/50 px-2 py-0.5 rounded text-muji-ink italic">「{{ $inv->name }}」</span>
-                            </p>
+                        <div class="flex gap-2 mt-5">
+                            <a href="{{ route('trip.show', ['user' => auth()->user(), 'trip' => $inv]) }}" onclick="markInvitationNotified('{{ $inv->id }}', this)" class="flex-1 h-9 flex items-center justify-center bg-muji-oak text-white text-[10px] font-black rounded-full shadow-muji hover:opacity-90 active:scale-95 transition-all">
+                                查看旅程
+                            </a>
+                            <button onclick="markInvitationNotified('{{ $inv->id }}', this)" class="w-20 h-9 flex items-center justify-center bg-muji-paper text-muji-ash border border-muji-edge text-[10px] font-black rounded-full hover:bg-muji-base transition-all active:scale-95">
+                                我知道了
+                            </button>
                         </div>
                     </div>
-                    <div class="flex gap-2 mt-5">
-                        <a href="{{ route('trip.show', ['user' => auth()->user(), 'trip' => $inv]) }}" 
-                           onclick="markInvitationNotified('{{ $inv->id }}', this)"
-                           class="flex-1 h-9 flex items-center justify-center bg-muji-oak text-white text-[10px] font-black rounded-full shadow-muji hover:opacity-90 active:scale-95 transition-all">
-                            查看旅程
-                        </a>
-                        <button onclick="markInvitationNotified('{{ $inv->id }}', this)" 
-                                class="w-20 h-9 flex items-center justify-center bg-muji-paper text-muji-ash border border-muji-edge text-[10px] font-black rounded-full hover:bg-muji-base transition-all active:scale-95">
-                            我知道了
-                        </button>
-                    </div>
-                </div>
                 @endforeach
             </div>
 
@@ -1595,7 +1662,7 @@
                                 'Accept': 'application/json'
                             }
                         });
-                        
+
                         if (response.ok) {
                             card.classList.add('translate-x-20', 'opacity-0');
                             setTimeout(() => card.remove(), 700);

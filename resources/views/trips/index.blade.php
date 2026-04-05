@@ -2,6 +2,7 @@
 @extends('layout')
 
 @section('title', '旅程足跡')
+@section('header_title', '旅程足跡')
 
 @section('content')
     <div class="max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8">

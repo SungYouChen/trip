@@ -77,10 +77,14 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 @endphp
 @extends('layout')
 
+@section('title', $trip->name . ' | 旅程計劃')
+@section('header_title', '旅程計劃')
+
 @section('content')
 <div class="mb-12 relative max-w-4xl mx-auto px-4 group">
     <!-- Header Content: Centered Title -->
     <div class="text-center pt-2">
+        <p class="text-[10px] font-black text-muji-ash/40 uppercase tracking-[0.2em] mb-1">旅程計劃</p>
         <h2 class="text-4xl font-black text-muji-ink sm:text-4xl leading-tight px-16">
             {{ $trip->name }}
         </h2>

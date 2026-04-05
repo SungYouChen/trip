@@ -1,6 +1,7 @@
 @php $isShared = $isShared ?? false; @endphp
 @extends('layout')
 @section('title', '花費統計')
+@section('header_title', '花費統計')
 @section('content')
     @push('modals')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
