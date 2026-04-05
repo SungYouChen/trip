@@ -503,7 +503,7 @@
                                             </div>
                                             <div>
                                                 <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">預訂價格</label>
-                                                <div class="flex relative rounded-xl border border-muji-edge overflow-hidden focus-within:ring-2 focus-within:ring-muji-oak bg-white shadow-muji-sm transition-all">
+                                                <div class="flex relative rounded-xl border border-muji-edge overflow-hidden focus-within:ring-2 focus-within:ring-muji-oak bg-muji-paper shadow-muji-sm transition-all">
                                                     <select name="hotel_currency" class="bg-muji-base border-0 border-r border-muji-edge px-3 py-3 text-muji-ink font-black text-xs focus:ring-0 cursor-pointer appearance-none">
                                                         @php
                                                             $rawPrice = $day['accommodation']['price'] ?? '';
@@ -519,11 +519,11 @@
                                             </div>
                                             <div>
                                                 <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">入住時間</label>
-                                                <input type="time" name="hotel_checkin" value="{{ $day['accommodation']['check_in'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink focus:ring-2 focus:ring-muji-oak">
+                                                <input type="time" name="hotel_checkin" value="{{ $day['accommodation']['check_in'] ?? '' }}" class="w-full px-4 py-3 muji-input">
                                             </div>
                                             <div class="sm:col-span-2">
                                                 <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">住宿備註</label>
-                                                <input type="text" name="hotel_note" value="{{ $day['accommodation']['note'] ?? '' }}" class="w-full px-4 py-3 bg-white border border-muji-edge rounded-xl shadow-muji-sm text-muji-ink focus:ring-2 focus:ring-muji-oak" placeholder="例如：連住 4 晚">
+                                                <input type="text" name="hotel_note" value="{{ $day['accommodation']['note'] ?? '' }}" class="w-full px-4 py-3 muji-input" placeholder="例如：連住 4 晚">
                                             </div>
                                         </div> {{-- End of grid from line 481 --}}
                                     </div> {{-- End of pt-6 border-t from line 474 (CRITICAL FIX) --}}

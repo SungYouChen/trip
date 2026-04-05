@@ -53,8 +53,14 @@ class Trip extends Model
 
     public function collaborators()
     {
-        return $this->belongsToMany(User::class, 'trip_user')
-                    ->withPivot('role')
+        return $this->belongsToMany(User::class, 'trip_collaborators')
+                    ->wherePivot('status', 'accepted')
+                    ->withPivot('role', 'status', 'token', 'is_notified')
                     ->withTimestamps();
+    }
+
+    public function invitations()
+    {
+        return $this->hasMany(TripCollaborator::class);
     }
 }

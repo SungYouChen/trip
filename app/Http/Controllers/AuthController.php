@@ -24,12 +24,19 @@ class AuthController extends Controller
             $request->session()->regenerate();
             
             if ($request->ajax()) {
+                $redirect = route('home', ['user' => auth()->user()]);
+                if (session()->has('invitation_token')) {
+                    $redirect = route('trip.accept_invitation', ['token' => session('invitation_token')]);
+                }
                 return response()->json([
                     'message' => '登入成功！',
-                    'redirect' => route('home', ['user' => auth()->user()])
+                    'redirect' => $redirect
                 ]);
             }
 
+            if (session()->has('invitation_token')) {
+                return redirect()->route('trip.accept_invitation', ['token' => session('invitation_token')]);
+            }
             return redirect()->route('home', ['user' => auth()->user()])->with('success', '登入成功');
         }
 
@@ -70,18 +77,31 @@ class AuthController extends Controller
         auth()->login($user);
 
         if ($request->ajax()) {
+            $redirect = route('verification.notice');
+            if (session()->has('invitation_token')) {
+                $redirect = route('trip.accept_invitation', ['token' => session('invitation_token')]);
+            }
             return response()->json([
-                'message' => '註冊成功！請檢查您的信箱進行驗證。',
-                'redirect' => route('verification.notice')
+                'message' => '註冊成功！',
+                'redirect' => $redirect
             ]);
         }
 
+        if (session()->has('invitation_token')) {
+            return redirect()->route('trip.accept_invitation', ['token' => session('invitation_token')]);
+        }
         return redirect()->route('verification.notice')->with('success', '註冊成功！請檢查您的信箱進行驗證。');
     }
 
     public function verifyEmail(EmailVerificationRequest $request)
     {
         $request->fulfill();
+
+        if (session()->has('invitation_token')) {
+            return redirect()->route('trip.accept_invitation', ['token' => session('invitation_token')])
+                           ->with('success', '您的電子郵件已成功驗證，現在您可以加入旅程了！');
+        }
+
         return redirect('/')->with('success', '您的電子郵件已成功驗證！');
     }
 

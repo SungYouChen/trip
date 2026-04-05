@@ -37,7 +37,7 @@
 
         <!-- Featured Image: Lifestyle Focus -->
         <div class="bg-muji-base flex items-center justify-center p-8 md:p-12">
-            <div class="w-full aspect-[4/5] bg-white relative overflow-hidden group">
+            <div class="w-full aspect-[4/5] bg-muji-paper relative overflow-hidden group">
                 <img src="https://picsum.photos/seed/journey_hero/800/1000?grayscale" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-1000">
                 <!-- Precise corner markers -->
                 <div class="absolute top-4 left-4 w-2 h-2 border-t border-l border-muji-oak/30"></div>
@@ -54,7 +54,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 border-l border-t border-muji-edge">
             <!-- Feature 1: Scheduling -->
-            <div class="p-10 border-r border-b border-muji-edge hover:bg-white transition-colors duration-500 group">
+            <div class="p-10 border-r border-b border-muji-edge hover:bg-muji-paper transition-colors duration-500 group">
                 <span class="text-[9px] font-black tracking-[0.4em] text-muji-oak block mb-6">Schedule / 精確安排</span>
                 <h4 class="text-lg font-bold text-muji-ink mb-6 group-hover:translate-x-2 transition-transform">行程。有序井然</h4>
                 <p class="text-xs text-muji-ash leading-[2] font-medium opacity-70">
@@ -62,7 +62,7 @@
                 </p>
             </div>
             <!-- Feature 2: Expenses -->
-            <div class="p-10 border-r border-b border-muji-edge hover:bg-white transition-colors duration-500 group">
+            <div class="p-10 border-r border-b border-muji-edge hover:bg-muji-paper transition-colors duration-500 group">
                 <span class="text-[9px] font-black tracking-[0.4em] text-muji-oak block mb-6">Ledger / 記帳對帳</span>
                 <h4 class="text-lg font-bold text-muji-ink mb-6 group-hover:translate-x-2 transition-transform">消費。透明掌控</h4>
                 <p class="text-xs text-muji-ash leading-[2] font-medium opacity-70">
@@ -83,7 +83,7 @@
     <!-- Aesthetic Proof -->
     <section class="mt-40 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         <div class="order-2 md:order-1">
-            <div class="bg-white border border-muji-edge p-0 overflow-hidden shadow-none">
+            <div class="bg-muji-paper border border-muji-edge p-0 overflow-hidden shadow-none">
                 <img src="https://picsum.photos/seed/journey_detail/800/800?grayscale" class="w-full aspect-square object-cover opacity-80 grayscale hover:grayscale-0 transition-all duration-700">
             </div>
         </div>

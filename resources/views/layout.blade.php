@@ -39,21 +39,56 @@
     <!-- Vite Assets -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <style id="muji-theme-vars">
+        :root {
+            --muji-base: #f8f5f0;
+            --muji-paper: #ffffff;
+            --muji-oak: #9c8c7c;
+            --muji-wheat: #dcd3c1;
+            --muji-ink: #333333;
+            --muji-ash: #757575;
+            --muji-edge: #e8e4db;
+            --muji-glass: rgba(255, 255, 255, 0.4);
+            --muji-glass-border: rgba(255, 255, 255, 0.2);
+            --text-main: #333333;
+        }
+
+        html.dark {
+            --muji-base: #1a1a1a;
+            --muji-paper: #2b2a27;
+            --muji-ink: #f8f5f0;
+            --muji-ash: #a1a1aa;
+            --muji-edge: #3f3f46;
+            --muji-glass: rgba(0, 0, 0, 0.4);
+            --muji-glass-border: rgba(255, 255, 255, 0.1);
+            --muji-wheat: #4b453d; /* Warmer dark wheat */
+            --text-main: #dcd3c1;
+        }
+    </style>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
+        // Init Theme immediately to avoid flash
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
                         muji: {
-                            base: '#f8f5f0',    // Off-white/Cream
-                            paper: '#ffffff',   // Pure white for panels
-                            oak: '#9c8c7c',     // Warm wood/earth tone
-                            wheat: '#dcd3c1',   // Light linen
-                            ink: '#333333',     // Soft black
-                            ash: '#757575',     // Soft grey
-                            edge: '#e8e4db'      // Subtle border
+                            base: 'var(--muji-base)',
+                            paper: 'var(--muji-paper)',
+                            oak: 'var(--muji-oak)',
+                            wheat: 'var(--muji-wheat)',
+                            ink: 'var(--muji-ink)',
+                            ash: 'var(--muji-ash)',
+                            edge: 'var(--muji-edge)'
                         }
                     },
                     fontFamily: {
@@ -108,6 +143,17 @@
             } else {
                 loginContent.style.display = 'block';
                 forgotPasswordContent.style.display = 'none';
+            }
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
             }
         }
 
@@ -188,53 +234,53 @@
 
         /* MUJI Style Glass Overlay */
         .muji-glass {
-            background-color: rgba(255, 255, 255, 0.5);
+            background-color: var(--muji-glass);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(232, 228, 219, 0.4);
+            border: 1px solid var(--muji-glass-border);
         }
 
         .muji-button-primary {
-            background-color: #9c8c7c;
+            background-color: var(--muji-oak);
             color: #ffffff;
             transition: all 0.3s ease;
         }
 
         .muji-button-primary:hover {
-            background-color: #8a7b6c;
+            opacity: 0.9;
         }
 
         .muji-card {
-            background: rgba(255, 255, 255, 0.45);
+            background: var(--muji-glass);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(232, 228, 219, 0.5);
+            border: 1px solid var(--muji-glass-border);
             border-radius: 20px;
             box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
         }
 
-        /* NEW: Premium Glass Inputs */
         .muji-input {
-            background: rgba(255, 255, 255, 0.4) !important;
+            background: var(--muji-glass) !important;
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
-            border: 1px solid rgba(232, 228, 219, 0.8) !important;
+            border: 1px solid var(--muji-glass-border) !important;
             border-radius: 12px !important;
             transition: all 0.3s ease !important;
-            color: #333333 !important;
+            color: var(--muji-ink) !important;
             font-weight: 500 !important;
         }
 
         .muji-input:focus {
-            background: rgba(255, 255, 255, 0.8) !important;
-            border-color: #9c8c7c !important;
+            background: var(--muji-paper) !important;
+            border-color: var(--muji-oak) !important;
             box-shadow: 0 0 0 4px rgba(156, 140, 124, 0.15) !important;
             outline: none !important;
             transform: translateY(-1px);
         }
 
         .muji-input::placeholder {
-            color: rgba(117, 117, 117, 0.6) !important;
+            color: var(--muji-ash) !important;
+            opacity: 0.6;
             font-size: 13px;
         }
 
@@ -289,7 +335,7 @@
 <body class="text-muji-ink antialiased min-h-screen flex flex-col relative bg-transparent overflow-x-hidden">
     <!-- Muji Pull-to-Refresh Indicator (Mobile Optimized) -->
     <div id="ptr-indicator" class="fixed top-[-80px] left-0 w-full h-[80px] flex items-center justify-center z-[9999] pointer-events-none" style="transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); will-change: transform; backface-visibility: hidden;">
-        <div class="bg-white/95 backdrop-blur-md p-3 rounded-full shadow-muji border border-muji-edge flex items-center justify-center transform-gpu">
+        <div class="bg-muji-paper/95 backdrop-blur-md p-3 rounded-full shadow-muji border border-muji-edge flex items-center justify-center transform-gpu">
             <svg id="ptr-icon" class="w-6 h-6 text-muji-ash will-change-transform" style="backface-visibility: hidden;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
@@ -423,6 +469,7 @@
 
         html, body {
             background-color: transparent !important;
+            color: var(--muji-ink);
         }
 
         @media (max-width: 768px) {
@@ -438,7 +485,7 @@
     </style>
 
     <!-- Global Background Wrapper -->
-    <div id="bg-wrapper" class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none select-none" style="background-color: #f5f4f2;">
+    <div id="bg-wrapper" class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none select-none" style="background-color: var(--muji-base);">
         <div id="global-bg-element" class="absolute inset-y-0 bg-cover bg-center bg-no-repeat transition-all duration-700 ease-in-out" style="background-image: url('{{ $bgUrl }}'); 
                     opacity: var(--bg-opacity, {{ $bgOpacityValue }}); 
                     filter: blur(var(--bg-blur, {{ $bgBlurValue }}px));
@@ -605,6 +652,15 @@
             </a>
 
             <nav class="flex items-center justify-end gap-1 sm:gap-4 text-muji-ash font-black">
+                <!-- Theme Toggle -->
+                <button onclick="toggleTheme()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-muji-base hover:bg-muji-edge transition-all group/theme" title="切換深淺模式">
+                    <svg class="w-5 h-5 text-muji-oak block dark:hidden group-hover/theme:rotate-12 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                    <svg class="w-5 h-5 text-muji-wheat hidden dark:block group-hover/theme:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 9H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                </button>
                 <!-- Desktop View (Visible on sm or larger) -->
                 <div class="hidden sm:flex items-center gap-4">
                     @if(isset($trip))
@@ -676,7 +732,7 @@
     <div id="mobileMenuBackdrop" class="fixed inset-0 z-[2000] sm:hidden bg-muji-ink/30 backdrop-blur-sm" onclick="toggleMobileMenu(false)"></div>
 
     <div id="mobileMenuDrawer" class="fixed right-0 top-0 bottom-0 z-[2001] w-[85%] max-w-sm bg-muji-paper shadow-2xl flex flex-col sm:hidden rounded-l-[32px] overflow-hidden">
-        <div class="p-6 flex items-center justify-between border-b border-muji-edge bg-white/50 backdrop-blur-sm">
+        <div class="p-6 flex items-center justify-between border-b border-muji-edge bg-muji-paper/50 backdrop-blur-sm">
             <span class="text-xs font-black text-muji-ash uppercase tracking-widest">選單導覽</span>
             <button onclick="toggleMobileMenu(false)" class="p-2 text-muji-ash active:rotate-90 transition-transform">
                 <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -756,7 +812,7 @@
                 @else
                     <div class="flex flex-col gap-3 py-2">
                         <button onclick="toggleMobileMenu(false); safeOpenModal('loginModal')" class="w-full flex items-center gap-4 p-4 rounded-2xl bg-muji-base/50 text-muji-ink hover:bg-muji-base transition-all text-left border-0 cursor-pointer group">
-                            <div class="p-2 bg-white rounded-xl shadow-muji-sm text-muji-oak group-hover:scale-110 transition-transform">
+                            <div class="p-2 bg-muji-paper rounded-xl shadow-muji-sm text-muji-oak group-hover:scale-110 transition-transform">
                                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                                 </svg>
@@ -764,7 +820,7 @@
                             <span class="text-sm font-black uppercase tracking-widest">登入帳號</span>
                         </button>
                         <button onclick="toggleMobileMenu(false); safeOpenModal('registerModal')" class="w-full flex items-center gap-4 p-4 rounded-2xl bg-muji-oak text-white transition-all text-left shadow-muji active:scale-[0.98] border-0 cursor-pointer group">
-                            <div class="p-2 bg-white/20 rounded-xl text-white group-hover:scale-110 transition-transform">
+                            <div class="p-2 bg-muji-paper/20 rounded-xl text-white group-hover:scale-110 transition-transform">
                                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                                 </svg>
@@ -820,7 +876,7 @@
                     @auth
                         <button onclick="toggleSpeedDial(); if(typeof openEventModal === 'function') { openEventModal(); } else { safeOpenModal('eventDetailsModal'); }" class="flex items-center gap-2 group">
                             <span class="bg-muji-ink text-white text-[10px] font-black px-2 py-1 rounded shadow-muji-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap uppercase tracking-widest">新增行程</span>
-                            <div class="w-12 h-12 bg-white text-muji-oak rounded-full shadow-muji border border-muji-edge flex items-center justify-center hover:bg-muji-base transition-all hover:scale-105">
+                            <div class="w-12 h-12 bg-muji-paper text-muji-oak rounded-full shadow-muji border border-muji-edge flex items-center justify-center hover:bg-muji-base transition-all hover:scale-105">
                                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
@@ -830,7 +886,7 @@
                 @endif
                 <button onclick="toggleSpeedDial(); safeOpenModal('expenseModal');" class="flex items-center gap-2 group">
                     <span class="bg-muji-ink text-white text-[10px] font-black px-2 py-1 rounded shadow-muji-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap uppercase tracking-widest">記錄消費</span>
-                    <div class="w-12 h-12 bg-white text-muji-oak rounded-full shadow-muji border border-muji-edge flex items-center justify-center hover:bg-muji-base transition-all hover:scale-105">
+                    <div class="w-12 h-12 bg-muji-paper text-muji-oak rounded-full shadow-muji border border-muji-edge flex items-center justify-center hover:bg-muji-base transition-all hover:scale-105">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -894,7 +950,7 @@
                                     </div>
                                     <div>
                                         <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">支出類別</label>
-                                        <select id="expenseCategory" name="category" required class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak font-black appearance-none cursor-pointer">
+                                        <select id="expenseCategory" name="category" required class="w-full h-[46px] px-4 muji-input font-black appearance-none cursor-pointer">
                                             <option value="Food">飲食 🍔</option>
                                             <option value="Transport">交通 🚇</option>
                                             <option value="Shopping">購物 🛍️</option>
@@ -908,7 +964,7 @@
 
                                 <div>
                                     <label class="block text-sm font-bold text-muji-ash mb-2">支出日期</label>
-                                    <input type="date" id="expenseDate" name="date" required value="{{ date('Y-m-d') }}" class="block w-full h-[46px] px-4 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium py-0 leading-none">
+                                    <input type="date" id="expenseDate" name="date" required value="{{ date('Y-m-d') }}" class="w-full h-[46px] px-4 muji-input">
                                 </div>
 
                                 <div class="pt-8 mt-8 border-t border-muji-edge flex gap-4">
@@ -931,25 +987,25 @@
     <div id="metroModal" class="fixed inset-0 z-[2000] hidden overflow-y-auto" role="dialog" aria-modal="true">
         <div class="flex min-h-full items-center justify-center p-0 text-center">
             <div class="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity" onclick="safeCloseModal('metroModal')"></div>
-            <div class="relative transform overflow-hidden bg-white rounded-[40px] w-full max-w-6xl h-[90vh] shadow-2xl flex flex-col transition-all border border-muji-edge">
-                <div class="flex justify-between items-center px-6 py-4 bg-gray-50 border-b border-gray-100">
+            <div class="relative transform overflow-hidden bg-muji-paper rounded-[40px] w-full max-w-6xl h-[90vh] shadow-2xl flex flex-col transition-all border border-muji-edge">
+                <div class="flex justify-between items-center px-6 py-4 bg-muji-base border-b border-muji-edge">
                     <div class="flex items-center gap-3">
-                        <div class="p-2 bg-indigo-50 rounded-lg text-indigo-600">
+                        <div class="p-2 bg-muji-paper rounded-xl text-muji-oak shadow-muji-sm">
                             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                             </svg>
                         </div>
-                        <h3 class="text-xl font-black text-gray-900 leading-none">大阪地鐵圖 (中文 PDF)</h3>
+                        <h3 class="text-xl font-black text-muji-ink leading-none">大阪地鐵圖 (中文 PDF)</h3>
                     </div>
                     <div class="flex items-center gap-4">
-                        <a href="/osakametro_rosenzu_20250404.pdf" target="_blank" class="text-xs font-bold text-indigo-600 hover:underline flex items-center gap-1">
+                        <a href="/osakametro_rosenzu_20250404.pdf" target="_blank" class="text-[10px] font-black text-muji-oak hover:text-muji-ink flex items-center gap-1 uppercase tracking-widest bg-muji-paper px-3 py-1.5 rounded-lg shadow-muji-sm transition-all">
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                             </svg>
-                            全螢幕 Full Screen
+                            全螢幕 FULL SCREEN
                         </a>
-                        <button onclick="safeCloseModal('metroModal')" class="p-2 rounded-full hover:bg-gray-200 transition-colors">
-                            <svg class="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <button onclick="safeCloseModal('metroModal')" class="p-2 rounded-full hover:bg-muji-paper text-muji-ash transition-colors">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
@@ -1426,7 +1482,7 @@
     </script>
 
     <!-- Back to Top Button -->
-    <button id="back-to-top" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[7000] w-10 h-10 bg-white/40 backdrop-blur-md border border-muji-edge/40 rounded-full shadow-muji-sm flex items-center justify-center text-muji-oak opacity-0 translate-y-10 transition-all duration-500 hover:bg-white/80 active:scale-95 group pointer-events-none">
+    <button id="back-to-top" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[7000] w-10 h-10 bg-muji-paper/40 backdrop-blur-md border border-muji-edge/40 rounded-full shadow-muji-sm flex items-center justify-center text-muji-oak opacity-0 translate-y-10 transition-all duration-500 hover:bg-muji-paper/80 active:scale-95 group pointer-events-none">
         <svg class="w-5 h-5 group-hover:-translate-y-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7" />
         </svg>
@@ -1444,11 +1500,11 @@
 
     <!-- PWA Install Prompt: Muji Minimalist -->
     <div id="pwa-install-prompt" class="fixed bottom-0 left-0 w-full z-[8000] transform translate-y-full transition-transform duration-700 ease-out p-4 pointer-events-none md:p-6">
-        <div class="max-w-md mx-auto bg-white/95 backdrop-blur-md border border-muji-edge rounded-[2.5rem] shadow-2xl p-6 pointer-events-auto flex items-center gap-4 group">
+        <div class="max-w-md mx-auto bg-muji-paper/95 backdrop-blur-md border border-muji-edge rounded-[2.5rem] shadow-2xl p-6 pointer-events-auto flex items-center gap-4 group">
             <div class="w-12 h-12 bg-muji-base rounded-2xl flex-shrink-0 flex items-center justify-center text-muji-oak shadow-muji-sm group-hover:scale-105 transition-transform">
                 <img src="/icon_logo.png" class="w-8 h-8 object-contain">
             </div>
-            <div class="flex-grow">
+            <div class="flex-grow text-left">
                 <h4 class="text-sm font-black text-muji-ink">將旅程規劃安裝至桌面</h4>
                 <p class="text-[10px] text-muji-ash font-medium mt-1">享受更快速、穩定的無邊框體驗</p>
             </div>
@@ -1461,7 +1517,7 @@
 
     <!-- iOS Install Hint (For Safari) -->
     <div id="ios-install-hint" class="fixed bottom-0 left-0 w-full z-[8000] transform translate-y-full transition-transform duration-700 ease-out p-4 pointer-events-none">
-        <div class="max-w-md mx-auto bg-white/95 backdrop-blur-md border border-muji-edge rounded-[2.5rem] shadow-2xl p-6 pointer-events-auto text-center">
+        <div class="max-w-md mx-auto bg-muji-paper/95 backdrop-blur-md border border-muji-edge rounded-[2.5rem] shadow-2xl p-6 pointer-events-auto text-center">
             <div class="flex flex-col items-center gap-4">
                 <div class="w-14 h-14 bg-muji-base rounded-2xl flex items-center justify-center text-muji-oak shadow-muji-sm">
                     <img src="/icon_logo.png" class="w-10 h-10 object-contain">

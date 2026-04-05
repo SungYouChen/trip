@@ -71,8 +71,9 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function collaboratingTrips()
     {
-        return $this->belongsToMany(Trip::class, 'trip_user')
-                    ->withPivot('role', 'is_notified')
+        return $this->belongsToMany(Trip::class, 'trip_collaborators')
+                    ->wherePivot('status', 'accepted')
+                    ->withPivot('role', 'status', 'token', 'is_notified')
                     ->withTimestamps();
     }
 }

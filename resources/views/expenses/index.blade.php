@@ -89,7 +89,7 @@
         </h2>
         <div class="space-y-4 mb-6">
             @foreach($externalCosts as $cost)
-                <div class="flex justify-between items-center bg-white/60 p-4 rounded-xl border border-muji-edge shadow-muji-sm">
+                <div class="flex justify-between items-center bg-muji-paper/60 p-4 rounded-xl border border-muji-edge shadow-muji-sm">
                     <span class="font-black text-muji-ink">{{ $cost['name'] }}</span>
                     <span class="font-mono text-muji-oak font-black text-lg">{{ $cost['raw'] }}</span>
                 </div>
@@ -110,14 +110,14 @@
 
     <!-- Quick Add Form (Inline alternative or just rely on FAB) -->
     <!-- Let's just list recent expenses -->
-    <div class="bg-white/40 backdrop-blur-md rounded-2xl shadow-sm border border-white/20 overflow-hidden">
-        <div class="p-6 border-b border-gray-100">
-            <h2 class="text-lg font-bold text-gray-900">帳單紀錄明細</h2>
+    <div class="bg-muji-paper/40 backdrop-blur-md rounded-2xl shadow-sm border border-muji-edge/20 overflow-hidden">
+        <div class="p-6 border-b border-muji-edge">
+            <h2 class="text-lg font-bold text-muji-ink">帳單紀錄明細</h2>
         </div>
 
                         <div class="grid md:grid-cols-2 gap-4 p-4 mt-2">
                             @forelse($expenses as $expense)
-                                <div class="muji-card p-5 rounded-2xl border border-muji-edge shadow-muji-sm bg-white/60 hover:shadow-muji transition-all relative group">
+                                <div class="muji-card p-5 rounded-2xl border border-muji-edge shadow-muji-sm bg-muji-paper/60 hover:shadow-muji transition-all relative group">
                                     <div class="flex justify-between items-start mb-4">
                                         <div class="flex items-center gap-3">
                                             <span class="w-10 h-10 bg-muji-base rounded-xl flex items-center justify-center text-xl shadow-muji-sm">

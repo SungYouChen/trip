@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Trip;
 use App\Models\User;
+use App\Models\TripCollaborator;
+use App\Mail\TripInvitationMail;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class TripController extends Controller
 {
@@ -341,27 +345,85 @@ class TripController extends Controller
     public function addCollaborator(User $user, Trip $trip, Request $request)
     {
         $validated = $request->validate([
-            'email' => 'required|email|exists:users,email',
+            'email' => 'required|email',
         ]);
 
-        $collaborator = \App\Models\User::where(fn ($q) => $q->where('email', $validated['email']))->first();
+        $email = $validated['email'];
 
-        if ($collaborator->id == $trip->user_id) {
+        // 1. Check if owner
+        if ($email == $trip->user->email) {
             return back()->with('error', '您已經是此行程的擁有者了。');
         }
 
-        $trip->collaborators()->syncWithoutDetaching([
-            $collaborator->id => [
-                'role' => 'editor',
-                'is_notified' => false
-            ]
-        ]);
+        // 2. Check if already a collaborator
+        $existing = TripCollaborator::where('trip_id', $trip->id)
+            ->where('email', $email)
+            ->first();
 
-        if ($request->ajax()) {
-            return response()->json(['message' => '協作者已加入！']);
+        if ($existing) {
+            return back()->with('error', '此 Email 已經被邀請過或已是協作者。');
         }
 
-        return back()->with('success', '已成功加入協作者！');
+        // 3. Create invitation
+        $token = Str::random(64);
+        $targetUser = User::where('email', $email)->first();
+
+        $collaborator = TripCollaborator::create([
+            'trip_id' => $trip->id,
+            'user_id' => $targetUser ? $targetUser->id : null,
+            'email' => $email,
+            'role' => 'editor',
+            'status' => 'pending',
+            'token' => $token,
+            'invited_by' => auth()->id()
+        ]);
+
+        // 4. Send email
+        try {
+            Mail::to($email)->send(new TripInvitationMail($trip, auth()->user(), $token));
+        } catch (\Exception $e) {
+            \Log::error('Mail failed: ' . $e->getMessage());
+            // We still keep the invitation in DB, but notify the user
+            return back()->with('info', '邀請已建立，但郵件發送失敗（請確認您的 SMTP 設定）。');
+        }
+
+        if ($request->ajax()) {
+            return response()->json(['message' => '邀請函已發送！']);
+        }
+
+        return back()->with('success', '邀請函已發送至：' . $email);
+    }
+
+    public function acceptInvitation($token)
+    {
+        $invitation = TripCollaborator::where('token', $token)->firstOrFail();
+
+        if ($invitation->status === 'accepted') {
+            return redirect()->route('trip.show', ['user' => $invitation->trip->user, 'trip' => $invitation->trip])
+                ->with('info', '您早已加入此旅程囉！');
+        }
+
+        // If not logged in, redirect to register with token
+        if (!auth()->check()) {
+            session(['invitation_token' => $token]);
+            return redirect()->route('story')->with('info', '歡迎參與！請先登入或註冊帳件，系統將為您自動加入旅程。');
+        }
+
+        // Check if current user is the one invited (or if email matches)
+        $user = auth()->user();
+        if ($user->email !== $invitation->email) {
+            // Optional: Support multi-account switching, but for now simple check
+            return redirect()->route('home', ['user' => $user])->with('error', '此連結僅限被邀請的 Email 使用。');
+        }
+
+        // Accept
+        $invitation->update([
+            'user_id' => $user->id,
+            'status' => 'accepted'
+        ]);
+
+        return redirect()->route('trip.show', ['user' => $invitation->trip->user, 'trip' => $invitation->trip])
+            ->with('success', '歡迎加入！您現在可以共同編輯這份旅程了。');
     }
 
     public function updateProfile(User $user, Request $request)

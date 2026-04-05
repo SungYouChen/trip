@@ -9,6 +9,7 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ItineraryDayController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\InvitationController;
 
 Route::get('/', function() {
     if (auth()->check()) {
@@ -47,7 +48,8 @@ Route::middleware(['auth', 'user.scope', 'verified'])->group(function () {
     Route::post('/{user}/trip/{trip}/add-day', [TripController::class, 'addDay'])->name('trip.add_day');
     Route::delete('/{user}/trip/{trip}/day/{date}', [ItineraryDayController::class, 'deleteDay'])->name('day.destroy');
     Route::post('/{user}/trip/{trip}/toggle-share', [TripController::class, 'toggleShare'])->name('trip.toggle_share');
-    Route::post('/{user}/trip/{trip}/collaborators', [TripController::class, 'addCollaborator'])->name('trip.collaborators.add');
+    Route::post('/{user}/trip/{trip}/invite', [TripController::class, 'addCollaborator'])->name('trip.invite');
+    Route::delete('/{user}/trip/{trip}/invitations/{invitation}', [InvitationController::class, 'revoke'])->name('trip.invitations.revoke');
     Route::delete('/{user}/trip/{trip}/collaborators/{collaborator}', [TripController::class, 'removeCollaborator'])->name('trip.collaborators.remove');
     Route::post('/{user}/profile', [TripController::class, 'updateProfile'])->name('profile.update');
     Route::get('/{user}/feedback', [FeedbackController::class, 'index'])->name('feedback.index');
@@ -98,3 +100,6 @@ Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])
 
 Route::post('/email/verification-notification', [AuthController::class, 'resendVerificationEmail'])
     ->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+// Accept Invitation (Open Access with Token)
+Route::get('/trip/invitation/accept/{token}', [TripController::class, 'acceptInvitation'])->name('trip.accept_invitation');

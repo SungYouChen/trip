@@ -32,13 +32,13 @@
                 <textarea name="content" rows="3" required class="block w-full px-5 py-4 muji-input leading-relaxed text-sm" placeholder="有任何建議或問題嗎？"></textarea>
             </div>
             <div class="flex flex-col sm:flex-row items-center gap-4 justify-between">
-                <label class="group flex items-center gap-2 px-4 h-[44px] bg-white border border-muji-edge rounded-xl cursor-pointer hover:bg-muji-base transition-all shadow-muji-sm">
+                <label class="group flex items-center gap-2 px-4 h-[44px] bg-muji-paper border border-muji-edge rounded-xl cursor-pointer hover:bg-muji-base transition-all shadow-muji-sm">
                     <svg class="w-4 h-4 text-muji-ash group-hover:text-muji-oak" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                     <span class="text-[10px] font-black text-muji-ash group-hover:text-muji-oak tracking-widest uppercase">附加圖片</span>
                     <input type="file" name="image" accept="image/*" class="hidden" onchange="previewMainImage(this)">
                 </label>
                 <div id="main-image-preview" class="hidden relative inline-flex items-center">
-                    <div class="h-14 w-14 rounded-xl overflow-hidden border-2 border-white shadow-muji"><img src="" class="w-full h-full object-cover"></div>
+                    <div class="h-14 w-14 rounded-xl overflow-hidden border-2 border-muji-edge shadow-muji"><img src="" class="w-full h-full object-cover"></div>
                     <button type="button" onclick="clearMainImage()" class="absolute -top-1.5 -right-1.5 bg-muji-ink text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] shadow-lg">×</button>
                 </div>
                 <button type="submit" class="w-full sm:w-auto h-[44px] px-10 bg-muji-oak text-white font-black rounded-xl hover:opacity-95 shadow-muji transition-all active:scale-95 text-xs tracking-widest uppercase">發佈訊息</button>
@@ -59,7 +59,7 @@
                     <div class="flex items-center justify-between cursor-pointer">
                         <div class="flex items-center gap-4">
                             <!-- MASTER AVATAR (Left Side Standard) -->
-                            <div class="w-9 h-9 rounded-xl overflow-hidden border border-white shadow-sm flex-shrink-0">
+                            <div class="w-9 h-9 rounded-xl overflow-hidden border border-muji-edge shadow-sm flex-shrink-0">
                                 <img src="{{ $feedback->user->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($feedback->user->name).'&background=9c8c7c&color=fff' }}" class="w-full h-full object-cover">
                             </div>
                             <div class="flex flex-col">
@@ -80,12 +80,12 @@
                             @if($uniqueRepliers->count() > 0)
                                 <div class="flex gap-1.5 items-center">
                                     @foreach($uniqueRepliers->take(3) as $r)
-                                        <div class="w-9 h-9 rounded-xl border border-white overflow-hidden shadow-sm flex-shrink-0">
+                                        <div class="w-9 h-9 rounded-xl border border-muji-edge overflow-hidden shadow-sm flex-shrink-0">
                                             <img src="{{ $r->user->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($r->user->name).'&background=333&color=fff' }}" class="w-full h-full object-cover">
                                         </div>
                                     @endforeach
                                     @if($uniqueRepliers->count() > 3)
-                                        <div class="w-9 h-9 rounded-xl border border-white bg-muji-base flex items-center justify-center text-[9px] font-black text-muji-ash flex-shrink-0">+{{ $uniqueRepliers->count()-3 }}</div>
+                                        <div class="w-9 h-9 rounded-xl border border-muji-edge bg-muji-base flex items-center justify-center text-[9px] font-black text-muji-ash flex-shrink-0">+{{ $uniqueRepliers->count()-3 }}</div>
                                     @endif
                                 </div>
                             @endif
@@ -99,7 +99,7 @@
                         <div class="px-2 mb-8 border-l-2 border-muji-edge pl-6 ml-1 text-sm">
                             <div class="text-muji-ink leading-relaxed whitespace-pre-wrap font-medium break-words">{{ $feedback->content }}</div>
                             @if($feedback->image_path)
-                                <div class="rounded-xl overflow-hidden border-2 border-white shadow-muji inline-block max-w-[85%] mt-2">
+                                <div class="rounded-xl overflow-hidden border-2 border-muji-edge shadow-muji inline-block max-w-[85%] mt-2">
                                     <img src="{{ Storage::url($feedback->image_path) }}" class="h-24 w-auto object-cover cursor-zoom-in" onclick="window.open(this.src)">
                                 </div>
                             @endif
@@ -113,7 +113,7 @@
                             @foreach($feedback->replies as $reply)
                                 <div class="flex items-start gap-4 {{ $reply->is_admin_reply ? 'flex-row-reverse' : '' }}">
                                     <div class="flex-shrink-0">
-                                        <div class="w-8 h-8 rounded-xl overflow-hidden {{ $reply->is_admin_reply ? 'bg-muji-ink' : 'bg-white border border-muji-edge shadow-sm' }}">
+                                        <div class="w-8 h-8 rounded-xl overflow-hidden {{ $reply->is_admin_reply ? 'bg-muji-ink' : 'bg-muji-base border border-muji-edge shadow-sm' }}">
                                             <img src="{{ $reply->user->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($reply->user->name).'&background='.($reply->is_admin_reply ? '333' : '9c8c7c').'&color=fff' }}" class="w-full h-full object-cover">
                                         </div>
                                     </div>
@@ -122,10 +122,10 @@
                                             <span class="text-[9px] font-black {{ $reply->is_admin_reply ? 'text-muji-oak' : 'text-muji-ash' }} uppercase tracking-wider">{{ $reply->user->name }}</span>
                                             <span class="text-[8px] font-bold text-muji-ash/40 uppercase">{{ $reply->created_at->diffForHumans() }}</span>
                                         </div>
-                                        <div class="p-4 px-6 rounded-2xl text-[13px] leading-relaxed shadow-muji-sm {{ $reply->is_admin_reply ? 'bg-muji-ink text-muji-base rounded-tr-none' : 'bg-white border border-muji-edge text-muji-ink rounded-tl-none' }}">
+                                        <div class="p-4 px-6 rounded-2xl text-[13px] leading-relaxed shadow-muji-sm {{ $reply->is_admin_reply ? 'bg-muji-ink text-muji-base rounded-tr-none' : 'bg-muji-paper border border-muji-edge text-muji-ink rounded-tl-none' }}">
                                             <div class="whitespace-pre-wrap font-medium break-words text-[13px]">{{ $reply->content }}</div>
                                             @if($reply->image_path)
-                                                <div class="rounded-xl overflow-hidden border-2 border-white shadow-muji inline-block max-w-full mt-2">
+                                                <div class="rounded-xl overflow-hidden border-2 border-muji-edge shadow-muji inline-block max-w-full mt-2">
                                                     <img src="{{ Storage::url($reply->image_path) }}" class="h-24 w-auto object-cover cursor-zoom-in" onclick="window.open(this.src)">
                                                 </div>
                                             @endif
@@ -146,13 +146,13 @@
                                 <div class="flex flex-col gap-4">
                                     <textarea name="content" rows="1" required class="block w-full px-5 py-3.5 muji-input text-[13px] resize-none overflow-hidden" placeholder="寫下你的回覆..." oninput="autoResize(this)"></textarea>
                                     <div class="flex items-center justify-between gap-3">
-                                        <label class="group flex items-center gap-2 px-4 h-[44px] bg-white border border-muji-edge rounded-xl cursor-pointer hover:bg-muji-base transition-all shadow-muji-sm">
+                                        <label class="group flex items-center gap-2 px-4 h-[44px] bg-muji-paper border border-muji-edge rounded-xl cursor-pointer hover:bg-muji-base transition-all shadow-muji-sm">
                                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                                             <span class="text-[10px] font-black text-muji-ash group-hover:text-muji-oak tracking-widest uppercase">附加圖片</span>
                                             <input type="file" name="image" accept="image/*" class="hidden" onchange="previewReplyImage(this, '{{ $feedback->id }}')">
                                         </label>
                                         <div id="reply-image-preview-{{ $feedback->id }}" class="hidden relative inline-flex items-center">
-                                            <div class="h-14 w-14 rounded-xl overflow-hidden border-2 border-white shadow-muji"><img src="" class="w-full h-full object-cover"></div>
+                                            <div class="h-14 w-14 rounded-xl overflow-hidden border-2 border-muji-edge shadow-muji"><img src="" class="w-full h-full object-cover"></div>
                                             <button type="button" onclick="clearReplyImage('{{ $feedback->id }}')" class="absolute -top-1.5 -right-1.5 bg-muji-ink text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] shadow-lg">×</button>
                                         </div>
                                         <div class="flex-grow"></div>
@@ -243,7 +243,7 @@ function clearReplyImage(feedbackId) {
 /* Synchronized with global site-wide card style */
 .muji-card { border-radius: 28px; }
 .feedback-thread { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-.feedback-thread.active { background-color: rgba(255, 255, 255, 0.9); }
+.feedback-thread.active { background-color: var(--muji-paper); }
 .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
 </style>
 @endsection

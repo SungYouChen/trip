@@ -42,7 +42,7 @@
 
                                 <div class="flex flex-col sm:flex-row items-center gap-8 bg-muji-base/20 p-6 rounded-[32px] border border-muji-edge/50">
                                     <div class="relative group">
-                                        <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-muji bg-white relative">
+                                        <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-muji-paper shadow-muji bg-muji-paper relative">
                                             <img id="avatar-preview" src="{{ auth()->user()->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&background=9c8c7c&color=fff' }}" class="w-full h-full object-cover">
                                         </div>
                                         @if(auth()->user()->avatar)
@@ -150,7 +150,7 @@
                                 <div class="space-y-6 bg-muji-base/10 p-6 rounded-[32px] border border-muji-edge/50">
                                     <div class="space-y-2">
                                         <label class="text-[10px] font-black text-muji-ash uppercase tracking-widest pl-1">全站背景圖片</label>
-                                        <div class="bg-white p-2 rounded-2xl border border-muji-edge h-[64px] flex items-center">
+                                        <div class="bg-muji-base/50 p-2 rounded-2xl border border-muji-edge h-[64px] flex items-center">
                                             <input type="file" name="background_image" accept="image/*" class="block w-full text-xs text-muji-ash file:mr-4 file:h-[40px] file:px-6 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-muji-base file:text-muji-oak hover:file:bg-muji-wheat/30 cursor-pointer transition-all" id="bg-upload-input">
                                         </div>
                                     </div>
@@ -181,7 +181,7 @@
                                 </div>
 
                                 <div class="pt-8 mt-10 border-t border-muji-edge flex gap-4">
-                                    <button type="button" onclick="safeCloseModal('globalProfileConfigModal')" class="flex-1 h-[46px] flex items-center justify-center bg-white text-muji-ash font-bold rounded-[24px] hover:bg-muji-base transition-all text-sm border border-muji-edge active:scale-95">
+                                    <button type="button" onclick="safeCloseModal('globalProfileConfigModal')" class="flex-1 h-[46px] flex items-center justify-center bg-muji-paper text-muji-ash font-bold rounded-[24px] hover:bg-muji-base transition-all text-sm border border-muji-edge active:scale-95">
                                         取消
                                     </button>
                                     <button type="submit" class="flex-1 h-[46px] flex items-center justify-center bg-muji-oak text-white font-black rounded-[24px] hover:opacity-95 hover:shadow-muji hover:translate-y-[-1px] transition-all active:scale-95 text-sm uppercase tracking-widest">

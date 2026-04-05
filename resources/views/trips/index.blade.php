@@ -159,7 +159,7 @@
                                 <!-- 旅程名稱：佔滿全寬 -->
                                 <div class="col-span-full">
                                     <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">旅程名稱</label>
-                                    <input type="text" name="name" required placeholder="例如：2025 京阪神之旅" class="block w-full px-4 py-3 bg-white border border-muji-edge rounded-xl text-muji-ink shadow-muji-sm focus:ring-2 focus:ring-muji-oak transition-all font-medium">
+                                    <input type="text" name="name" required placeholder="例如：2025 京阪神之旅" class="w-full px-4 py-3 muji-input">
                                 </div>
 
                                 <!-- 日期區塊：各佔一半 (3/6) -->
@@ -257,8 +257,8 @@
                                     <label class="block w-full text-left text-sm font-bold text-muji-ash ml-1">旅程封面圖設定</label>
                                 </div>
                                 <div class="bg-muji-base/30 p-4 rounded-xl border border-muji-edge">
-                                    <input type="file" name="cover_image" accept="image/*" class="block w-full text-xs text-muji-ash file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:bg-white file:text-muji-oak hover:file:bg-muji-base cursor-pointer transition-all">
-                                    <p class="text-[10px] text-muji-ash mt-2 italic shadow-muji-sm p-2 bg-white/50 rounded-lg">※ 支援 JPG、PNG，目前上限 2MB（因主機設定）。建議使用清爽的風景照。</p>
+                                    <input type="file" name="cover_image" accept="image/*" class="block w-full text-xs text-muji-ash file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:bg-muji-paper file:text-muji-oak hover:file:bg-muji-base cursor-pointer transition-all shadow-muji-sm">
+                                    <p class="text-[10px] text-muji-ash mt-2 italic shadow-muji-sm p-2 bg-muji-paper/50 rounded-lg">※ 支援 JPG、PNG，目前上限 2MB（因主機設定）。建議使用清爽的風景照。</p>
                                 </div>
                             </div>
                             <div class="pt-8 mt-8 border-t border-muji-edge flex gap-4">

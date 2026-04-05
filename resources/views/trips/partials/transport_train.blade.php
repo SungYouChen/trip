@@ -8,13 +8,13 @@
 @endphp
 
 <!-- Train Ticket Specialized UI -->
-<div class="relative grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-dashed divide-gray-200">
+<div class="relative grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-dashed divide-muji-edge">
     <!-- Decorative Notches -->
-    <div class="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/2 w-6 h-10 bg-gray-50 rounded-r-full hidden md:block z-10 border-r border-gray-100"></div>
-    <div class="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/2 w-6 h-10 bg-gray-50 rounded-l-full hidden md:block z-10 border-l border-gray-100"></div>
+    <div class="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/2 w-6 h-10 bg-muji-base rounded-r-full hidden md:block z-10 border-r border-muji-edge"></div>
+    <div class="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/2 w-6 h-10 bg-muji-base rounded-l-full hidden md:block z-10 border-l border-muji-edge"></div>
 
     <!-- Departure Ticket -->
-    <div class="p-8 group/item hover:bg-white/40 transition-all duration-300">
+    <div class="p-8 group/item hover:bg-muji-base/40 transition-all duration-300">
         <div class="flex justify-between items-start mb-6">
             <span class="px-3 py-1.5 bg-muji-base text-muji-oak rounded-lg border border-muji-edge text-[10px] font-black uppercase tracking-[0.2em] shadow-muji-sm">
                 {{ $theme['label_out'] }}
