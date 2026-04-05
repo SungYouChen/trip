@@ -40,19 +40,25 @@
     <div class="mb-8">
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
-                <div>
-                    <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-muji-wheat text-muji-oak mb-2">
+                <div class="flex items-center gap-3 mb-2 flex-wrap">
+                    <span class="inline-block px-3 py-1.5 rounded-full text-xs font-bold bg-muji-wheat text-muji-oak">
                         {{ $day['date'] }} ({{ $day['day'] }})
                     </span>
-                    <div class="flex items-center gap-3 @if(!$isShared) @auth cursor-pointer hover:opacity-80 transition-all @endauth @endif" @if(!$isShared) @auth onclick="safeOpenModal('daySummaryEditModal')" @endauth @endif>
+                    <div class="weather-indicator tooltip tooltip-bottom flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-black bg-muji-base border border-muji-edge shadow-muji-sm" 
+                         data-date="{{ date('Y-m-d', strtotime($day['date'])) }}" 
+                         data-location="{{ $day['location'] }}"
+                         data-tip="氣象同步中..">
+                        <span class="text-muji-oak uppercase tracking-widest mr-1">{{ $day['location'] }}</span>
+                        <div class="weather-icon flex items-center justify-center min-w-[14px]"><span class="animate-pulse">◌</span></div>
+                        <span class="weather-temp font-black text-muji-ink">-- / --°C</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 @if(!$isShared) @auth cursor-pointer hover:opacity-80 transition-all @endauth @endif" @if(!$isShared) @auth onclick="safeOpenModal('daySummaryEditModal')" @endauth @endif>
                         <h1 class="text-3xl font-black text-muji-ink">{{ $day['title'] }}</h1>
                     </div>
                     @if($day['summary'])
                         <p class="text-lg text-muji-ash mt-1">{{ $day['summary'] }}</p>
                     @endif
-                </div>
-                <div class="text-right">
-                    <span class="text-2xl font-black text-muji-oak uppercase tracking-widest">{{ $day['location'] }}</span>
                 </div>
             </div>
         </div>
@@ -80,7 +86,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
-                            <span class="text-sm leading-relaxed">{{ $day['accommodation']['address'] }}</span>
+                            <div class="flex flex-col">
+                                <span class="text-sm leading-relaxed">{{ $day['accommodation']['address'] }}</span>
+                            </div>
                         </div>
                         <div class="space-y-2 text-sm">
                             <div class="flex justify-between border-b border-muji-edge pb-2">
@@ -234,7 +242,7 @@
                                                             @method('PATCH')
                                                             <button type="button" onclick="confirmAction('還原行程活動？', '確定要將「{{ $event['activity'] }}」移回行程嗎？', '{{ $restoreEventId }}')" class="tooltip tooltip-bottom p-1 text-green-500 hover:bg-green-50 rounded transition-colors" data-tip="還原">
                                                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7 7-7" />
                                                                 </svg>
                                                             </button>
                                                         </form>
@@ -663,4 +671,52 @@
             </script>
             @endauth
         @endif
+
+    <!-- Weather Forecast System (High Reliability) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const indicators = document.querySelectorAll('.weather-indicator');
+            const geoMap = {
+                '福岡': { lat: 33.59, lon: 130.40 }, 'Fukuoka': { lat: 33.59, lon: 130.40 },
+                '東京': { lat: 35.68, lon: 139.76 }, 'Tokyo': { lat: 35.68, lon: 139.76 },
+                '大阪': { lat: 34.69, lon: 135.50 }, 'Osaka': { lat: 34.69, lon: 135.50 },
+                '京都': { lat: 35.01, lon: 135.76 }, 'Kyoto': { lat: 35.01, lon: 135.76 }
+            };
+            indicators.forEach(async (el) => {
+                const loc = el.dataset.location; const date = el.dataset.date; if (!loc) return;
+                try {
+                    el.classList.remove('hidden'); el.classList.add('inline-flex');
+                    el.querySelector('.weather-icon').innerHTML = '<svg class="animate-spin h-3 w-3 text-muji-oak" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+                    let lat, lon;
+                    if (geoMap[loc]) { lat = geoMap[loc].lat; lon = geoMap[loc].lon; }
+                    else {
+                        let res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(loc)}&count=1&language=en&format=json`);
+                        let data = await res.json();
+                        if (data.results) { lat = data.results[0].latitude; lon = data.results[0].longitude; }
+                    }
+                    if (lat && lon) {
+                        const wR = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&start_date=${date}&end_date=${date}`);
+                        const wD = await wR.json();
+                        if (wD.daily) {
+                            const code = wD.daily.weather_code[0];
+                            const tMax = Math.round(wD.daily.temperature_2m_max[0]);
+                            const tMin = Math.round(wD.daily.temperature_2m_min[0]);
+                            let icon = '☀️'; let desc = '晴朗';
+                            if (code >= 51 && code <= 67) { icon = '🌧️'; desc = '雨天'; }
+                            else if (code >= 1 && code <= 3) { icon = '☁️'; desc = '多雲'; }
+                            else if (code >= 45 && code <= 48) { icon = '🌫️'; desc = '有霧'; }
+                            else if (code >= 71 && code <= 77) { icon = '❄️'; desc = '下雪'; }
+                            else if (code >= 80 && code <= 82) { icon = '🌦️'; desc = '陣雨'; }
+                            else if (code >= 95 && code <= 99) { icon = '⛈️'; desc = '雷雨'; }
+                            el.querySelector('.weather-icon').innerHTML = icon;
+                            el.querySelector('.weather-temp').innerText = `${tMax}°/${tMin}°C`;
+                            el.setAttribute('data-tip', `${desc} (最高 ${tMax}°, 最低 ${tMin}°)`);
+                            return;
+                        }
+                    }
+                    el.classList.add('hidden');
+                } catch (e) { el.classList.add('hidden'); }
+            });
+        });
+    </script>
 @endsection

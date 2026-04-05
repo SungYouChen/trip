@@ -377,6 +377,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
     ? $itinerary->filter(fn($d) => $d->trashed())
     : $itinerary->filter(fn($d) => !$d->trashed());
     @endphp
+    @php $lastLoc = $trip->name; @endphp
     @foreach($daysToShow as $day)
     @php
     $dayDate = \Carbon\Carbon::parse($day->date);
@@ -398,15 +399,26 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 <h3 class="text-xl font-black text-muji-ink mb-1 group-hover:text-muji-oak transition-colors truncate">
                     {{ $day->title ?: 'Day ' . $loop->iteration }}
                 </h3>
-                @if($day->location)
-                <div class="flex items-center gap-1 text-[10px] font-bold text-muji-oak mb-2 uppercase tracking-widest truncate">
-                    <svg class="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span class="truncate">{{ $day->location }}</span>
+                @php 
+                    if ($day->location) { $lastLoc = $day->location; }
+                    $loc = $lastLoc;
+                @endphp
+                <div class="flex items-center gap-2 text-[10px] font-bold text-muji-oak mb-2 uppercase tracking-widest">
+                    <div class="flex items-center gap-1 truncate max-w-[100px]">
+                        <svg class="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <span class="truncate">{{ $loc }}</span>
+                    </div>
+                    <div class="weather-indicator tooltip tooltip-bottom inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-black bg-muji-base border border-muji-edge shadow-muji-sm" 
+                         data-date="{{ $dayDate->format('Y-m-d') }}" 
+                         data-location="{{ $loc }}"
+                         data-tip="氣象同步中..">
+                        <div class="weather-icon flex items-center justify-center min-w-[12px]"><span class="animate-pulse">◌</span></div>
+                        <span class="weather-temp font-black text-muji-oak">-- / --°C</span>
+                    </div>
                 </div>
-                @endif
 
                 <p class="text-xs text-muji-ash line-clamp-2">
                     {{ $day->summary }}
@@ -1414,5 +1426,51 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 }
             }
         }
+    </script>
+
+    <!-- Weather Forecast System (High Reliability) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const indicators = document.querySelectorAll('.weather-indicator');
+            const geoMap = {
+                '福岡': { lat: 33.59, lon: 130.40 }, 'Fukuoka': { lat: 33.59, lon: 130.40 },
+                '東京': { lat: 35.68, lon: 139.76 }, 'Tokyo': { lat: 35.68, lon: 139.76 },
+                '大阪': { lat: 34.69, lon: 135.50 }, 'Osaka': { lat: 34.69, lon: 135.50 }
+            };
+            indicators.forEach(async (el) => {
+                const loc = el.dataset.location; const date = el.dataset.date; if (!loc) return;
+                try {
+                    let lat, lon;
+                    if (geoMap[loc]) { lat = geoMap[loc].lat; lon = geoMap[loc].lon; }
+                    else {
+                        let q = loc.replace('未來', '').replace('行程', '');
+                        let res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=1&language=en&format=json`);
+                        let data = await res.json();
+                        if (data.results) { lat = data.results[0].latitude; lon = data.results[0].longitude; }
+                    }
+                    if (lat && lon) {
+                        const wR = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&start_date=${date}&end_date=${date}`);
+                        const wD = await wR.json();
+                        if (wD.daily) {
+                            const code = wD.daily.weather_code[0];
+                            const tMax = Math.round(wD.daily.temperature_2m_max[0]);
+                            const tMin = Math.round(wD.daily.temperature_2m_min[0]);
+                            let icon = '☀️'; let desc = '晴朗';
+                            if (code >= 51 && code <= 67) { icon = '🌧️'; desc = '雨天'; }
+                            else if (code >= 1 && code <= 3) { icon = '☁️'; desc = '多雲'; }
+                            else if (code >= 45 && code <= 48) { icon = '🌫️'; desc = '有霧'; }
+                            else if (code >= 71 && code <= 77) { icon = '❄️'; desc = '下雪'; }
+                            else if (code >= 80 && code <= 82) { icon = '🌦️'; desc = '陣雨'; }
+                            else if (code >= 95 && code <= 99) { icon = '⛈️'; desc = '雷雨'; }
+                            el.querySelector('.weather-icon').innerHTML = icon;
+                            el.querySelector('.weather-temp').innerText = `${tMax}°/${tMin}°C`;
+                            el.setAttribute('data-tip', `${desc} (最高 ${tMax}°, 最低 ${tMin}°)`);
+                            return;
+                        }
+                    }
+                    el.classList.add('hidden');
+                } catch (e) { el.classList.add('hidden'); }
+            });
+        });
     </script>
 @endsection
