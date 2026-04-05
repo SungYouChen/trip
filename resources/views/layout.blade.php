@@ -8,7 +8,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Elk 的旅程規劃</title>
-    <link rel="icon" href="/icon_logo.png?v={{ time() }}" type="image/png">
+    <link rel="icon" href="/icon_logo.png" type="image/png">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Fonts -->
@@ -676,7 +676,7 @@
         <div class="max-w-4xl mx-auto px-2 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <a href="{{ auth()->check() ? route('home', ['user' => auth()->user()]) : '/' }}" class="flex items-center gap-2 flex-shrink-0 group">
                 <div class="w-10 h-10 rounded-lg bg-muji-base flex items-center justify-center shadow-muji-sm group-hover:scale-105 transition-transform overflow-hidden relative">
-                    <img src="/icon_logo.png?v={{ time() }}" alt="Logo" class="w-full h-full object-contain p-1 z-10 relative">
+                    <img src="/icon_logo.png" alt="Logo" class="w-full h-full object-contain p-1 z-10 relative">
                 </div>
                 <h1 class="text-sm sm:text-lg font-black text-muji-ink truncate max-w-[150px] xs:max-w-[200px] md:max-w-[400px] tracking-tight">
                     @yield('header_title', config('app.name'))
@@ -903,7 +903,7 @@
         </div>
 
         <div class="p-8 text-center bg-muji-base/10">
-            <p class="text-[10px] text-muji-ash/40 font-mono tracking-[0.3em] uppercase">Muji Aesthetic v2.1</p>
+            <p class="text-[10px] text-muji-ash/40 font-mono tracking-[0.3em] uppercase">ElkTrip Experience</p>
         </div>
     </div>
 
