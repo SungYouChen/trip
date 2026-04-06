@@ -1342,23 +1342,36 @@
                 toggleSpeedDial();
             }
         });
+        // --- SweetAlert2 Muji Theme Switcher ---
+        function getSwalConfig() {
+            const isDark = document.documentElement.classList.contains('dark');
+            return {
+                background: isDark ? '#2b2a27' : '#f8f5f0',
+                color: isDark ? '#f8f5f0' : '#333333',
+                confirmButtonColor: '#9c8c7c',
+                cancelButtonColor: isDark ? '#3f3f46' : '#dcd3c1',
+                borderRadius: '1.5rem',
+                customClass: {
+                    popup: 'muji-card rounded-[32px] border border-muji-edge/20',
+                    title: 'text-2xl font-black text-muji-ink',
+                    htmlContainer: 'text-sm text-muji-ash font-bold',
+                    confirmButton: 'rounded-xl px-8 py-3 font-black tracking-widest text-xs uppercase',
+                    cancelButton: 'rounded-xl px-8 py-3 font-black tracking-widest text-xs uppercase'
+                }
+            };
+        }
+
         function confirmDelete(title, text, formId) {
+            const config = getSwalConfig();
             Swal.fire({
+                ...config,
                 title: title || '確定要刪除嗎？',
                 text: text || '此操作無法復原，請確認！',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#ef4444',
-                cancelButtonColor: '#6b7280',
+                confirmButtonColor: '#f87171', // Muji Red focus
                 confirmButtonText: '是的，刪除它！',
-                cancelButtonText: '取消',
-                background: '#ffffff',
-                borderRadius: '1.5rem',
-                customClass: {
-                    title: 'text-2xl font-bold text-gray-900',
-                    confirmButton: 'rounded-xl px-6 py-3 font-bold',
-                    cancelButton: 'rounded-xl px-6 py-3 font-bold'
-                }
+                cancelButtonText: '取消'
             }).then((result) => {
                 if (result.isConfirmed) {
                     document.getElementById(formId).submit();
@@ -1368,22 +1381,15 @@
         }
 
         function confirmAction(title, text, formId, icon = 'question', confirmText = '是的') {
+            const config = getSwalConfig();
             Swal.fire({
+                ...config,
                 title: title || '確認執行？',
                 text: text || '請確認是否執行此動作？',
                 icon: icon,
                 showCancelButton: true,
-                confirmButtonColor: '#9c8c7c',
-                cancelButtonColor: '#757575',
                 confirmButtonText: confirmText,
-                cancelButtonText: '取消',
-                background: '#f8f5f0',
-                borderRadius: '1.25rem',
-                customClass: {
-                    title: 'text-2xl font-bold text-muji-ink',
-                    confirmButton: 'rounded-xl px-6 py-3 font-bold',
-                    cancelButton: 'rounded-xl px-6 py-3 font-bold'
-                }
+                cancelButtonText: '取消'
             }).then((result) => {
                 if (result.isConfirmed) {
                     document.getElementById(formId).submit();
@@ -1393,6 +1399,7 @@
         }
 
         const Toast = Swal.mixin({
+            ...getSwalConfig(),
             toast: true,
             position: 'top-end',
             showConfirmButton: false,
@@ -1517,24 +1524,19 @@
                         }
 
                         Swal.fire({
+                            ...getSwalConfig(),
                             icon: 'error',
                             title: '輸入驗證失敗',
                             html: errorMsg, // Use html property instead of text
-                            confirmButtonColor: '#9c8c7c',
-                            customClass: {
-                                popup: 'rounded-[32px]',
-                                confirmButton: 'rounded-xl px-10'
-                            }
                         });
                     }
                 } catch (error) {
                     console.error('AJAX Error:', error);
                     Swal.fire({
+                        ...getSwalConfig(),
                         icon: 'error',
                         title: '系統錯誤',
                         html: '<div class="text-sm text-muji-ash">' + (error.message || '連線異常，請稍後再試。') + '</div>',
-                        confirmButtonColor: '#9c8c7c',
-                        customClass: { popup: 'rounded-[32px]' }
                     });
                 } finally {
                     submitBtn.disabled = false;
