@@ -8,6 +8,7 @@ use App\Models\Trip;
 use App\Models\ItineraryDay;
 use App\Models\ItineraryEvent;
 use App\Models\Expense;
+use App\Models\DayComment;
 use App\Models\User;
 use Carbon\Carbon;
 
@@ -44,7 +45,7 @@ class ItineraryDayController extends Controller
             ->firstOrFail();
 
         $day->load(['events' => function ($q) {
-            $q->withTrashed()->orderBy('sort_order'); }]);
+            $q->withTrashed()->orderBy('sort_order'); }, 'comments']);
         $expenses = Expense::withTrashed()
             ->where(fn ($q) => $q->where('trip_id', $trip->id))
             ->whereDate('date', $day->date)
@@ -69,6 +70,21 @@ class ItineraryDayController extends Controller
                         'note' => $event->note,
                         'map_query' => $event->map_query,
                         'trashed' => $event->trashed(),
+                    ];
+                })->toArray(),
+                'comments' => $day->comments->map(function($comment) use ($trip) {
+                    $canDelete = false;
+                    if (auth()->check()) {
+                        if (auth()->id() === $trip->user_id || auth()->id() === $comment->user_id) {
+                            $canDelete = true;
+                        }
+                    }
+                    return [
+                        'id' => $comment->id,
+                        'user_name' => $comment->user_name ?: '匿名旅伴',
+                        'content' => $comment->content,
+                        'time' => $comment->created_at->format('n/j H:i'),
+                        'can_delete' => $canDelete
                     ];
                 })->toArray(),
             ],
@@ -255,5 +271,49 @@ class ItineraryDayController extends Controller
             return response()->json(['message' => '行程卡片及所有活動已永久刪除。']);
         }
         return back()->with('success', '行程卡片及所有活動已永久刪除。');
+    }
+
+    public function addComment($dayId, Request $request)
+    {
+        $day = ItineraryDay::findOrFail($dayId);
+        $request->validate(['content' => 'required|string|max:1000']);
+        
+        $day->comments()->create([
+            'user_id' => auth()->id(),
+            'user_name' => auth()->user()->name,
+            'content' => $request->content
+        ]);
+
+        return back()->with('success', '留言成功！');
+    }
+
+    public function addCommentShared($dayId, Request $request)
+    {
+        $day = ItineraryDay::findOrFail($dayId);
+        $request->validate([
+            'user_name' => 'required|string|max:50',
+            'content' => 'required|string|max:1000'
+        ]);
+        
+        $day->comments()->create([
+            'user_name' => $request->user_name,
+            'content' => $request->content
+        ]);
+
+        return back()->with('success', '留言成功！');
+    }
+
+    public function deleteComment($commentId)
+    {
+        $comment = DayComment::findOrFail($commentId);
+        $trip = $comment->itineraryDay->trip;
+
+        // AUTH: Trip owner OR Comment author
+        if (auth()->check() && (auth()->id() === $trip->user_id || auth()->id() === $comment->user_id)) {
+            $comment->delete();
+            return back()->with('success', '留言已刪除。');
+        }
+
+        return abort(403, '權限不足。');
     }
 }

@@ -23,4 +23,9 @@ class ItineraryDay extends Model
     {
         return $this->hasMany(ItineraryEvent::class)->orderBy('sort_order');
     }
+
+    public function comments()
+    {
+        return $this->hasMany(DayComment::class)->orderBy('created_at', 'asc');
+    }
 }

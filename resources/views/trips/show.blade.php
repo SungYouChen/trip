@@ -82,61 +82,60 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 
 @section('content')
 <div class="mb-12 relative max-w-4xl mx-auto px-4 group">
-    <!-- Header Content: Centered Title -->
-    <div class="text-center pt-2">
-        <p class="text-[10px] font-black text-muji-ash/40 uppercase tracking-[0.2em] mb-1">旅程計劃</p>
-        <h2 class="text-4xl font-black text-muji-ink sm:text-4xl leading-tight px-16">
-            {{ $trip->name }}
-        </h2>
-        
-        @if(!$isShared && $trip->is_public)
-        <div class="mt-4 mb-2 bg-muji-base/80 backdrop-blur-sm p-2 rounded-xl flex items-center justify-between gap-3 border border-muji-edge max-w-sm mx-auto overflow-hidden shadow-muji-sm">
-            <span id="shareLink" class="text-[10px] text-muji-oak font-mono truncate flex-1 font-bold">{{ route('trip.index_shared', ['token' => $trip->share_token]) }}</span>
-            <button onclick="copyShareLink()" class="bg-muji-oak text-white text-[10px] h-[32px] px-4 flex items-center justify-center rounded-xl hover:opacity-80 transition-colors font-black whitespace-nowrap">複製連結</button>
-        </div>
-        <script>
-            function copyShareLink() {
-                const link = document.getElementById('shareLink').innerText;
-                navigator.clipboard.writeText(link).then(() => {
-                    Swal.fire({
-                        icon: 'success',
-                        title: '連結已複製！',
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 2000
-                    });
-                });
-            }
-        </script>
-        @endif
-        
-        <p class="text-md text-muji-ash italic font-medium mt-2">
-            {{ \Carbon\Carbon::parse($trip->start_date)->format('Y/m/d') }} - {{ \Carbon\Carbon::parse($trip->end_date)->format('Y/m/d') }}
-        </p>
-    </div>
-    
-    @if(!$isShared && auth()->check())
-    <!-- Management Tools: Absolute Top-Right -->
-    <div class="absolute -top-1 -right-1 sm:right-4 flex items-center gap-2 p-1.5 z-40">
-        <!-- Settings Gear -->
-        <button onclick="safeOpenModal('tripSettingsModal')" class="mt-3 p-1 text-muji-ash hover:text-muji-oak hover:bg-muji-base rounded-xl transition-all tooltip tooltip-bottom hover:scale-105 active:scale-95 group/btn" data-tip="編輯旅程設定">
-            <svg class="w-6 h-6 transition-transform group-hover/btn:rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-        </button>
+    <!-- Header Block: Flex Container for Perfect Alignment -->
+    <div class="flex items-start justify-between min-h-[100px]">
+        <!-- Left Side Spacer (for centering) -->
+        <div class="hidden sm:flex w-24"></div>
 
-        <!-- Privacy Toggle -->
-        <form action="{{ route('trip.toggle_share', ['user' => $trip->user, 'trip' => $trip]) }}" method="POST" class="inline m-0">
-            @csrf
-            <button type="submit" class="mt-3 p-1 transition-all rounded-xl hover:bg-muji-base tooltip tooltip-bottom hover:scale-105 active:scale-95 {{ $trip->is_public ? 'text-muji-oak' : 'text-muji-ash opacity-60' }}" data-tip="{{ $trip->is_public ? '已分享 (點擊隱私)' : '未分享 (點擊公開)' }}">
-                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+        <!-- Center: Title Content -->
+        <div class="flex-1 text-center">
+            <h2 class="text-3xl sm:text-4xl font-black text-muji-ink leading-tight">
+                {{ $trip->name }}
+            </h2>
+            
+            <p class="text-sm sm:text-md text-muji-ash italic font-medium mt-2">
+                {{ \Carbon\Carbon::parse($trip->start_date)->format('Y/m/d') }} - {{ \Carbon\Carbon::parse($trip->end_date)->format('Y/m/d') }}
+            </p>
+        </div>
+
+        <!-- Right Side: Action Icons -->
+        <div class="flex items-center gap-2 pt-1">
+            @if(!$isShared && auth()->check())
+            <!-- Settings Gear -->
+            <button onclick="safeOpenModal('tripSettingsModal')" class="p-1.5 text-muji-ash hover:text-muji-oak hover:bg-muji-base rounded-xl transition-all tooltip tooltip-bottom hover:scale-105 active:scale-95 group/btn" data-tip="編輯旅程設定">
+                <svg class="w-6 h-6 transition-transform group-hover/btn:rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
             </button>
-        </form>
+
+            <!-- Privacy Toggle -->
+            <form action="{{ route('trip.toggle_share', ['user' => $trip->user, 'trip' => $trip]) }}" method="POST" class="inline m-0">
+                @csrf
+                <button type="submit" class="p-1.5 transition-all rounded-xl hover:bg-muji-base tooltip tooltip-bottom hover:scale-105 active:scale-95 {{ $trip->is_public ? 'text-muji-oak' : 'text-muji-ash opacity-60' }}" data-tip="{{ $trip->is_public ? '已分享 (點擊隱私)' : '未分享 (點擊公開)' }}">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                    </svg>
+                </button>
+            </form>
+            @endif
+        </div>
     </div>
+
+    <!-- Share Link Box (Balanced below title) -->
+    @if(!$isShared && $trip->is_public)
+    <div class="bg-muji-base/80 backdrop-blur-sm p-1.5 rounded-xl flex items-center justify-between gap-3 border border-muji-edge max-w-md mx-auto overflow-hidden shadow-muji-sm">
+        <span id="shareLink" class="text-[10px] text-muji-oak font-mono truncate flex-1 font-black pl-3 tracking-wider">{{ route('trip.index_shared', ['token' => $trip->share_token]) }}</span>
+        <button onclick="copyShareLink()" class="bg-muji-oak text-white text-[10px] h-[36px] px-6 flex items-center justify-center rounded-xl hover:opacity-80 transition-all font-black whitespace-nowrap active:scale-95 shadow-muji-sm">複製連結</button>
+    </div>
+    <script>
+        function copyShareLink() {
+            const link = document.getElementById('shareLink').innerText;
+            navigator.clipboard.writeText(link).then(() => {
+                showToast('連結已複製！', 'success');
+            });
+        }
+    </script>
     @endif
 </div>
 
@@ -150,7 +149,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 
 @if($hasFlight)
 <!-- Multi-modal Transport Card -->
-<div id="transportCard" class="relative muji-card shadow-muji border-muji-edge mb-8 group/transport zoom-in-on-load ticket-masked overflow-hidden">
+<div id="transportCard" class="relative muji-card shadow-muji border-muji-edge mb-4 group/transport zoom-in-on-load ticket-masked overflow-hidden">
     <div class="absolute inset-0 bg-gradient-to-br {{ $theme['gradient'] }} opacity-50 pointer-events-none"></div>
 
     <!-- Top Section: Header & Price -->
@@ -269,7 +268,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 </div>
 
                 <!-- Inbound -->
-                <div class="p-8 group/item hover:bg-white/40 transition-all duration-300">
+                <div class="p-8 group/item hover:bg-muji-paper/40 transition-all duration-300">
                     <div class="flex justify-between items-start mb-6">
                         <span class="px-3 py-1.5 bg-gray-100 text-gray-500 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm">
                             {{ $theme['label_in'] }}
@@ -342,7 +341,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 @elseif(!$isShared)
 @auth
 <!-- Placeholder for no flight info -->
-<div class="mb-8 p-8 border-2 border-dashed border-muji-edge rounded-3xl flex flex-col items-center justify-center text-muji-ash bg-muji-base/30 hover:border-muji-oak hover:text-muji-oak transition-all group" onclick="openFlightEditModal()" style="cursor: pointer;">
+<div class="mb-4 p-8 border-2 border-dashed border-muji-edge rounded-3xl flex flex-col items-center justify-center text-muji-ash bg-muji-base/30 hover:border-muji-oak hover:text-muji-oak transition-all group" onclick="openFlightEditModal()" style="cursor: pointer;">
     <div class="w-12 h-12 rounded-full bg-muji-base group-hover:bg-muji-wheat/20 flex items-center justify-center mb-3 transition-colors">
         <svg class="w-6 h-6 text-muji-wheat group-hover:text-muji-oak transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 4v16m8-8H4" />
@@ -495,7 +494,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 </div>
 
 <!-- Checklists Section (Standardized space-y-8 / gap-8) -->
-<div class="grid md:grid-cols-2 gap-8 mt-8">
+<div class="grid md:grid-cols-2 gap-6 mt-6">
     <!-- Must Buy List (p-8) -->
     <div class="muji-card shadow-muji p-8 relative flex flex-col min-h-[400px]">
         <h3 class="text-xl font-black text-muji-ink mb-6 flex items-center gap-2">
@@ -579,7 +578,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 </ul>
             </div>
             @endif
-@empty
+        @empty
                 <div class="flex flex-col items-center justify-center py-10 opacity-30 select-none">
                     <svg class="w-10 h-10 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
                     <p class="text-xs font-black tracking-widest uppercase">尚無必買清單</p>
@@ -643,41 +642,49 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                     <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         @foreach($items as $item)
                         @php $isItemArchived = $item->trashed(); @endphp
-                        <li class="flex items-start justify-between gap-2 text-sm text-muji-ash group {{ $isItemArchived ? 'border border-dashed border-red-200 rounded p-1 bg-red-50/20 grayscale opacity-60' : '' }}">
-                            <div class="flex items-start gap-2">
-                                @if($isItemArchived)
-                                <span class="text-red-400 mt-1"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></span>
-                                @else
-                                <input type="checkbox" 
-                                       class="mt-1 rounded text-muji-oak focus:ring-muji-oak sync-chk disabled:opacity-50 disabled:cursor-not-allowed" 
-                                       onchange="toggleChecklistItem(this, '{{ route('checklist.toggle', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}')"
-                                       @if($item->is_completed) checked @endif
-                                       @if(!auth()->check() || $isShared) disabled @endif>
-                                @endif
-                                <span class="{{ (!auth()->check() || $isShared) ? 'text-muji-ash/50' : '' }} {{ $isItemArchived ? 'text-red-800 font-bold' : '' }} {{ $item->is_completed ? 'line-through opacity-40' : '' }}">{{ $item->name }}</span>
-                            </div>
-                            @if(!$isShared)
-                            @auth
-                            <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                @if($isItemArchived)
-                                @php $restoreGoId = 'restore-chk-go-' . $item->id; @endphp
-                                <form id="{{ $restoreGoId }}" action="{{ route('checklist.restore', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}" method="POST">
-                                    @csrf @method('PATCH')
-                                    <button type="button" class="text-green-500 hover:text-green-700 p-0.5" onclick="confirmAction('還原清單項目？', '確定要將「{{ $item->name }}」移回想去景點嗎？', '{{ $restoreGoId }}')">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" /></svg>
-                                    </button>
-                                </form>
-                                @else
-                                @php $chkGoFormId = 'del-chk-go-' . $item->id; @endphp
-                                <form id="{{ $chkGoFormId }}" action="{{ route('checklist.destroy', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}" method="POST">
-                                    @csrf @method('DELETE')
-                                    <button type="button" class="text-red-400 hover:text-red-600 p-0.5" onclick="confirmDelete('封存清單項目？', '確定要將「{{ $item->name }}」移至回收桶嗎？', '{{ $chkGoFormId }}')">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                    </button>
-                                </form>
+                        <li class="flex flex-col gap-2 p-3 muji-card border border-muji-edge group {{ $isItemArchived ? 'grayscale opacity-60 bg-red-50/20' : 'bg-muji-paper hover:shadow-muji' }} transition-all">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-start gap-2">
+                                    @if($isItemArchived)
+                                        <span class="text-red-400 mt-1"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></span>
+                                    @else
+                                        <input type="checkbox" 
+                                               class="mt-1 rounded text-muji-oak focus:ring-muji-oak sync-chk disabled:opacity-50 disabled:cursor-not-allowed" 
+                                               onchange="toggleChecklistItem(this, '{{ route('checklist.toggle', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}')"
+                                               @if($item->is_completed) checked @endif
+                                               @if(!auth()->check() || $isShared) disabled @endif>
+                                    @endif
+                                    <span class="font-bold {{ (!auth()->check() || $isShared) ? 'text-muji-ash/50' : 'text-muji-ink' }} {{ $isItemArchived ? 'text-red-800' : '' }} {{ $item->is_completed ? 'line-through opacity-40' : '' }}">{{ $item->name }}</span>
+                                </div>
+                                @if(!$isShared && auth()->check())
+                                    <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        @if($isItemArchived)
+                                            <button type="button" class="text-green-500 hover:text-green-700 p-1" onclick="confirmAction('還原？', '將「{{ $item->name }}」移回想去景點嗎？', 'restore-chk-go-{{ $item->id }}')">
+                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" /></svg>
+                                            </button>
+                                            <form id="restore-chk-go-{{ $item->id }}" action="{{ route('checklist.restore', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}" method="POST" class="hidden">@csrf @method('PATCH')</form>
+                                        @else
+                                            <button type="button" class="text-red-400 hover:text-red-600 p-1" onclick="confirmDelete('封存？', '將「{{ $item->name }}」移至回收桶嗎？', 'del-chk-go-{{ $item->id }}')">
+                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                            </button>
+                                            <form id="del-chk-go-{{ $item->id }}" action="{{ route('checklist.destroy', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
+                                        @endif
+                                    </div>
                                 @endif
                             </div>
-                            @endauth
+                            
+                            @if(!$isItemArchived && !$isShared && auth()->check())
+                            <!-- Simplified Quick Assign Ribbons -->
+                            <div class="flex flex-wrap gap-1.5 mt-1 border-t border-muji-base pt-2">
+                                @foreach($itinerary as $day)
+                                    <button type="button" 
+                                            onclick="assignSpotToDay('{{ route('checklist.assign', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}', '{{ $day->date }}', '{{ $item->name }}')"
+                                            class="w-7 h-7 flex items-center justify-center rounded-full bg-muji-base text-[10px] font-black text-muji-ash hover:bg-muji-oak hover:text-white transition-all active:scale-90"
+                                            title="指派到 Day {{ $loop->iteration }}">
+                                        {{ $loop->iteration }}
+                                    </button>
+                                @endforeach
+                            </div>
                             @endif
                         </li>
                         @endforeach
@@ -713,10 +720,71 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
             @endauth
             @endif
         </div>
-    </div>
-
 </div>
+</div>
+<!-- 旅程交流牆 (Central Discussion Board) -->
+    <div class="mt-6 border-muji-edge animate-in fade-in slide-in-from-bottom-4 duration-700 w-full">
+        <div class="muji-card p-4 sm:p-6 border border-muji-edge shadow-muji shadow-muji-oak/5 rounded-[32px] w-full">
+            <div class="mb-6 w-full">
+            <h3 class="text-xl font-black text-muji-ink flex items-center gap-3">
+                <span class="w-10 h-10 rounded-2xl bg-muji-wheat/30 flex items-center justify-center text-muji-oak shadow-muji-sm">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                </span>
+                旅程交流牆
+            </h3>
+        </div>
+            <!-- 留言列表 -->
+            <div class="space-y-6 mb-10 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+                @forelse($globalComments as $comment)
+                <div class="flex items-start gap-4 animate-in fade-in slide-in-from-left-2 duration-300">
+                    <div class="w-10 h-10 rounded-2xl bg-muji-wheat/20 flex-shrink-0 flex items-center justify-center text-xs font-black text-muji-oak border border-muji-edge shadow-sm">
+                        {{ mb_substr($comment->user_name, 0, 1) }}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-baseline gap-3 mb-1.5">
+                            <span class="text-sm font-black text-muji-ink">{{ $comment->user_name }}</span>
+                            <span class="text-[10px] text-muji-ash/40 font-bold uppercase tracking-tighter">{{ $comment->created_at->diffForHumans() }}</span>
+                        </div>
+                        <div class="bg-muji-paper/40 p-4 rounded-3xl rounded-tl-none border border-muji-edge/40 text-sm text-muji-ink leading-relaxed shadow-sm">
+                            {!! preg_replace('/(https?:\/\/[^\s]+)/', '<a href="$1" target="_blank" class="text-muji-oak hover:underline break-all underline decoration-dotted decoration-muji-wheat">$1</a>', e($comment->content)) !!}
+                        </div>
+                    </div>
+                </div>
+                @empty
+                <div class="py-16 flex flex-col items-center justify-center opacity-30 select-none">
+                    <svg class="w-16 h-16 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" /></svg>
+                    <p class="text-[10px] font-black tracking-widest uppercase">大家都很安靜呢，來聊聊細節吧！</p>
+                </div>
+                @endforelse
+            </div>
 
+            <!-- 留言表單 -->
+            <form action="{{ $isShared ? route('trip.comment.store_shared', ['token' => $trip->share_token]) : route('trip.comment.store', ['user' => $trip->user, 'trip' => $trip]) }}" 
+                  method="POST" 
+                  class="relative bg-muji-paper/50 p-6 rounded-[32px] border border-muji-edge shadow-inner"
+                  onsubmit="handleAjaxSubmit(event, this, null)">
+                @csrf
+                @if(!auth()->check() || $isShared)
+                <div class="mb-4">
+                    <label class="block text-[10px] font-black text-muji-ash uppercase tracking-widest mb-1.5 ml-1">留言暱稱</label>
+                    <input type="text" name="user_name" required placeholder="您的暱稱" class="w-full sm:w-1/3 bg-muji-paper border-muji-edge rounded-xl text-sm px-4 py-2.5 focus:ring-muji-oak focus:border-muji-oak shadow-sm transition-all h-[46px]">
+                </div>
+                @endif
+                <div class="flex gap-3 items-end">
+                    <div class="flex-1">
+                        <label class="block text-[10px] font-black text-muji-ash uppercase tracking-widest mb-1.5 ml-1">發言內容</label>
+                        <textarea name="content" required rows="3" placeholder="想對大家說什麼？或是貼上好站連結..." class="w-full bg-muji-paper border-muji-edge rounded-[24px] text-sm p-4 focus:ring-muji-oak focus:border-muji-oak transition-all resize-none shadow-sm"></textarea>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-4">
+                    <button type="submit" class="px-8 h-[50px] bg-muji-oak text-white rounded-full flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-muji font-black text-sm tracking-widest">
+                        發送留言
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
 @push('modals')
 @if(!$isShared)
@@ -1408,6 +1476,51 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
         }
         function closeTripEditModal() {
             safeCloseModal('tripSettingsModal');
+        }
+
+        /**
+         * Assign a spot from the Inbox/Wishlist to a specific itinerary day
+         */
+        async function assignSpotToDay(url, date, itemName) {
+            const btn = event.currentTarget;
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = '<span class="loading loading-spinner loading-[10px] text-white"></span>';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ date: date })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    if (typeof showToast === 'function') {
+                        showToast(`「${itemName}」已排入行程！`, 'success');
+                    } else {
+                        Swal.fire({
+                            icon: 'success', title: '指派成功！', text: `「${itemName}」已加入您的行程表。`,
+                            toast: true, position: 'top-end', showConfirmButton: false, timer: 3000
+                        });
+                    }
+                } else {
+                    throw new Error(data.message || '指派時發生錯誤');
+                }
+            } catch (error) {
+                console.error('Assign Error:', error);
+                if (typeof showToast === 'function') {
+                    showToast(error.message || '指派失敗', 'error');
+                }
+            } finally {
+                btn.innerHTML = originalContent;
+                btn.disabled = false;
+            }
         }
     </script>
     @endif

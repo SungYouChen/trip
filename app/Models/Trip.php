@@ -63,4 +63,9 @@ class Trip extends Model
     {
         return $this->hasMany(TripCollaborator::class);
     }
+
+    public function tripComments()
+    {
+        return $this->hasMany(TripComment::class)->orderBy('created_at', 'desc');
+    }
 }

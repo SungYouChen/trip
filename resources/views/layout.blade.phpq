@@ -525,7 +525,7 @@
 
     <!-- Global Background Wrapper -->
     <div id="bg-wrapper" class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none select-none" style="background-color: var(--muji-base);">
-        <div id="global-bg-element" class="absolute inset-y-0 bg-cover bg-center bg-no-repeat transition-all duration-700 ease-in-out" style="background-image: url('{{ $bgUrl ?: asset('bg.jpg') }}') ;
+        <div id="global-bg-element" class="absolute inset-y-0 bg-cover bg-center bg-no-repeat transition-all duration-700 ease-in-out" style="background-image: url('{{ $bgUrl ?: asset('bg.jpg') }}');
                     opacity: var(--bg-opacity, {{ $bgOpacityValue }}); 
                     filter: blur(var(--bg-blur, {{ $bgBlurValue }}px));
                     width: var(--bg-width, {{ $bgWidthValue }}%);

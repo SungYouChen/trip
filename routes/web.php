@@ -41,6 +41,7 @@ Route::middleware(['auth', 'user.scope', 'verified'])->group(function () {
     Route::post('/{user}/trip/{trip}/checklist', [TripController::class, 'addItem'])->name('checklist.store');
     Route::delete('/{user}/trip/{trip}/checklist/{id}', [TripController::class, 'deleteItem'])->name('checklist.destroy');
     Route::post('/{user}/trip/{trip}/checklist/{id}/toggle', [TripController::class, 'toggleItem'])->name('checklist.toggle');
+    Route::post('/{user}/trip/{trip}/checklist/{id}/assign', [TripController::class, 'assignSpotToDay'])->name('checklist.assign');
     Route::put('/{user}/trip/{trip}/day/{date}', [ItineraryDayController::class, 'updateDay'])->name('day.update');
     Route::post('/{user}/trip/{trip}/day/{date}/events', [ItineraryDayController::class, 'addEvent'])->name('events.store');
     Route::put('/{user}/events/{event}', [ItineraryDayController::class, 'updateEvent'])->name('events.update');
@@ -68,8 +69,13 @@ Route::middleware(['auth', 'user.scope', 'verified'])->group(function () {
     Route::delete('/{user}/trip/{trip}/day/{dayId}/force', [ItineraryDayController::class, 'forceDeleteDay'])->name('day.forceDelete');
     Route::patch('/{user}/events/{eventId}/restore', [ItineraryDayController::class, 'restoreEvent'])->name('events.restore');
     Route::delete('/{user}/events/{eventId}/force', [ItineraryDayController::class, 'forceDeleteEvent'])->name('events.forceDelete');
+    Route::post('/day/{dayId}/comments', [ItineraryDayController::class, 'addComment'])->name('day.comments.store');
+    Route::delete('/day/comments/{commentId}', [ItineraryDayController::class, 'deleteComment'])->name('day.comments.destroy');
+    Route::post('/{user}/trip/{trip}/comment', [TripController::class, 'storeTripComment'])->name('trip.comment.store');
 });
 
+Route::post('/shared/day/{dayId}/comments', [ItineraryDayController::class, 'addCommentShared'])->name('day.comments.store_shared');
+Route::post('/shared/{token}/comment', [TripController::class, 'storeTripCommentShared'])->name('trip.comment.store_shared');
 Route::get('/shared/{token}', [TripController::class, 'indexShared'])->name('trip.index_shared');
 Route::get('/shared/{token}/day/{date}', [ItineraryDayController::class, 'showShared'])->name('day.show_shared');
 Route::get('/shared/{token}/expenses', [ExpenseController::class, 'indexShared'])->name('expenses.index_shared');

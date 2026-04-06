@@ -342,6 +342,9 @@ class TripController extends Controller
         return view('trips.show', $data);
     }
 
+    /**
+     * @param Trip $trip
+     */
     public function addCollaborator(User $user, Trip $trip, Request $request)
     {
         $validated = $request->validate([
@@ -549,10 +552,13 @@ class TripController extends Controller
         return response()->json(['success' => true]);
     }
 
+    /**
+     * @param Trip $trip
+     */
     private function getTripShowData($trip)
     {
         $trip->load(['days' => function ($q) {
-            $q->withTrashed()->orderBy('date'); }, 'collaborators']);
+            $q->withTrashed()->orderBy('date'); }, 'collaborators', 'tripComments']);
         $checklistItems = $trip->checklistItems()->withTrashed()->get();
         $groupedChecklist = $checklistItems->groupBy('category')->map(function ($items) {
             return $items->mapWithKeys(fn ($i) => [$i->id => ['name' => $i->name, 'trashed' => $i->trashed()]])->toArray();
@@ -567,7 +573,70 @@ class TripController extends Controller
             'mustGoList' => $groupedChecklist['Must Go'] ?? [],
             'mustBuyList' => $groupedChecklist['Must Buy'] ?? [],
             'itinerary' => $trip->days,
+            'globalComments' => $trip->tripComments,
         ];
+    }
+
+    public function storeTripComment(User $user, Trip $trip, Request $request)
+    {
+        $validated = $request->validate([
+            'user_name' => 'nullable|string|max:255',
+            'content' => 'required|string',
+        ]);
+
+        $trip->tripComments()->create([
+            'user_id' => auth()->id(),
+            'user_name' => $validated['user_name'] ?? (auth()->check() ? auth()->user()->name : '匿名旅伴'),
+            'content' => $validated['content'],
+        ]);
+
+        if ($request->ajax()) {
+            return response()->json(['message' => '發言成功！']);
+        }
+
+        return back()->with('success', '發言成功！');
+    }
+
+    public function storeTripCommentShared($token, Request $request)
+    {
+        $trip = Trip::where('share_token', $token)->where('is_public', true)->firstOrFail();
+        
+        $validated = $request->validate([
+            'user_name' => 'required|string|max:255',
+            'content' => 'required|string',
+        ]);
+
+        $trip->tripComments()->create([
+            'user_id' => null,
+            'user_name' => $validated['user_name'],
+            'content' => $validated['content'],
+        ]);
+
+        if ($request->ajax()) {
+            return response()->json(['message' => '發言成功！']);
+        }
+
+        return back()->with('success', '發言成功！');
+    }
+
+    public function assignSpotToDay(User $user, Trip $trip, $id, Request $request)
+    {
+        $item = $trip->checklistItems()->findOrFail($id);
+        $date = $request->input('date');
+
+        $day = $trip->days()->whereDate('date', $date)->firstOrFail();
+
+        $day->events()->create([
+            'time' => '全天/彈性',
+            'activity' => $item->name,
+            'note' => '從景點收納箱指派',
+            'sort_order' => $day->events()->count(),
+        ]);
+
+        return response()->json([
+            'message' => "「{$item->name}」已成功指派至 {$date}！",
+            'success' => true
+        ]);
     }
 
     public function fetchExchangeRate(User $user, Request $request)

@@ -442,6 +442,133 @@
                     </div>
                 @endif
             </div>
+        </div> {{-- End of lg:grid-cols-3 --}}
+
+        <!-- Collaborative Comment Board -->
+        <div class="mt-12 pt-12 border-t border-muji-edge">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="p-3 bg-muji-base rounded-2xl text-muji-oak shadow-muji-sm">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                    </svg>
+                </div>
+                <div class="flex flex-col border-l-2 border-muji-edge pl-4">
+                    <h3 class="text-2xl font-black text-muji-ink leading-tight">協作討論區</h3>
+                    <p class="text-[10px] font-bold text-muji-ash uppercase tracking-[0.2em] mt-1">與旅伴一起豐富行程細節</p>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-4 gap-8">
+                <div class="lg:col-span-3 space-y-6">
+                    @if(empty($day['comments']))
+                        <div class="muji-card p-12 text-center border-dashed border-2 bg-muji-base/20 border-muji-edge">
+                            <div class="inline-flex p-4 rounded-full bg-muji-base text-muji-ash mb-4">
+                                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                </svg>
+                            </div>
+                            <p class="text-muji-ash font-bold">目前還沒有討論，來當第一個留言的人吧！</p>
+                        </div>
+                    @else
+                        <div class="space-y-6">
+                            @foreach($day['comments'] as $comment)
+                                <div class="flex gap-4 group/comment relative">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-10 h-10 rounded-full bg-muji-oak text-white flex items-center justify-center font-black text-sm shadow-muji-sm">
+                                            {{ mb_substr($comment['user_name'], 0, 1) }}
+                                        </div>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <div class="flex items-center gap-3">
+                                                <span class="font-black text-muji-ink text-sm">{{ $comment['user_name'] }}</span>
+                                                <span class="text-[10px] text-muji-ash font-bold uppercase tracking-widest">{{ $comment['time'] }}</span>
+                                            </div>
+                                            
+                                            @if($comment['can_delete'])
+                                                @php $commentDelFormId = 'del-comment-' . $comment['id']; @endphp
+                                                <form id="{{ $commentDelFormId }}" action="{{ route('day.comments.destroy', ['commentId' => $comment['id']]) }}" method="POST" class="opacity-0 group-hover/comment:opacity-100 transition-opacity">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" onclick="confirmDelete('刪除此則留言？', '此動作無法復原！確定要永久刪除嗎？', '{{ $commentDelFormId }}')" class="p-1 px-2 text-[10px] text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all font-bold flex items-center gap-1">
+                                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                        </svg>
+                                                        刪除
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                        <div class="muji-card p-4 bg-muji-paper border border-muji-edge shadow-muji-sm text-muji-ink leading-relaxed whitespace-pre-wrap">@php 
+                                            // Simple URL to link conversion
+                                            $content = e($comment['content']);
+                                            $content = preg_replace(
+                                                '/(https?:\/\/[^\s]+)/', 
+                                                '<a href="$1" target="_blank" class="text-muji-oak hover:underline underline-offset-4 break-all">$1</a>', 
+                                                $content
+                                            );
+                                            echo $content;
+                                        @endphp</div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <!-- Add Comment Form -->
+                    <div class="muji-card p-8 bg-muji-paper border border-muji-edge mt-8">
+                        <form action="{{ $isShared ? route('day.comments.store_shared', ['dayId' => $day['id']]) : route('day.comments.store', ['dayId' => $day['id']]) }}" method="POST">
+                            @csrf
+                            <h4 class="text-xs font-black text-muji-oak uppercase tracking-[0.2em] flex items-center gap-2 mb-6">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                發表新留言
+                            </h4>
+                            <div class="space-y-4">
+                                @if($isShared)
+                                    <div>
+                                        <label class="block text-xs font-bold text-muji-ash mb-2 ml-1">您的暱稱</label>
+                                        <input type="text" name="user_name" required placeholder="例如：旅伴小 A" class="w-full px-4 py-3 muji-input max-w-xs">
+                                    </div>
+                                @endif
+                                <div>
+                                    <label class="block text-xs font-bold text-muji-ash mb-2 ml-1">留言內容</label>
+                                    <textarea name="content" rows="3" required placeholder="例如：我想吃這家大腸鍋（貼上連結）" class="w-full px-4 py-3 muji-input"></textarea>
+                                </div>
+                                <div class="flex justify-end">
+                                    <button type="submit" class="px-8 h-[46px] flex items-center justify-center bg-muji-oak text-white font-black rounded-full hover:opacity-90 shadow-muji transition-all active:scale-95 text-sm gap-2">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                        </svg>
+                                        送出留言
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-1">
+                    <div class="muji-card p-6 bg-muji-base/30 border border-muji-edge sticky top-24">
+                        <h4 class="text-xs font-black text-muji-ink uppercase tracking-widest mb-4">協作小撇步</h4>
+                        <ul class="space-y-4 text-xs text-muji-ash leading-relaxed">
+                            <li class="flex gap-2">
+                                <span class="text-muji-oak font-black">●</span>
+                                <span>您可以直接貼上 Google Maps 或食記連結，系統會自動轉換。</span>
+                            </li>
+                            <li class="flex gap-2">
+                                <span class="text-muji-oak font-black">●</span>
+                                <span>這是一個公開的討論區，持有連結的旅伴皆可發言。</span>
+                            </li>
+                            <li class="flex gap-2">
+                                <span class="text-muji-oak font-black">●</span>
+                                <span>討論結果可以直接由行程擁有者更新至上方的詳細清單。</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
 
         @push('modals')

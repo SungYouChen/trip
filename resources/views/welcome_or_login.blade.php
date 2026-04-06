@@ -69,7 +69,7 @@
                     </p>
                 </div>
                 <!-- Feature 3: Checklist -->
-                <div class="p-10 border-r border-b border-muji-edge hover:bg-white transition-colors duration-500 group">
+                <div class="p-10 border-r border-b border-muji-edge hover:bg-muji-paper transition-colors duration-500 group">
                     <span class="text-[9px] font-black tracking-[0.4em] text-muji-oak block mb-6">Checklist / 清單收納</span>
                     <h4 class="text-lg font-bold text-muji-ink mb-6 group-hover:translate-x-2 transition-transform">清單。不再遺忘</h4>
                     <p class="text-xs text-muji-ash leading-[2] font-medium opacity-70">
