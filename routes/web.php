@@ -72,6 +72,7 @@ Route::middleware(['auth', 'user.scope', 'verified'])->group(function () {
     Route::post('/day/{dayId}/comments', [ItineraryDayController::class, 'addComment'])->name('day.comments.store');
     Route::delete('/day/comments/{commentId}', [ItineraryDayController::class, 'deleteComment'])->name('day.comments.destroy');
     Route::post('/{user}/trip/{trip}/comment', [TripController::class, 'storeTripComment'])->name('trip.comment.store');
+    Route::delete('/trip/comments/{id}', [TripController::class, 'deleteTripComment'])->name('trip.comment.destroy');
 });
 
 Route::post('/shared/day/{dayId}/comments', [ItineraryDayController::class, 'addCommentShared'])->name('day.comments.store_shared');

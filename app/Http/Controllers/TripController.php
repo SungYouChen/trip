@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Trip;
 use App\Models\User;
 use App\Models\TripCollaborator;
+use App\Models\TripComment;
 use App\Mail\TripInvitationMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -573,7 +574,21 @@ class TripController extends Controller
             'mustGoList' => $groupedChecklist['Must Go'] ?? [],
             'mustBuyList' => $groupedChecklist['Must Buy'] ?? [],
             'itinerary' => $trip->days,
-            'globalComments' => $trip->tripComments,
+            'globalComments' => $trip->tripComments->map(function($comment) use ($trip) {
+                $canDelete = false;
+                if (auth()->check()) {
+                    if (auth()->id() === $trip->user_id || auth()->id() === $comment->user_id) {
+                        $canDelete = true;
+                    }
+                }
+                return [
+                    'id' => $comment->id,
+                    'user_name' => $comment->user_name ?: '匿名旅伴',
+                    'content' => $comment->content,
+                    'time' => $comment->created_at->diffForHumans(),
+                    'can_delete' => $canDelete
+                ];
+            }),
         ];
     }
 
@@ -617,6 +632,20 @@ class TripController extends Controller
         }
 
         return back()->with('success', '發言成功！');
+    }
+
+    public function deleteTripComment($commentId)
+    {
+        $comment = TripComment::findOrFail($commentId);
+        $trip = $comment->trip;
+
+        // AUTH: Trip owner OR Comment author
+        if (auth()->check() && (auth()->id() === $trip->user_id || auth()->id() === $comment->user_id)) {
+            $comment->delete();
+            return back()->with('success', '留言已刪除。');
+        }
+
+        return abort(403, '權限不足。');
     }
 
     public function assignSpotToDay(User $user, Trip $trip, $id, Request $request)

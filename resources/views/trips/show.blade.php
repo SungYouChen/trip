@@ -736,23 +736,40 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
             <!-- 留言列表 -->
             <div class="space-y-6 mb-10 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
                 @forelse($globalComments as $comment)
-                <div class="flex items-start gap-4 animate-in fade-in slide-in-from-left-2 duration-300">
+                <div class="flex items-start gap-4 group/comment relative animate-in fade-in slide-in-from-left-2 duration-300">
                     <div class="w-10 h-10 rounded-2xl bg-muji-wheat/20 flex-shrink-0 flex items-center justify-center text-xs font-black text-muji-oak border border-muji-edge shadow-sm">
-                        {{ mb_substr($comment->user_name, 0, 1) }}
+                        {{ mb_substr($comment['user_name'], 0, 1) }}
                     </div>
                     <div class="flex-1 min-w-0">
-                        <div class="flex items-baseline gap-3 mb-1.5">
-                            <span class="text-sm font-black text-muji-ink">{{ $comment->user_name }}</span>
-                            <span class="text-[10px] text-muji-ash/40 font-bold uppercase tracking-tighter">{{ $comment->created_at->diffForHumans() }}</span>
+                        <div class="flex items-baseline justify-between mb-1.5">
+                            <div class="flex items-baseline gap-3">
+                                <span class="text-sm font-black text-muji-ink">{{ $comment['user_name'] }}</span>
+                                <span class="text-[10px] text-muji-ash/40 font-bold uppercase tracking-tighter">{{ $comment['time'] }}</span>
+                            </div>
+                            
+                            @if($comment['can_delete'])
+                                @php $commDelId = 'del-global-comm-' . $comment['id']; @endphp
+                                <form id="{{ $commDelId }}" action="{{ route('trip.comment.destroy', ['id' => $comment['id']]) }}" method="POST" class="opacity-0 group-hover/comment:opacity-100 transition-opacity">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" onclick="confirmDelete('刪除此則留言？', '此動作無法復原！確定要永久刪除嗎？', '{{ $commDelId }}')" class="text-red-400 hover:text-red-600 transition-colors">
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </form>
+                            @endif
                         </div>
-                        <div class="bg-muji-paper/40 p-4 rounded-3xl rounded-tl-none border border-muji-edge/40 text-sm text-muji-ink leading-relaxed shadow-sm">
-                            {!! preg_replace('/(https?:\/\/[^\s]+)/', '<a href="$1" target="_blank" class="text-muji-oak hover:underline break-all underline decoration-dotted decoration-muji-wheat">$1</a>', e($comment->content)) !!}
+                        <div class="bg-muji-paper p-4 rounded-3xl rounded-tl-none border border-muji-edge/60 text-sm text-muji-ink leading-relaxed shadow-muji-sm hover:shadow-muji transition-all duration-300">
+                            {!! preg_replace('/(https?:\/\/[^\s]+)/', '<a href="$1" target="_blank" class="text-muji-oak hover:underline break-all underline decoration-dotted decoration-muji-wheat">$1</a>', e($comment['content'])) !!}
                         </div>
                     </div>
                 </div>
                 @empty
                 <div class="py-16 flex flex-col items-center justify-center opacity-30 select-none">
-                    <svg class="w-16 h-16 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" /></svg>
+                    <svg class="w-16 h-16 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
                     <p class="text-[10px] font-black tracking-widest uppercase">大家都很安靜呢，來聊聊細節吧！</p>
                 </div>
                 @endforelse
@@ -761,7 +778,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
             <!-- 留言表單 -->
             <form action="{{ $isShared ? route('trip.comment.store_shared', ['token' => $trip->share_token]) : route('trip.comment.store', ['user' => $trip->user, 'trip' => $trip]) }}" 
                   method="POST" 
-                  class="relative bg-muji-paper/50 p-6 rounded-[32px] border border-muji-edge shadow-inner"
+                  class="relative mt-8 pt-8 border-t border-muji-edge/40"
                   onsubmit="handleAjaxSubmit(event, this, null)">
                 @csrf
                 @if(!auth()->check() || $isShared)
@@ -779,7 +796,6 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 <div class="flex justify-end mt-4">
                     <button type="submit" class="px-8 h-[50px] bg-muji-oak text-white rounded-full flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-muji font-black text-sm tracking-widest">
                         發送留言
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
                     </button>
                 </div>
             </form>
