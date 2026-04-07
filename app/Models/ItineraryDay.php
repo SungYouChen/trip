@@ -11,6 +11,7 @@ class ItineraryDay extends Model
     protected $fillable = ['trip_id', 'date', 'title', 'location', 'summary', 'accommodation', 'accommodation_details'];
 
     protected $casts = [
+        'date' => 'date',
         'accommodation_details' => 'array',
     ];
 

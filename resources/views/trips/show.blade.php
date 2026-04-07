@@ -594,13 +594,13 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 @csrf
                 <input type="hidden" name="type" value="shopping">
                 <div class="flex gap-2 items-stretch h-[46px]">
-                    <input type="text" name="category" placeholder="例如：藥妝" class="w-1/3 rounded-xl border-muji-edge text-sm px-4 bg-muji-base/30 text-muji-ink focus:ring-muji-oak transition-all hover:bg-muji-base/50" required list="shop_categories" autocomplete="off">
+                    <input type="text" name="category" placeholder="例如：藥妝" class="w-1/3 h-[46px] px-4 muji-input" required list="shop_categories" autocomplete="off">
                     <datalist id="shop_categories">
                         @foreach($shoppingCategories as $cat)
                         <option value="{{ $cat }}">
                         @endforeach
                     </datalist>
-                    <input type="text" name="name" placeholder="例如：合利他命" class="w-2/3 rounded-xl border-muji-edge text-sm px-4 bg-muji-base/30 text-muji-ink focus:ring-muji-oak" required>
+                    <input type="text" name="name" placeholder="例如：合利他命" class="w-2/3 h-[46px] px-4 muji-input" required>
                     <button type="submit" class="bg-muji-oak text-white w-[46px] flex items-center justify-center rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-muji-sm flex-shrink-0">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -642,49 +642,46 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                     <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         @foreach($items as $item)
                         @php $isItemArchived = $item->trashed(); @endphp
-                        <li class="flex flex-col gap-2 p-3 muji-card border border-muji-edge group {{ $isItemArchived ? 'grayscale opacity-60 bg-red-50/20' : 'bg-muji-paper hover:shadow-muji' }} transition-all">
-                            <div class="flex items-start justify-between">
-                                <div class="flex items-start gap-2">
-                                    @if($isItemArchived)
-                                        <span class="text-red-400 mt-1"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></span>
-                                    @else
-                                        <input type="checkbox" 
-                                               class="mt-1 rounded text-muji-oak focus:ring-muji-oak sync-chk disabled:opacity-50 disabled:cursor-not-allowed" 
-                                               onchange="toggleChecklistItem(this, '{{ route('checklist.toggle', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}')"
-                                               @if($item->is_completed) checked @endif
-                                               @if(!auth()->check() || $isShared) disabled @endif>
-                                    @endif
-                                    <span class="font-bold {{ (!auth()->check() || $isShared) ? 'text-muji-ash/50' : 'text-muji-ink' }} {{ $isItemArchived ? 'text-red-800' : '' }} {{ $item->is_completed ? 'line-through opacity-40' : '' }}">{{ $item->name }}</span>
-                                </div>
-                                @if(!$isShared && auth()->check())
-                                    <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        @if($isItemArchived)
-                                            <button type="button" class="text-green-500 hover:text-green-700 p-1" onclick="confirmAction('還原？', '將「{{ $item->name }}」移回想去景點嗎？', 'restore-chk-go-{{ $item->id }}')">
-                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" /></svg>
-                                            </button>
-                                            <form id="restore-chk-go-{{ $item->id }}" action="{{ route('checklist.restore', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}" method="POST" class="hidden">@csrf @method('PATCH')</form>
-                                        @else
-                                            <button type="button" class="text-red-400 hover:text-red-600 p-1" onclick="confirmDelete('封存？', '將「{{ $item->name }}」移至回收桶嗎？', 'del-chk-go-{{ $item->id }}')">
-                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                            </button>
-                                            <form id="del-chk-go-{{ $item->id }}" action="{{ route('checklist.destroy', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
-                                        @endif
-                                    </div>
+                        <li class="flex items-start justify-between gap-2 text-sm text-muji-ash group {{ $isItemArchived ? 'border border-dashed border-red-200 rounded p-1 bg-red-50/20 grayscale opacity-60' : '' }}">
+                            <div class="flex items-start gap-2">
+                                @if($isItemArchived)
+                                    <span class="text-red-400 mt-0.5"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></span>
+                                @else
+                                    <input type="checkbox" 
+                                           class="mt-1 rounded text-muji-oak focus:ring-muji-oak sync-chk disabled:opacity-50 disabled:cursor-not-allowed" 
+                                           onchange="toggleChecklistItem(this, '{{ route('checklist.toggle', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}')"
+                                           @if($item->is_completed) checked @endif
+                                           @if(!auth()->check() || $isShared) disabled @endif>
                                 @endif
+                                <span class="font-bold {{ (!auth()->check() || $isShared) ? 'text-muji-ash/50' : 'text-muji-ink' }} {{ $isItemArchived ? 'text-red-800' : '' }} {{ $item->is_completed ? 'line-through opacity-40' : '' }}">{{ $item->name }}</span>
                             </div>
-                            
-                            @if(!$isItemArchived && !$isShared && auth()->check())
-                            <!-- Simplified Quick Assign Ribbons -->
-                            <div class="flex flex-wrap gap-1.5 mt-1 border-t border-muji-base pt-2">
-                                @foreach($itinerary as $day)
-                                    <button type="button" 
-                                            onclick="assignSpotToDay('{{ route('checklist.assign', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}', '{{ $day->date }}', '{{ $item->name }}')"
-                                            class="w-7 h-7 flex items-center justify-center rounded-full bg-muji-base text-[10px] font-black text-muji-ash hover:bg-muji-oak hover:text-white transition-all active:scale-90"
-                                            title="指派到 Day {{ $loop->iteration }}">
-                                        {{ $loop->iteration }}
-                                    </button>
-                                @endforeach
-                            </div>
+                            @if(!$isShared && auth()->check())
+                                <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    @if($isItemArchived)
+                                        <button type="button" class="text-green-500 hover:text-green-700 p-0.5" onclick="confirmAction('還原？', '將「{{ $item->name }}」移回想去景點嗎？', 'restore-chk-go-{{ $item->id }}')">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" /></svg>
+                                        </button>
+                                        <form id="restore-chk-go-{{ $item->id }}" action="{{ route('checklist.restore', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}" method="POST" class="hidden">@csrf @method('PATCH')</form>
+                                        
+                                        <button type="button" class="text-red-600 hover:text-red-800 p-0.5" onclick="confirmDelete('永久刪除？', '此動作無法復原！確定要永久刪除「{{ $item->name }}」嗎？', 'force-chk-go-{{ $item->id }}')">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                        </button>
+                                        <form id="force-chk-go-{{ $item->id }}" action="{{ route('checklist.forceDelete', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
+                                    @else
+                                        <button type="button" 
+                                                onclick="showAssignSwal('{{ route('checklist.assign', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}', '{{ $item->name }}')"
+                                                class="text-muji-oak hover:opacity-70 p-0.5"
+                                                title="指派到行程日">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                        </button>
+                                        <button type="button" class="text-red-400 hover:text-red-600 p-0.5" onclick="confirmDelete('封存？', '將「{{ $item->name }}」移至回收桶嗎？', 'del-chk-go-{{ $item->id }}')">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                        </button>
+                                        <form id="del-chk-go-{{ $item->id }}" action="{{ route('checklist.destroy', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
+                                    @endif
+                                </div>
                             @endif
                         </li>
                         @endforeach
@@ -707,11 +704,11 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 @csrf
                 <input type="hidden" name="type" value="spot">
                 <div class="flex gap-2 items-stretch h-[46px]">
-                    <input type="text" name="category" placeholder="例如：河口湖" class="w-1/3 rounded-xl border-muji-edge text-sm px-4 bg-muji-base/30 text-muji-ink focus:ring-muji-oak transition-all hover:bg-muji-base/50" required list="spot_categories" autocomplete="off">
+                    <input type="text" name="category" placeholder="例如：河口湖" class="w-1/3 h-[46px] px-4 muji-input" required list="spot_categories" autocomplete="off">
                     <datalist id="spot_categories">
                         @foreach($spotCategories as $cat) <option value="{{ $cat }}"> @endforeach
                     </datalist>
-                    <input type="text" name="name" placeholder="例如：新倉山淺間公園" class="w-2/3 rounded-xl border-muji-edge text-sm px-4 bg-muji-base/30 text-muji-ink focus:ring-muji-oak" required>
+                    <input type="text" name="name" placeholder="例如：新倉山淺間公園" class="w-2/3 h-[46px] px-4 muji-input" required>
                     <button type="submit" class="bg-muji-oak text-white w-[46px] flex items-center justify-center rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-muji-sm flex-shrink-0">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                     </button>
@@ -1494,14 +1491,56 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
             safeCloseModal('tripSettingsModal');
         }
 
-        /**
-         * Assign a spot from the Inbox/Wishlist to a specific itinerary day
-         */
+        const dayOptions = {
+            @foreach($itinerary as $index => $day)
+                '{{ $day->date->format('Y-m-d') }}': 'Day {{ $index + 1 }} ({{ $day->date->format('n/j') }})',
+            @endforeach
+        };
+
+        function showAssignSwal(url, itemName) {
+            Swal.fire({
+                ...getSwalConfig(),
+                title: '指派景點',
+                html: `<div class="mb-4 text-center">請選擇要將「<span class="text-muji-oak">${itemName}</span>」排入哪一天？</div>`,
+                input: 'select',
+                inputOptions: dayOptions,
+                inputPlaceholder: '請選擇日期',
+                showCancelButton: true,
+                confirmButtonText: '確定指派',
+                cancelButtonText: '取消',
+                inputValidator: (value) => {
+                    if (!value) return '請先選擇一個日期！';
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const selectedDate = result.value;
+                    const dayLabel = dayOptions[selectedDate];
+                    
+                    Swal.fire({
+                        ...getSwalConfig(),
+                        title: '確認指派？',
+                        text: `確定要將「${itemName}」加入 ${dayLabel} 嗎？`,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: '確定',
+                        cancelButtonText: '返回'
+                    }).then((confResult) => {
+                        if (confResult.isConfirmed) {
+                            assignSpotToDay(url, selectedDate, itemName);
+                        }
+                    });
+                }
+            });
+        }
+
         async function assignSpotToDay(url, date, itemName) {
-            const btn = event.currentTarget;
-            const originalContent = btn.innerHTML;
-            btn.innerHTML = '<span class="loading loading-spinner loading-[10px] text-white"></span>';
-            btn.disabled = true;
+            Swal.fire({
+                ...getSwalConfig(),
+                title: '指派中...',
+                didOpen: () => { Swal.showLoading(); },
+                allowOutsideClick: false,
+                showConfirmButton: false
+            });
 
             try {
                 const response = await fetch(url, {
@@ -1517,25 +1556,26 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 const data = await response.json();
                 
                 if (response.ok) {
-                    if (typeof showToast === 'function') {
-                        showToast(`「${itemName}」已排入行程！`, 'success');
-                    } else {
-                        Swal.fire({
-                            icon: 'success', title: '指派成功！', text: `「${itemName}」已加入您的行程表。`,
-                            toast: true, position: 'top-end', showConfirmButton: false, timer: 3000
-                        });
-                    }
+                    Swal.fire({
+                        ...getSwalConfig(),
+                        icon: 'success',
+                        title: '指派成功！',
+                        text: `「${itemName}」已成功排入行程。`,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                    setTimeout(() => window.location.reload(), 2100);
                 } else {
                     throw new Error(data.message || '指派時發生錯誤');
                 }
             } catch (error) {
                 console.error('Assign Error:', error);
-                if (typeof showToast === 'function') {
-                    showToast(error.message || '指派失敗', 'error');
-                }
-            } finally {
-                btn.innerHTML = originalContent;
-                btn.disabled = false;
+                Swal.fire({
+                    ...getSwalConfig(),
+                    icon: 'error',
+                    title: '指派失敗',
+                    text: error.message || '連線異常，請稍後再試。'
+                });
             }
         }
     </script>
