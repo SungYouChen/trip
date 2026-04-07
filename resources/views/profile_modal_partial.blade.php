@@ -46,7 +46,7 @@
                                             <img id="avatar-preview" src="{{ auth()->user()->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&background=9c8c7c&color=fff' }}" class="w-full h-full object-cover">
                                         </div>
                                         @if(auth()->user()->avatar)
-                                            <button type="button" onclick="performAvatarRemoval(this)" class="absolute -top-1 -right-1 bg-red-500 text-white w-7 h-7 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-30 shadow-lg hover:scale-110 active:scale-95 border-2 border-white" title="移除頭像">
+                                            <button type="button" onclick="performAvatarRemoval(this)" class="absolute -top-1 -right-1 bg-red-500 text-white w-7 h-7 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-30 shadow-lg hover:scale-110 active:scale-95 border-2 border-white" data-tooltip="移除頭像">
                                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M6 18L18 6M6 6l12 12" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                             </button>
                                             <input type="hidden" name="remove_avatar" id="remove_avatar_input" value="0">

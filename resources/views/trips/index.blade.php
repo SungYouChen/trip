@@ -89,7 +89,7 @@
                             <div class="absolute top-3 right-3 z-10 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <form action="{{ route('trips.restore', ['user' => auth()->user(), 'tripId' => $t->id]) }}" method="POST">
                                     @csrf @method('PATCH')
-                                    <button type="submit" class="p-2 bg-green-50 text-green-600 rounded-xl hover:bg-green-100 shadow-sm transition-colors" title="還原">
+                                    <button type="submit" class="p-2 bg-green-50 text-green-600 rounded-xl hover:bg-green-100 shadow-sm transition-colors" data-tooltip="還原">
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                                         </svg>
@@ -98,7 +98,7 @@
                                 @php $forceId = 'force-trip-' . $t->id; @endphp
                                 <form id="{{ $forceId }}" action="{{ route('trips.forceDelete', ['user' => auth()->user(), 'tripId' => $t->id]) }}" method="POST">
                                     @csrf @method('DELETE')
-                                    <button type="button" onclick="confirmDelete('永久刪除？', '此旅程將被永久刪除，無法復原！', '{{ $forceId }}')" class="p-2 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 shadow-sm transition-colors" title="永久刪除">
+                                    <button type="button" onclick="confirmDelete('永久刪除？', '此旅程將被永久刪除，無法復原！', '{{ $forceId }}')" class="p-2 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 shadow-sm transition-colors" data-tooltip="永久刪除">
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                         </svg>
@@ -109,7 +109,7 @@
                             @php $archiveId = 'archive-trip-' . $t->id; @endphp
                             <form id="{{ $archiveId }}" action="{{ route('trips.destroy', ['user' => auth()->user(), 'trip' => $t]) }}" method="POST" class="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
                                 @csrf @method('DELETE')
-                                <button type="button" onclick="confirmDelete('封存旅程？', '此旅程將被封存，可在「查看封存」中還原。', '{{ $archiveId }}')" class="p-2 bg-red-50/90 text-red-500 rounded-xl hover:bg-red-100 hover:text-red-600 shadow-sm transition-colors backdrop-blur-sm" title="封存旅程">
+                                <button type="button" onclick="confirmDelete('封存旅程？', '此旅程將被封存，可在「查看封存」中還原。', '{{ $archiveId }}')" class="p-2 bg-red-50/90 text-red-500 rounded-xl hover:bg-red-100 hover:text-red-600 shadow-sm transition-colors backdrop-blur-sm" data-tooltip="封存旅程">
                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2l1-12M10 12v4m4-4v4" />
                                     </svg>

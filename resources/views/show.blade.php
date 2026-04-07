@@ -44,14 +44,16 @@
                     <span class="inline-block px-3 py-1.5 rounded-full text-xs font-bold bg-muji-wheat text-muji-oak">
                         {{ $day['date'] }} ({{ $day['day'] }})
                     </span>
-                    <div class="weather-indicator tooltip tooltip-bottom flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-black bg-muji-base border border-muji-edge shadow-muji-sm" 
-                         data-date="{{ date('Y-m-d', strtotime($day['date'])) }}" 
+                    @if($day['date_obj'] && $day['date_obj']->isBetween(now()->subDays(1), now()->addDays(15)))
+                    <div class="weather-indicator tooltip-bottom flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-black bg-muji-base border border-muji-edge shadow-muji-sm" 
+                         data-date="{{ $day['date_obj']->format('Y-m-d') }}" 
                          data-location="{{ $day['location'] }}"
-                         data-tip="氣象同步中..">
+                         data-tooltip="氣象同步中..">
                         <span class="text-muji-oak uppercase tracking-widest mr-1">{{ $day['location'] }}</span>
                         <div class="weather-icon flex items-center justify-center min-w-[14px]"><span class="animate-pulse">◌</span></div>
                         <span class="weather-temp font-black text-muji-ink">-- / --°C</span>
                     </div>
+                    @endif
                 </div>
                 <div class="flex items-center gap-3 @if(!$isShared) @auth cursor-pointer hover:opacity-80 transition-all @endauth @endif" @if(!$isShared) @auth onclick="safeOpenModal('daySummaryEditModal')" @endauth @endif>
                         <h1 class="text-3xl font-black text-muji-ink">{{ $day['title'] }}</h1>
@@ -72,7 +74,7 @@
                             <h3 class="text-muji-ash text-[10px] font-bold uppercase tracking-widest">住宿資訊</h3>
                             @if(!$isShared)
                                 @auth
-                                    <button type="button" onclick="safeOpenModal('daySummaryEditModal')" class="p-1 text-muji-oak hover:opacity-70 transition-colors" title="編輯住宿與日誌">
+                                    <button type="button" onclick="safeOpenModal('daySummaryEditModal')" class="p-1 text-muji-oak hover:opacity-70 transition-colors" data-tooltip="編輯住宿與日誌">
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                         </svg>
@@ -118,12 +120,20 @@
                         <h3 class="text-muji-ash text-[10px] font-bold uppercase tracking-widest">每日行程</h3>
                         @if(!$isShared)
                             @auth
-                                <button type="button" onclick="openEventModal()" class="flex items-center justify-center gap-2 h-[46px] px-6 bg-muji-wheat text-muji-oak rounded-2xl hover:opacity-80 transition-all border border-muji-edge shadow-muji-sm active:scale-95 text-sm font-bold">
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                                    </svg>
-                                    新增活動
-                                </button>
+                                <div class="flex gap-2">
+                                    <button type="button" onclick="openMapViewModal()" class="flex items-center justify-center gap-2 h-[46px] px-6 bg-muji-base text-muji-oak rounded-2xl hover:opacity-80 transition-all border border-muji-edge shadow-muji-sm active:scale-95 text-sm font-bold">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                                        </svg>
+                                        地圖模式
+                                    </button>
+                                    <button type="button" onclick="openEventModal()" class="flex items-center justify-center gap-2 h-[46px] px-6 bg-muji-wheat text-muji-oak rounded-2xl hover:opacity-80 transition-all border border-muji-edge shadow-muji-sm active:scale-95 text-sm font-bold">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                        </svg>
+                                        新增活動
+                                    </button>
+                                </div>
                             @endauth
                         @endif
                     </div>
@@ -240,7 +250,7 @@
                                                         <form id="{{ $restoreEventId }}" action="{{ route('events.restore', ['user' => $trip->user, 'eventId' => $event['id']]) }}" method="POST" class="inline">
                                                             @csrf
                                                             @method('PATCH')
-                                                            <button type="button" onclick="confirmAction('還原行程活動？', '確定要將「{{ $event['activity'] }}」移回行程嗎？', '{{ $restoreEventId }}')" class="tooltip tooltip-bottom p-1 text-green-500 hover:bg-green-50 rounded transition-colors" data-tip="還原">
+                                                            <button type="button" onclick="confirmAction('還原行程活動？', '確定要將「{{ $event['activity'] }}」移回行程嗎？', '{{ $restoreEventId }}')" class="tooltip tooltip-bottom p-1 text-green-500 hover:bg-green-50 rounded transition-colors" data-tooltip="還原">
                                                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7 7-7" />
                                                                 </svg>
@@ -251,7 +261,7 @@
                                                         <form id="{{ $forceEventId }}" action="{{ route('events.forceDelete', ['user' => $trip->user, 'eventId' => $event['id']]) }}" method="POST" class="inline">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="button" onclick="confirmDelete('永久刪除活動？', '此動作無法復原！確定要永久刪除「{{ $event['activity'] }}」嗎？', '{{ $forceEventId }}')" class="tooltip tooltip-bottom p-1 text-red-600 hover:bg-red-100 rounded transition-colors" data-tip="永久刪除">
+                                                            <button type="button" onclick="confirmDelete('永久刪除活動？', '此動作無法復原！確定要永久刪除「{{ $event['activity'] }}」嗎？', '{{ $forceEventId }}')" class="tooltip tooltip-bottom p-1 text-red-600 hover:bg-red-100 rounded transition-colors" data-tooltip="永久刪除">
                                                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                                 </svg>
@@ -260,7 +270,7 @@
                                                     @else
                                                         @php $eventDelFormId = 'del-event-' . $event['id']; @endphp
                                                         <div class="flex items-center gap-1">
-                                                            <button onclick="openEventModal({{ json_encode($event) }})" class="tooltip tooltip-bottom p-1 text-muji-ash hover:text-muji-oak hover:bg-muji-base rounded transition-colors" data-tip="編輯">
+                                                            <button onclick="openEventModal({{ json_encode($event) }})" class="tooltip tooltip-bottom p-1 text-muji-ash hover:text-muji-oak hover:bg-muji-base rounded transition-colors" data-tooltip="編輯">
                                                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                                                 </svg>
@@ -268,7 +278,7 @@
                                                             <form id="{{ $eventDelFormId }}" action="{{ route('events.destroy', ['user' => $trip->user, 'event' => $event['id']]) }}" method="POST" class="inline">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="button" onclick="confirmDelete('封存行程活動？', '確定要將「{{ $event['activity'] }}」移至回收桶嗎？', '{{ $eventDelFormId }}')" class="tooltip tooltip-bottom p-1 text-slate-300 hover:text-red-400 hover:bg-red-50 rounded transition-colors" data-tip="封存">
+                                                                <button type="button" onclick="confirmDelete('封存行程活動？', '確定要將「{{ $event['activity'] }}」移至回收桶嗎？', '{{ $eventDelFormId }}')" class="tooltip tooltip-bottom p-1 text-slate-300 hover:text-red-400 hover:bg-red-50 rounded transition-colors" data-tooltip="封存">
                                                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
                                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                                     </svg>
@@ -403,7 +413,7 @@
                                                         <form id="{{ $restoreExId }}" action="{{ route('expenses.restore', ['user' => $trip->user, 'expenseId' => $expense->id]) }}" method="POST" class="inline">
                                                             @csrf
                                                             @method('PATCH')
-                                                            <button type="button" onclick="confirmAction('還原花費項目？', '確定要將「{{ $expense->description }}」移回花費清單嗎？', '{{ $restoreExId }}')" class="p-1 text-green-500 hover:bg-green-50 rounded transition-colors" title="還原">
+                                                            <button type="button" onclick="confirmAction('還原花費項目？', '確定要將「{{ $expense->description }}」移回花費清單嗎？', '{{ $restoreExId }}')" class="p-1 text-green-500 hover:bg-green-50 rounded transition-colors" data-tooltip="還原內容">
                                                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                                                                 </svg>
@@ -414,7 +424,7 @@
                                                         <form id="{{ $forceExId }}" action="{{ route('expenses.forceDelete', ['user' => $trip->user, 'expenseId' => $expense->id]) }}" method="POST" class="inline">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="button" onclick="confirmDelete('永久刪除花費？', '此動作無法復原！確定要永久刪除「{{ $expense->description }}」嗎？', '{{ $forceExId }}')" class="p-1 text-red-600 hover:bg-red-100 rounded transition-colors" title="永久刪除">
+                                                            <button type="button" onclick="confirmDelete('永久刪除花費？', '此動作無法復原！確定要永久刪除「{{ $expense->description }}」嗎？', '{{ $forceExId }}')" class="p-1 text-red-600 hover:bg-red-100 rounded transition-colors" data-tooltip="永久刪除">
                                                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                                 </svg>
@@ -425,7 +435,7 @@
                                                         <form id="{{ $exDelId }}" action="{{ route('expenses.destroy', ['user' => $trip->user, 'expense' => $expense->id]) }}" method="POST" class="inline">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="button" onclick="confirmDelete('封存花費項目？', '確定要將「{{ $expense->description }}」移至回收桶嗎？', '{{ $exDelId }}')" class="p-1 text-red-400 hover:bg-red-50 rounded transition-colors" title="封存">
+                                                            <button type="button" onclick="confirmDelete('封存花費項目？', '確定要將「{{ $expense->description }}」移至回收桶嗎？', '{{ $exDelId }}')" class="p-1 text-red-400 hover:bg-red-50 rounded transition-colors" data-tooltip="移至回收桶">
                                                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                                 </svg>
@@ -698,9 +708,41 @@
                                             <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">活動時間 (例如: 09:00 - 10:30)</label>
                                             <input type="text" name="time" id="event_time" required placeholder="例如：09:00 - 10:30" class="block w-full px-4 py-3 muji-input">
                                         </div>
+                                        <div class="relative">
+                                            <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">活動地點 (例如：生田神社)</label>
+                                            <div class="flex gap-2">
+                                                <input type="text" name="activity" id="event_activity" required placeholder="例如：道頓堀散策" class="flex-1 px-4 py-3 muji-input" onblur="tryGeocode(this.value)">
+                                                <button type="button" onclick="toggleLocationPicker()" class="p-3 bg-muji-base text-muji-oak border border-muji-edge rounded-xl hover:bg-muji-wheat/30 transition-all flex-shrink-0" data-tooltip="打開地圖手動拾取">
+                                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    </svg>
+                                                </button>
+                                                <button type="button" onclick="findMyLocation()" class="p-3 bg-muji-base text-muji-oak border border-muji-edge rounded-xl hover:bg-muji-wheat/30 transition-all flex-shrink-0" data-tooltip="使用當前位置">
+                                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                        <circle cx="12" cy="12" r="3" stroke-width="2" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
                                         <div>
-                                            <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">活動名稱 / 地點</label>
-                                            <input type="text" name="activity" id="event_activity" required placeholder="例如：道頓堀散策" class="block w-full px-4 py-3 muji-input">
+                                            <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">詳細地址 (搜尋後會自動帶入)</label>
+                                            <input type="text" name="address" id="event_address" placeholder="例如：1 Chome-2-1 Shimoyamatedori, Chuo Ward, Kobe" class="block w-full px-4 py-3 muji-base/30 border border-muji-edge rounded-xl text-sm italic text-muji-ash/80">
+                                        </div>
+                                        <div id="locationPicker" class="hidden mt-4 h-48 rounded-2xl border border-muji-edge overflow-hidden shadow-inner bg-muji-base/30 relative">
+                                            <div id="pickerMap" class="w-full h-full"></div>
+                                            <div class="absolute bottom-2 right-2 bg-muji-glass px-2 py-1 rounded-lg text-[10px] text-muji-ash border border-muji-edge">在圖上拖動中心點定位</div>
+                                        </div>
+                                        <div class="flex gap-4 mt-2">
+                                            <div class="flex-1">
+                                                <label class="text-[10px] font-bold text-muji-ash/60 ml-1">緯度 Latitude</label>
+                                                <input type="text" name="latitude" id="event_lat" readonly placeholder="自動" class="w-full px-4 py-2 bg-muji-base/20 border border-muji-edge rounded-xl text-xs font-mono text-muji-ash outline-none">
+                                            </div>
+                                            <div class="flex-1">
+                                                <label class="text-[10px] font-bold text-muji-ash/60 ml-1">經度 Longitude</label>
+                                                <input type="text" name="longitude" id="event_lng" readonly placeholder="自動" class="w-full px-4 py-2 bg-muji-base/20 border border-muji-edge rounded-xl text-xs font-mono text-muji-ash outline-none">
+                                            </div>
                                         </div>
                                         <div>
                                             <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">細分目的地 (逗號隔開)</label>
@@ -726,6 +768,35 @@
                 </div>
                 @endauth
             @endif
+
+            <!-- Trip Map View Modal -->
+            <div id="mapViewModal" class="fixed inset-0 z-[3000] hidden" role="dialog" aria-modal="true">
+                <div class="absolute inset-0 bg-black/40 backdrop-blur-md" onclick="safeCloseModal('mapViewModal')"></div>
+                <div class="absolute inset-4 sm:inset-10 muji-glass rounded-[40px] shadow-2xl flex flex-col overflow-hidden border border-white/20">
+                    <div class="px-6 py-4 border-b border-muji-edge flex justify-between items-center bg-muji-paper/80">
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-lg bg-muji-oak text-white flex items-center justify-center font-black text-xs shadow-muji-sm">MAP</span>
+                            <h3 class="text-lg font-black text-muji-ink">{{ $day['date'] }} 路線規劃預覽</h3>
+                        </div>
+                        <button onclick="safeCloseModal('mapViewModal')" class="p-2 text-muji-ash hover:text-muji-oak transition-colors">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    </div>
+                    <div id="itineraryMap" class="flex-grow w-full bg-muji-base"></div>
+                    <div class="px-6 py-4 border-t border-muji-edge bg-muji-paper/90 flex flex-wrap gap-6 items-center justify-between">
+                        <div class="flex gap-4 items-center">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-muji-oak"></div>
+                                <span class="text-xs font-bold text-muji-ash uppercase tracking-widest">行程打點</span>
+                            </div>
+                            <div id="trafficInfo" class="text-xs font-black text-muji-oak bg-muji-wheat/30 px-3 py-1 rounded-full border border-muji-edge hidden anim-pulse">
+                                <span class="mr-1">🚗</span> 預估交通總合: <span id="totalTravelTime">--</span>
+                            </div>
+                        </div>
+                        <div class="text-[10px] text-muji-ash/50 font-medium italic">※ 交通時間僅供參考，實際請依各地圖導航為準</div>
+                    </div>
+                </div>
+            </div>
         @endpush
 
         @if(!$isShared)
@@ -736,44 +807,42 @@
                  * @param {Object|null} event - The event data to edit, or null to create new
                  */
                 function openEventModal(event = null) {
-                    console.log('Opening Event Modal...', event);
-                    const modal = document.getElementById('eventDetailsModal');
-                    if (!modal) {
-                        console.error('Modal "eventDetailsModal" not found in DOM.');
-                        return;
-                    }
-
                     const title = document.getElementById('eventModalTitle');
                     const form = document.getElementById('eventForm');
                     const methodDiv = document.getElementById('eventMethod');
+                    
+                    if (!form) return;
 
-                    if (!form) {
-                        console.error('Form "eventForm" not found in modal.');
-                        return;
-                    }
+                    const setVal = (id, val) => {
+                        const el = document.getElementById(id);
+                        if (el) el.value = val || '';
+                    };
 
                     if (event) {
                         if (title) title.innerText = '編輯行程活動';
-                        // Use the username from the trip's owner
                         form.action = `/{{ $trip->user->username }}/events/${event.id}`;
                         if (methodDiv) methodDiv.innerHTML = '@method("PUT")';
 
-                        // Populate fields safely
-                        const setVal = (id, val) => {
-                            const el = document.getElementById(id);
-                            if (el) el.value = val || '';
-                        };
-
                         setVal('event_time', event.time);
                         setVal('event_activity', event.activity);
+                        setVal('event_address', event.address);
                         setVal('event_subs', Array.isArray(event.sub_activities) ? event.sub_activities.join(', ') : (event.sub_activities || ''));
                         setVal('event_note', event.note);
                         setVal('event_map', event.map_query);
+                        setVal('event_lat', event.latitude);
+                        setVal('event_lng', event.longitude);
+
+                        if (event.latitude && event.longitude) {
+                            updatePickerPosition(event.latitude, event.longitude);
+                        }
                     } else {
                         if (title) title.innerText = '新增行程活動';
                         form.action = "{{ route('events.store', ['user' => $trip->user->username, 'trip' => $trip, 'date' => request()->route('date') ?? (isset($currentDate) ? $currentDate : '')]) }}";
                         if (methodDiv) methodDiv.innerHTML = '';
                         form.reset();
+                        setVal('event_lat', '');
+                        setVal('event_lng', '');
+                        setVal('event_address', '');
                     }
 
                     safeOpenModal('eventDetailsModal');
@@ -786,7 +855,214 @@
             @endauth
         @endif
 
-    <!-- Weather Forecast System (High Reliability) -->
+    <!-- Leaflet Map Integration (Free & No Token Required) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        let itineraryMap, pickerMap, pickerMarker;
+        const scheduleData = @json($day['schedule']);
+        const cartoUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>';
+
+        function openMapViewModal() {
+            safeOpenModal('mapViewModal');
+            setTimeout(initItineraryMap, 300);
+        }
+
+        function initItineraryMap() {
+            if (itineraryMap) itineraryMap.remove();
+            
+            const events = scheduleData.filter(e => !e.trashed && e.latitude && e.longitude);
+            if (events.length === 0) {
+                document.getElementById('itineraryMap').innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center text-muji-ash opacity-50 p-10 text-center">
+                        <svg class="w-16 h-16 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>
+                        <p class="font-bold">尚未標註任何具座標的地點</p>
+                    </div>
+                `;
+                return;
+            }
+
+            itineraryMap = L.map('itineraryMap').setView([parseFloat(events[0].latitude), parseFloat(events[0].longitude)], 13);
+            L.tileLayer(cartoUrl, { attribution }).addTo(itineraryMap);
+
+            const coordinates = [];
+            const markers = [];
+
+            events.forEach((ev, index) => {
+                const lat = parseFloat(ev.latitude);
+                const lng = parseFloat(ev.longitude);
+                coordinates.push([lat, lng]);
+
+                const markerIcon = L.divIcon({
+                    className: 'custom-div-icon',
+                    html: `<div class="w-8 h-8 rounded-full bg-muji-oak border-2 border-white shadow-lg flex items-center justify-center text-white font-black text-xs">${index + 1}</div>`,
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 32]
+                });
+
+                const marker = L.marker([lat, lng], { icon: markerIcon })
+                    .bindPopup(`<div class="p-2 font-black text-muji-ink">${ev.activity}</div>`)
+                    .addTo(itineraryMap);
+                markers.push(marker);
+            });
+
+            if (coordinates.length > 1) {
+                const polyline = L.polyline(coordinates, {
+                    color: '#9c8c7c',
+                    weight: 4,
+                    opacity: 0.6,
+                    dashArray: '10, 10',
+                    lineJoin: 'round'
+                }).addTo(itineraryMap);
+                itineraryMap.fitBounds(polyline.getBounds(), { padding: [50, 50] });
+                calculateTraffic(coordinates);
+            } else {
+                itineraryMap.setView(coordinates[0], 15);
+            }
+        }
+
+        async function calculateTraffic(coords) {
+            if (coords.length < 2) return;
+            const infoBox = document.getElementById('trafficInfo');
+            const timeSpan = document.getElementById('totalTravelTime');
+            try {
+                // Use OSRM public API for free routing
+                const query = coords.map(c => c[1] + ',' + c[0]).join(';');
+                const resp = await fetch(`https://router.project-osrm.org/route/v1/driving/${query}?overview=false`);
+                const data = await resp.json();
+                if (data.routes && data.routes[0]) {
+                    const durationSec = data.routes[0].duration;
+                    const mins = Math.round(durationSec / 60);
+                    timeSpan.innerText = mins >= 60 ? `${Math.floor(mins/60)}時 ${mins%60}分` : `${mins}分鐘`;
+                    infoBox.classList.remove('hidden');
+                }
+            } catch (e) { console.error('Traffic failed:', e); }
+        }
+
+        function toggleLocationPicker() {
+            const picker = document.getElementById('locationPicker');
+            picker.classList.toggle('hidden');
+            if (!picker.classList.contains('hidden')) {
+                setTimeout(initPickerMap, 200);
+            }
+        }
+
+        function initPickerMap() {
+            if (pickerMap) return;
+            let startCoord = [35.681, 139.767]; 
+            const currLat = document.getElementById('event_lat').value;
+            const currLng = document.getElementById('event_lng').value;
+            if (currLat && currLng) startCoord = [parseFloat(currLat), parseFloat(currLng)];
+
+            pickerMap = L.map('pickerMap').setView(startCoord, 14);
+            L.tileLayer(cartoUrl, { attribution }).addTo(pickerMap);
+
+            pickerMarker = L.marker(startCoord, { draggable: true, icon: L.icon({
+                iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41]
+            })}).addTo(pickerMap);
+
+            pickerMap.on('move', () => {
+                const center = pickerMap.getCenter();
+                pickerMarker.setLatLng(center);
+                document.getElementById('event_lat').value = center.lat.toFixed(6);
+                document.getElementById('event_lng').value = center.lng.toFixed(6);
+            });
+
+            pickerMarker.on('dragend', (e) => {
+                const latlng = e.target.getLatLng();
+                document.getElementById('event_lat').value = latlng.lat.toFixed(6);
+                document.getElementById('event_lng').value = latlng.lng.toFixed(6);
+            });
+        }
+
+        function updatePickerPosition(lat, lng) {
+            const coord = [lat, lng];
+            if (pickerMap) {
+                pickerMap.setView(coord, 14);
+                pickerMarker.setLatLng(coord);
+            }
+        }
+
+        async function tryGeocode(query) {
+            if (!query || query.length < 2) return;
+            const latInput = document.getElementById('event_lat');
+            const lngInput = document.getElementById('event_lng');
+            if (latInput.value && latInput.value !== '') return;
+
+            const input = document.getElementById('event_activity');
+            input.classList.remove('border-green-400', 'border-red-400');
+            input.classList.add('animate-pulse');
+
+            try {
+                // Determine context (e.g. "Japan" or the location for this day)
+                const context = "{{ $day['location'] ?? 'Japan' }}";
+                const fullQuery = query.includes(context) ? query : `${query} ${context}`;
+                
+                // Enhanced search with Japanese priority and Japan country code
+                const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullQuery)}&limit=1&accept-language=ja,zh-TW,en&countrycodes=jp`;
+                const resp = await fetch(url);
+                const data = await resp.json();
+                
+                if (data && data.length > 0) {
+                    const feat = data[0];
+                    const lat = parseFloat(feat.lat);
+                    const lon = parseFloat(feat.lon);
+                    
+                    latInput.value = lat.toFixed(6);
+                    lngInput.value = lon.toFixed(6);
+                    document.getElementById('event_address').value = feat.display_name;
+                    
+                    input.classList.remove('animate-pulse');
+                    input.classList.add('border-green-400');
+                    setTimeout(() => input.classList.remove('border-green-400'), 2000);
+
+                    // If picker is hidden, open it to show the user it found something
+                    if (document.getElementById('locationPicker').classList.contains('hidden')) {
+                        toggleLocationPicker();
+                        setTimeout(() => updatePickerPosition(lat, lon), 400);
+                    } else {
+                        updatePickerPosition(lat, lon);
+                    }
+                } else {
+                    input.classList.remove('animate-pulse');
+                    input.classList.add('border-red-200');
+                    setTimeout(() => input.classList.remove('border-red-200'), 2000);
+                }
+            } catch (e) { 
+                input.classList.remove('animate-pulse');
+            }
+        }
+
+        function findMyLocation() {
+            if (!navigator.geolocation) {
+                alert('瀏覽器不支援定位功能');
+                return;
+            }
+
+            const btn = event.currentTarget;
+            btn.classList.add('animate-spin');
+
+            navigator.geolocation.getCurrentPosition((pos) => {
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
+                document.getElementById('event_lat').value = lat.toFixed(6);
+                document.getElementById('event_lng').value = lon.toFixed(6);
+                
+                btn.classList.remove('animate-spin');
+                
+                if (document.getElementById('locationPicker').classList.contains('hidden')) {
+                    toggleLocationPicker();
+                }
+                setTimeout(() => updatePickerPosition(lat, lon), 200);
+            }, (err) => {
+                btn.classList.remove('animate-spin');
+                alert('無法取得您的位置：' + err.message);
+            });
+        }
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const indicators = document.querySelectorAll('.weather-indicator');

@@ -106,22 +106,28 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
         <div class="flex items-center gap-2 pt-1">
             @if(!$isShared && auth()->check())
             <!-- Settings Gear -->
-            <button onclick="safeOpenModal('tripSettingsModal')" class="p-1.5 text-muji-ash hover:text-muji-oak hover:bg-muji-base rounded-xl transition-all tooltip tooltip-bottom hover:scale-105 active:scale-95 group/btn" data-tip="編輯旅程設定">
+            <button onclick="safeOpenModal('tripSettingsModal')" class="p-1.5 text-muji-ash hover:text-muji-oak hover:bg-muji-base rounded-xl transition-all tooltip-bottom hover:scale-105 active:scale-95 group/btn" data-tooltip="編輯旅程設定">
                 <svg class="w-6 h-6 transition-transform group-hover/btn:rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
             </button>
 
-            <!-- Privacy Toggle -->
-            <form action="{{ route('trip.toggle_share', ['user' => $trip->user, 'trip' => $trip]) }}" method="POST" class="inline m-0">
-                @csrf
-                <button type="submit" class="p-1.5 transition-all rounded-xl hover:bg-muji-base tooltip tooltip-bottom hover:scale-105 active:scale-95 {{ $trip->is_public ? 'text-muji-oak' : 'text-muji-ash opacity-60' }}" data-tip="{{ $trip->is_public ? '已分享 (點擊隱私)' : '未分享 (點擊公開)' }}">
+                <button type="button" onclick="openMapViewModal()" class="p-1.5 text-muji-ash hover:text-muji-oak hover:bg-muji-base rounded-xl transition-all tooltip-bottom hover:scale-105 active:scale-95 group/btn" data-tooltip="查看完整地圖規劃">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                     </svg>
                 </button>
-            </form>
+
+                <!-- Privacy Toggle -->
+                <form action="{{ route('trip.toggle_share', ['user' => $trip->user, 'trip' => $trip]) }}" method="POST" class="inline m-0">
+                    @csrf
+                    <button type="submit" class="p-1.5 transition-all rounded-xl hover:bg-muji-base tooltip-bottom hover:scale-105 active:scale-95 {{ $trip->is_public ? 'text-muji-oak' : 'text-muji-ash opacity-60' }}" data-tooltip="{{ $trip->is_public ? '已分享 (點擊隱私)' : '未分享 (點擊公開)' }}">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                        </svg>
+                    </button>
+                </form>
             @endif
         </div>
     </div>
@@ -419,11 +425,11 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         </svg>
                         <span class="truncate">{{ $loc }}</span>
                     </div>
-                    @if($dayDate)
-                    <div class="weather-indicator tooltip tooltip-bottom inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-black bg-muji-base border border-muji-edge shadow-muji-sm" 
+                    @if($dayDate && $dayDate->isBetween(now()->subDays(1), now()->addDays(15)))
+                    <div class="weather-indicator tooltip-bottom inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-black bg-muji-base border border-muji-edge shadow-muji-sm" 
                          data-date="{{ $dayDate->format('Y-m-d') }}" 
                          data-location="{{ $loc }}"
-                         data-tip="氣象同步中..">
+                         data-tooltip="氣象同步中..">
                         <div class="weather-icon flex items-center justify-center min-w-[12px]"><span class="animate-pulse">◌</span></div>
                         <span class="weather-temp font-black text-muji-oak">-- / --°C</span>
                     </div>
@@ -452,7 +458,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
         <div class="absolute top-3 right-3 z-10 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
             <form id="{{ $restoreId }}" action="{{ route('day.restore', ['user' => $trip->user, 'trip' => $trip, 'dayId' => $day->id]) }}" method="POST">
                 @csrf @method('PATCH')
-                <button type="submit" class="p-2 bg-green-50 text-green-600 rounded-xl hover:bg-green-100 shadow-sm transition-colors" title="還原">
+                <button type="submit" class="p-2 bg-green-50 text-green-600 rounded-xl hover:bg-green-100 shadow-sm transition-colors" data-tooltip="還原此天行程">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
@@ -460,7 +466,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
             </form>
             <form id="{{ $forceId }}" action="{{ route('day.forceDelete', ['user' => $trip->user, 'trip' => $trip, 'dayId' => $day->id]) }}" method="POST">
                 @csrf @method('DELETE')
-                <button type="button" onclick="confirmDelete('永久刪除？', '此操作無法復原！', '{{ $forceId }}')" class="p-2 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 shadow-sm transition-colors" title="永久刪除">
+                <button type="button" onclick="confirmDelete('永久刪除？', '此操作無法復原！', '{{ $forceId }}')" class="p-2 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 shadow-sm transition-colors" data-tooltip="永久刪除此天">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
@@ -472,7 +478,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
         @php $formId = 'delete-day-' . $day->id; @endphp
         <form id="{{ $formId }}" action="{{ route('day.destroy', ['user' => $trip->user, 'trip' => $trip, 'date' => $dateParam]) }}" method="POST" class="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
             @csrf @method('DELETE')
-            <button type="button" onclick="confirmDelete('封存此天行程？', '此天行程將被封存，可於「查看封存」中還原。', '{{ $formId }}')" class="p-2 bg-red-50 text-red-500 rounded-xl hover:bg-red-100 hover:text-red-600 shadow-sm transition-colors" title="封存此天">
+            <button type="button" onclick="confirmDelete('封存此天行程？', '此天行程將被封存，可於「查看封存」中還原。', '{{ $formId }}')" class="p-2 bg-red-50 text-red-500 rounded-xl hover:bg-red-100 hover:text-red-600 shadow-sm transition-colors" data-tooltip="封存這一天">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2l1-12M10 12v4m4-4v4" />
                 </svg>
@@ -564,7 +570,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                             @php $forceChkId = 'force-chk-' . $item->id; @endphp
                             <form id="{{ $forceChkId }}" action="{{ route('checklist.forceDelete', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}" method="POST">
                                 @csrf @method('DELETE')
-                                <button type="button" class="text-red-600 hover:text-red-800 p-0.5" onclick="confirmDelete('永久刪除項目？', '此動作無法復原！確定要永久刪除「{{ $item->name }}」嗎？', '{{ $forceChkId }}')">
+                                <button type="button" class="text-red-600 hover:text-red-800 p-0.5" onclick="confirmDelete('永久刪除項目？', '此動作無法復原！確定要永久刪除「{{ $item->name }}」嗎？', '{{ $forceChkId }}')" data-tooltip="刪除">
                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                     </svg>
@@ -574,7 +580,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                             @php $chkFormId = 'del-chk-' . $item->id; @endphp
                             <form id="{{ $chkFormId }}" action="{{ route('checklist.destroy', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}" method="POST">
                                 @csrf @method('DELETE')
-                                <button type="button" class="text-red-400 hover:text-red-600 p-0.5" onclick="confirmDelete('封存清單項目？', '確定要將「{{ $item->name }}」移至回收桶嗎？', '{{ $chkFormId }}')">
+                                <button type="button" class="text-red-400 hover:text-red-600 p-0.5" onclick="confirmDelete('封存清單項目？', '確定要將「{{ $item->name }}」移至回收桶嗎？', '{{ $chkFormId }}')" data-tooltip="刪除">
                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                     </svg>
@@ -682,12 +688,12 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                                         <button type="button" 
                                                 onclick="showAssignSwal('{{ route('checklist.assign', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}', '{{ $item->name }}')"
                                                 class="text-muji-oak hover:opacity-70 p-0.5"
-                                                title="指派到行程日">
+                                                data-tooltip="指派到行程日">
                                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                             </svg>
                                         </button>
-                                        <button type="button" class="text-red-400 hover:text-red-600 p-0.5" onclick="confirmDelete('封存？', '將「{{ $item->name }}」移至回收桶嗎？', 'del-chk-go-{{ $item->id }}')">
+                                        <button type="button" class="text-red-400 hover:text-red-600 p-0.5" onclick="confirmDelete('封存？', '將「{{ $item->name }}」移至回收桶嗎？', 'del-chk-go-{{ $item->id }}')" data-tooltip="刪除">
                                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                         </button>
                                         <form id="del-chk-go-{{ $item->id }}" action="{{ route('checklist.destroy', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
@@ -1686,7 +1692,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                     if (lat && lon) {
                         const wR = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&start_date=${date}&end_date=${date}`);
                         const wD = await wR.json();
-                        if (wD.daily) {
+                        if (wD.daily && wD.daily.weather_code[0] !== null) {
                             const code = wD.daily.weather_code[0];
                             const tMax = Math.round(wD.daily.temperature_2m_max[0]);
                             const tMin = Math.round(wD.daily.temperature_2m_min[0]);
@@ -1699,7 +1705,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                             else if (code >= 95 && code <= 99) { icon = '⛈️'; desc = '雷雨'; }
                             el.querySelector('.weather-icon').innerHTML = icon;
                             el.querySelector('.weather-temp').innerText = `${tMax}°/${tMin}°C`;
-                            el.setAttribute('data-tip', `${desc} (最高 ${tMax}°, 最低 ${tMin}°)`);
+                            el.setAttribute('data-tooltip', `${desc} (最高 ${tMax}°, 最低 ${tMin}°)`);
                             return;
                         }
                     }
@@ -1707,5 +1713,119 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 } catch (e) { el.classList.add('hidden'); }
             });
         });
+    </script>
+
+    <!-- Full Trip Map Modal -->
+    <div id="mapViewModal" class="fixed inset-0 z-[3000] hidden" role="dialog" aria-modal="true">
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-md" onclick="safeCloseModal('mapViewModal')"></div>
+        <div class="absolute inset-4 sm:inset-10 muji-glass rounded-[40px] shadow-2xl flex flex-col overflow-hidden border border-white/20">
+            <div class="px-6 py-4 border-b border-muji-edge flex justify-between items-center bg-muji-paper/80">
+                <div class="flex items-center gap-3">
+                    <span class="w-8 h-8 rounded-lg bg-muji-oak text-white flex items-center justify-center font-black text-xs shadow-muji-sm">TRIP</span>
+                    <h3 class="text-lg font-black text-muji-ink">{{ $trip->name }} 完整地圖規劃</h3>
+                </div>
+                <button onclick="safeCloseModal('mapViewModal')" class="p-2 text-muji-ash hover:text-muji-oak transition-colors">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <div id="tripFullMap" class="flex-grow w-full bg-muji-base"></div>
+            <div class="px-6 py-4 border-t border-muji-edge bg-muji-paper/90 flex flex-wrap gap-6 items-center justify-between">
+                <div class="flex gap-4 items-center">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-muji-oak"></div>
+                        <span class="text-xs font-bold text-muji-ash uppercase tracking-widest">全行程景點</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet Map Integration (Free & No Token Required) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        let fullMap;
+        const cartoUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>';
+
+        function openMapViewModal() {
+            safeOpenModal('mapViewModal');
+            setTimeout(initFullMap, 300);
+        }
+
+        function initFullMap() {
+            if (fullMap) fullMap.remove();
+            
+            const events = [];
+            @foreach($trip->days as $day)
+                @foreach($day->events as $event)
+                    @if(!$event->trashed() && $event->latitude && $event->longitude)
+                        events.push({
+                            lat: {{ $event->latitude }},
+                            lng: {{ $event->longitude }},
+                            activity: "{{ addslashes($event->activity) }}",
+                            date: "{{ $day->date ? $day->date->format('n/j') : 'Day '.$day->day_number }}"
+                        });
+                    @endif
+                @endforeach
+            @endforeach
+
+            if (events.length === 0) {
+                document.getElementById('tripFullMap').innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center text-muji-ash opacity-50 p-10 text-center">
+                        <svg class="w-16 h-16 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>
+                        <p class="font-bold">尚未標註任何具座標的地點</p>
+                    </div>
+                `;
+                return;
+            }
+
+            fullMap = L.map('tripFullMap').setView([events[0].lat, events[0].lng], 10);
+            L.tileLayer(cartoUrl, { attribution }).addTo(fullMap);
+
+            const markers = [];
+            const coordinates = [];
+
+            events.forEach(ev => {
+                const latlng = [ev.lat, ev.lng];
+                coordinates.push(latlng);
+                const marker = L.marker(latlng, { icon: L.icon({
+                    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41]
+                })})
+                    .bindPopup(`<div class="p-2 font-black text-muji-ink">${ev.date}: ${ev.activity}</div>`)
+                    .addTo(fullMap);
+                markers.push(marker);
+            });
+
+            if (coordinates.length > 1) {
+                const group = new L.featureGroup(markers);
+                fullMap.fitBounds(group.getBounds(), { padding: [50, 50] });
+            }
+
+            // Real-time User Location on Full Map
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((pos) => {
+                    const userLat = pos.coords.latitude;
+                    const userLng = pos.coords.longitude;
+                    
+                    const userIcon = L.divIcon({
+                        className: 'user-location-marker',
+                        html: `<div class="relative w-6 h-6"><div class="absolute inset-0 rounded-full bg-blue-500 opacity-25 animate-ping"></div><div class="relative w-4 h-4 mt-1 ml-1 rounded-full bg-blue-600 border-2 border-white shadow-lg"></div></div>`,
+                        iconSize: [24, 24],
+                        iconAnchor: [12, 12]
+                    });
+
+                    L.marker([userLat, userLng], { icon: userIcon })
+                        .bindPopup('<div class="p-1 font-bold text-blue-600 italic">您目前的位置</div>')
+                        .addTo(fullMap);
+
+                    // If you want to include user in the view bounds:
+                    // group.addLayer(userMarker);
+                    // fullMap.fitBounds(group.getBounds(), { padding: [80, 80] });
+                }, null, { enableHighAccuracy: true });
+            }
+        }
     </script>
 @endsection

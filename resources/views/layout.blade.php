@@ -53,6 +53,123 @@
             --text-main: #333333;
         }
 
+        /* --- PREMIUM TOOLTIP ENGINE --- */
+        [data-tooltip] {
+            position: relative;
+            display: inline-flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+
+        /* Default: Top Tooltip */
+        [data-tooltip]::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            padding: 7px 14px;
+            background: var(--muji-oak);
+            color: white !important;
+            font-size: 11px;
+            font-weight: 800;
+            white-space: nowrap;
+            border-radius: 12px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10000;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25);
+            pointer-events: none;
+            letter-spacing: 0.05em;
+        }
+
+        /* Top Arrow */
+        [data-tooltip]::after {
+            content: '';
+            position: absolute;
+            bottom: 112%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            border: 6px solid transparent;
+            border-top-color: var(--muji-oak);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10000;
+            pointer-events: none;
+        }
+
+        /* --- BOTTOM VARIANT (.tooltip-bottom) --- */
+        [data-tooltip].tooltip-bottom::before {
+            bottom: auto !important;
+            top: 125% !important;
+            transform: translateX(-50%) translateY(-10px) !important;
+        }
+        [data-tooltip].tooltip-bottom::after {
+            bottom: auto !important;
+            top: 112% !important;
+            transform: translateX(-50%) translateY(-10px) !important;
+            border-top-color: transparent !important;
+            border-bottom-color: var(--muji-oak) !important;
+        }
+
+        /* --- LEFT VARIANT (.tooltip-left) --- */
+        [data-tooltip].tooltip-left::before {
+            bottom: 50% !important;
+            left: auto !important;
+            right: 125% !important;
+            transform: translateY(50%) translateX(10px) !important;
+        }
+        [data-tooltip].tooltip-left::after {
+            bottom: 50% !important;
+            left: auto !important;
+            right: 112% !important;
+            transform: translateY(50%) translateX(10px) !important;
+            border-top-color: transparent !important;
+            border-left-color: var(--muji-oak) !important;
+        }
+
+        /* Hover States */
+        [data-tooltip]:hover::before, [data-tooltip]:hover::after {
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+        [data-tooltip]:not(.tooltip-bottom):not(.tooltip-left):hover::before, 
+        [data-tooltip]:not(.tooltip-bottom):not(.tooltip-left):hover::after {
+            transform: translateX(-50%) translateY(0) !important;
+        }
+        [data-tooltip].tooltip-bottom:hover::before, [data-tooltip].tooltip-bottom:hover::after {
+            transform: translateX(-50%) translateY(0) !important;
+        }
+        [data-tooltip].tooltip-left:hover::before, [data-tooltip].tooltip-left:hover::after {
+            transform: translateY(50%) translateX(0) !important;
+        }
+
+        /* Global Layout Safeguards - Smart Overflow Logic */
+        .muji-card, .muji-glass { 
+            overflow: hidden; /* Default: Preserve rounded corners */
+        }
+        
+        /* Only release overflow when a tooltip is being hovered within the card */
+        .muji-card:has([data-tooltip]:hover), 
+        .muji-glass:has([data-tooltip]:hover),
+        section:has([data-tooltip]:hover),
+        div.flex:has([data-tooltip]:hover) { 
+            overflow: visible !important; 
+        }
+
+
+
+        /* Muji Aesthetic Map Filter */
+        #itineraryMap, #pickerMap, #tripFullMap, .leaflet-container {
+            filter: grayscale(100%) brightness(1.05) contrast(0.9) sepia(15%);
+            transition: filter 0.4s ease;
+        }
+        #itineraryMap:hover, #pickerMap:hover, #tripFullMap:hover, .leaflet-container:hover {
+            filter: grayscale(40%) brightness(1.02) contrast(0.95) sepia(5%);
+        }
+
         html.dark {
             --muji-base: #1a1a1a;
             --muji-paper: #2b2a27;
@@ -768,7 +885,7 @@
                         <div class="h-6 w-[1px] bg-muji-edge/20 mx-2"></div>
                         @auth
                             <!-- Home Link -->
-                            <a href="{{ route('home', ['user' => auth()->user()]) }}" class="tooltip tooltip-bottom flex items-center justify-center w-10 h-10 rounded-xl hover:bg-muji-base transition-all {{ request()->routeIs('home') ? 'text-muji-ink bg-muji-base shadow-muji-sm' : 'text-muji-ash' }}" data-tip="旅程足跡">
+                            <a href="{{ route('home', ['user' => auth()->user()]) }}" class="tooltip-bottom flex items-center justify-center w-10 h-10 rounded-xl hover:bg-muji-base transition-all {{ request()->routeIs('home') ? 'text-muji-ink bg-muji-base shadow-muji-sm' : 'text-muji-ash' }}" data-tooltip="旅程足跡">
                                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
@@ -776,8 +893,8 @@
 
                             <!-- User Dropdown Menu -->
                             <div class="relative ml-1" id="userDropdownContainer">
-                                <button onclick="toggleUserDropdown(event)" class="tooltip tooltip-bottom w-10 h-10 flex items-center justify-center rounded-full overflow-hidden border border-muji-edge shadow-muji-sm hover:scale-105 transition-all bg-muji-base hover:border-muji-oak/30 p-0 cursor-pointer" data-tip="帳戶設定">
-                                    <img src="{{ auth()->user()->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&background=9c8c7c&color=fff' }}" class="w-full h-full object-cover">
+                                <button onclick="toggleUserDropdown(event)" class="tooltip-bottom w-10 h-10 flex items-center justify-center rounded-full overflow-hidden border border-muji-edge shadow-muji-sm hover:scale-105 transition-all bg-muji-base hover:border-muji-oak/30 p-0 cursor-pointer" data-tooltip="帳戶設定">
+                                    <img src="{{ auth()->user()->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&background=9c8c7c&color=fff' }}" class="w-full h-full object-cover rounded-full">
                                 </button>
 
                                 <div id="userDropdown" class="absolute top-14 right-0 w-52 bg-muji-paper rounded-[24px] shadow-2xl border border-muji-edge/50 py-2 hidden origin-top-right transition-all z-[100] overflow-hidden">
@@ -1007,8 +1124,7 @@
             <div id="speedDialMenu" class="hidden flex flex-col items-end gap-3 mb-1 animate-in slide-in-from-bottom-4 fade-in duration-200">
                 @if(request()->routeIs('day.show') || request()->routeIs('day.show_shared'))
                     @auth
-                        <button onclick="toggleSpeedDial(); if(typeof openEventModal === 'function') { openEventModal(); } else { safeOpenModal('eventDetailsModal'); }" class="flex items-center gap-2 group">
-                            <span class="bg-muji-ink text-white text-[10px] font-black px-2 py-1 rounded shadow-muji-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap uppercase tracking-widest">新增行程</span>
+                        <button onclick="toggleSpeedDial(); if(typeof openEventModal === 'function') { openEventModal(); } else { safeOpenModal('eventDetailsModal'); }" class="flex items-center gap-2 group tooltip-left" data-tooltip="新增行程活動">
                             <div class="w-12 h-12 bg-muji-paper text-muji-oak rounded-full shadow-muji border border-muji-edge flex items-center justify-center hover:bg-muji-base transition-all hover:scale-105">
                                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -1017,8 +1133,7 @@
                         </button>
                     @endauth
                 @endif
-                <button onclick="toggleSpeedDial(); safeOpenModal('expenseModal');" class="flex items-center gap-2 group">
-                    <span class="bg-muji-ink text-white text-[10px] font-black px-2 py-1 rounded shadow-muji-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap uppercase tracking-widest">記錄消費</span>
+                <button onclick="toggleSpeedDial(); safeOpenModal('expenseModal');" class="flex items-center gap-2 group tooltip-left" data-tooltip="記錄消費項目">
                     <div class="w-12 h-12 bg-muji-paper text-muji-oak rounded-full shadow-muji border border-muji-edge flex items-center justify-center hover:bg-muji-base transition-all hover:scale-105">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />

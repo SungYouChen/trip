@@ -12,9 +12,12 @@ class ItineraryEvent extends Model
         'itinerary_day_id', 
         'time', 
         'activity', 
+        'address',
         'sub_activities', 
         'note', 
         'map_query', 
+        'latitude',
+        'longitude',
         'sort_order'
     ];
 

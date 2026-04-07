@@ -63,6 +63,7 @@ class ItineraryDayController extends Controller
             'day' => [
                 'id' => $day->id,
                 'date' => $day->date ? Carbon::parse($day->date)->format('n/j') : 'Day ' . $day->day_number,
+                'date_obj' => $day->date ? Carbon::parse($day->date) : null,
                 'day' => $day->date ? Carbon::parse($day->date)->locale('zh_TW')->dayName : '',
                 'title' => $day->title ?? $day->summary,
                 'summary' => $day->summary,
@@ -76,6 +77,8 @@ class ItineraryDayController extends Controller
                         'sub_activities' => $event->sub_activities,
                         'note' => $event->note,
                         'map_query' => $event->map_query,
+                        'latitude' => $event->latitude,
+                        'longitude' => $event->longitude,
                         'trashed' => $event->trashed(),
                     ];
                 })->toArray(),
@@ -150,8 +153,11 @@ class ItineraryDayController extends Controller
         $validated = $request->validate([
             'time' => 'required|string',
             'activity' => 'required|string',
+            'address' => 'nullable|string',
             'note' => 'nullable|string',
             'map_query' => 'nullable|string',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
             'sub_activities' => 'nullable|string', // Will be comma separated
         ]);
 
@@ -162,8 +168,11 @@ class ItineraryDayController extends Controller
         $day->events()->create([
             'time' => $validated['time'],
             'activity' => $validated['activity'],
+            'address' => $validated['address'] ?? null,
             'note' => $validated['note'] ?? null,
             'map_query' => $validated['map_query'] ?? null,
+            'latitude' => $validated['latitude'] ?? null,
+            'longitude' => $validated['longitude'] ?? null,
             'sub_activities' => $subActivities,
             'sort_order' => $day->events()->count(),
         ]);
@@ -180,8 +189,11 @@ class ItineraryDayController extends Controller
         $validated = $request->validate([
             'time' => 'required|string',
             'activity' => 'required|string',
+            'address' => 'nullable|string',
             'note' => 'nullable|string',
             'map_query' => 'nullable|string',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
             'sub_activities' => 'nullable|string',
         ]);
 
@@ -192,8 +204,11 @@ class ItineraryDayController extends Controller
         $event->update([
             'time' => $validated['time'],
             'activity' => $validated['activity'],
+            'address' => $validated['address'] ?? null,
             'note' => $validated['note'] ?? null,
             'map_query' => $validated['map_query'] ?? null,
+            'latitude' => $validated['latitude'] ?? null,
+            'longitude' => $validated['longitude'] ?? null,
             'sub_activities' => $subActivities,
         ]);
 
