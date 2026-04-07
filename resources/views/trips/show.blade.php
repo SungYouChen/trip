@@ -94,7 +94,11 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
             </h2>
             
             <p class="text-sm sm:text-md text-muji-ash italic font-medium mt-2">
+                @if($trip->start_date && $trip->end_date)
                 {{ \Carbon\Carbon::parse($trip->start_date)->format('Y/m/d') }} - {{ \Carbon\Carbon::parse($trip->end_date)->format('Y/m/d') }}
+                @else
+                日期未定 (共 {{ $trip->estimated_days ?? $trip->days->count() }} 天)
+                @endif
             </p>
         </div>
 
@@ -379,19 +383,24 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
     @php $lastLoc = $trip->name; @endphp
     @foreach($daysToShow as $day)
     @php
-    $dayDate = \Carbon\Carbon::parse($day->date);
-    $isToday = $dayDate->isToday();
+    $dayDate = $day->date ? \Carbon\Carbon::parse($day->date) : null;
+    $isToday = $dayDate ? $dayDate->isToday() : false;
     $isArchived = $day->trashed();
+    $dateParam = $dayDate ? $dayDate->format('n-j') : 'day-' . $day->day_number;
     $cardLink = (!$isArchived && $isShared)
-    ? route('day.show_shared', ['token' => $trip->share_token, 'date' => $dayDate->format('n-j')])
-    : ((!$isArchived && !$isShared) ? route('day.show', ['user' => $trip->user, 'trip' => $trip, 'date' => $dayDate->format('n-j')]) : null);
+    ? route('day.show_shared', ['token' => $trip->share_token, 'date' => $dateParam])
+    : ((!$isArchived && !$isShared) ? route('day.show', ['user' => $trip->user, 'trip' => $trip, 'date' => $dateParam]) : null);
     @endphp
     <div class="relative group">
         <a href="{{ $cardLink }}" class="flex flex-col h-52 muji-card shadow-muji border-muji-edge hover:shadow-muji transition-all duration-300 transform hover:-translate-y-1 overflow-hidden {{ $isArchived ? 'border-2 border-dashed border-muji-ash grayscale opacity-60' : ($isToday ? 'bg-muji-wheat/10 ring-1 ring-muji-oak' : '') }}">
             <div class="p-6 flex-1 overflow-hidden">
                 <div class="flex items-center justify-between mb-3">
                     <span class="inline-flex items-center justify-center px-3 py-1 rounded-full text-[10px] font-bold bg-muji-base text-muji-oak border border-muji-edge">
+                        @if($dayDate)
                         {{ $dayDate->format('n/j') }} ({{ $dayDate->locale('zh_TW')->dayName }})
+                        @else
+                        Day {{ $day->day_number }}
+                        @endif
                     </span>
                 </div>
 
@@ -410,6 +419,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         </svg>
                         <span class="truncate">{{ $loc }}</span>
                     </div>
+                    @if($dayDate)
                     <div class="weather-indicator tooltip tooltip-bottom inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-black bg-muji-base border border-muji-edge shadow-muji-sm" 
                          data-date="{{ $dayDate->format('Y-m-d') }}" 
                          data-location="{{ $loc }}"
@@ -417,6 +427,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         <div class="weather-icon flex items-center justify-center min-w-[12px]"><span class="animate-pulse">◌</span></div>
                         <span class="weather-temp font-black text-muji-oak">-- / --°C</span>
                     </div>
+                    @endif
                 </div>
 
                 <p class="text-xs text-muji-ash line-clamp-2">
@@ -459,7 +470,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
         @else
         {{-- Active: Soft delete (archive) --}}
         @php $formId = 'delete-day-' . $day->id; @endphp
-        <form id="{{ $formId }}" action="{{ route('day.destroy', ['user' => $trip->user, 'trip' => $trip, 'date' => $dayDate->format('n-j')]) }}" method="POST" class="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+        <form id="{{ $formId }}" action="{{ route('day.destroy', ['user' => $trip->user, 'trip' => $trip, 'date' => $dateParam]) }}" method="POST" class="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
             @csrf @method('DELETE')
             <button type="button" onclick="confirmDelete('封存此天行程？', '此天行程將被封存，可於「查看封存」中還原。', '{{ $formId }}')" class="p-2 bg-red-50 text-red-500 rounded-xl hover:bg-red-100 hover:text-red-600 shadow-sm transition-colors" title="封存此天">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -530,7 +541,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                                 </svg></span>
                             @else
                             <input type="checkbox" 
-                                   class="mt-1 rounded text-muji-oak focus:ring-muji-oak sync-chk disabled:opacity-50 disabled:cursor-not-allowed" 
+                                   class="mt-1 muji-checkbox sync-chk" 
                                    onchange="toggleChecklistItem(this, '{{ route('checklist.toggle', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}')"
                                    @if($item->is_completed) checked @endif
                                    @if(!auth()->check() || $isShared) disabled @endif>
@@ -648,7 +659,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                                     <span class="text-red-400 mt-0.5"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></span>
                                 @else
                                     <input type="checkbox" 
-                                           class="mt-1 rounded text-muji-oak focus:ring-muji-oak sync-chk disabled:opacity-50 disabled:cursor-not-allowed" 
+                                           class="mt-1 muji-checkbox sync-chk" 
                                            onchange="toggleChecklistItem(this, '{{ route('checklist.toggle', ['user' => $trip->user, 'trip' => $trip, 'id' => $item->id]) }}')"
                                            @if($item->is_completed) checked @endif
                                            @if(!auth()->check() || $isShared) disabled @endif>
@@ -1084,15 +1095,56 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                             <input type="text" name="name" required value="{{ $trip->name }}" class="w-full px-4 py-3 muji-input">
                         </div>
 
-                        <!-- 日期 -->
-                        <div class="col-span-full sm:col-span-3">
-                            <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">開始日期</label>
-                            <input type="date" name="start_date" required value="{{ $trip->start_date ? $trip->start_date->format('Y-m-d') : '' }}" class="w-full h-[46px] px-4 muji-input">
+                        <!-- 未定日期切換 -->
+                        <div class="col-span-full border-b border-muji-edge pb-4 mb-2">
+                            <label class="flex items-center gap-2 cursor-pointer mt-2 w-max">
+                                <input type="checkbox" id="tbd_date_toggle_edit" class="muji-checkbox" onchange="toggleTbdDateEdit(this)" {{ !$trip->start_date ? 'checked' : '' }}>
+                                <span class="text-sm font-bold text-muji-ink">尚未決定具體日期</span>
+                            </label>
                         </div>
-                        <div class="col-span-full sm:col-span-3">
-                            <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">結束日期</label>
-                            <input type="date" name="end_date" required value="{{ $trip->end_date ? $trip->end_date->format('Y-m-d') : '' }}" class="w-full h-[46px] px-4 muji-input">
+
+                        <!-- 確切日期區塊 -->
+                        <div id="exact_dates_edit" class="col-span-full grid grid-cols-1 sm:grid-cols-6 gap-6 mt-[-1rem] {{ !$trip->start_date ? 'hidden' : '' }}">
+                            <div class="col-span-full sm:col-span-3">
+                                <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">開始日期</label>
+                                <input type="date" name="start_date" id="start_date_edit" {{ $trip->start_date ? 'required' : '' }} value="{{ $trip->start_date ? $trip->start_date->format('Y-m-d') : '' }}" class="w-full h-[46px] px-4 muji-input">
+                            </div>
+                            <div class="col-span-full sm:col-span-3">
+                                <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">結束日期</label>
+                                <input type="date" name="end_date" id="end_date_edit" {{ $trip->start_date ? 'required' : '' }} value="{{ $trip->end_date ? $trip->end_date->format('Y-m-d') : '' }}" class="w-full h-[46px] px-4 muji-input">
+                            </div>
                         </div>
+
+                        <!-- 預估天數區塊 -->
+                        <div id="estimated_days_edit" class="col-span-full sm:col-span-6 {{ $trip->start_date ? 'hidden' : '' }} mt-[-1rem]">
+                            <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">預計天數</label>
+                            <input type="number" name="estimated_days" id="estimated_days_input_edit" min="1" placeholder="例如：5" value="{{ $trip->estimated_days ?? $trip->days->count() }}" {{ !$trip->start_date ? 'required' : '' }} class="w-full h-[46px] px-4 muji-input">
+                        </div>
+                        <script>
+                            function toggleTbdDateEdit(checkbox) {
+                                const exactDates = document.getElementById('exact_dates_edit');
+                                const estimatedDays = document.getElementById('estimated_days_edit');
+                                const startIn = document.getElementById('start_date_edit');
+                                const endIn = document.getElementById('end_date_edit');
+                                const estIn = document.getElementById('estimated_days_input_edit');
+
+                                if (checkbox.checked) {
+                                    exactDates.classList.add('hidden');
+                                    estimatedDays.classList.remove('hidden');
+                                    startIn.removeAttribute('required');
+                                    endIn.removeAttribute('required');
+                                    estIn.setAttribute('required', 'required');
+                                    startIn.value = '';
+                                    endIn.value = '';
+                                } else {
+                                    exactDates.classList.remove('hidden');
+                                    estimatedDays.classList.add('hidden');
+                                    startIn.setAttribute('required', 'required');
+                                    endIn.setAttribute('required', 'required');
+                                    estIn.removeAttribute('required');
+                                }
+                            }
+                        </script>
 
                         <!-- 貨幣 -->
                         @php
@@ -1168,10 +1220,24 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         <div class="flex justify-between items-center mb-4">
                             <label class="block text-sm font-bold text-muji-ash text-left mb-2">旅程封面圖設定</label>
                             @if($trip->cover_image)
-                            <label class="flex items-center gap-2 text-xs text-red-400 cursor-pointer hover:text-red-600 transition-colors font-bold">
-                                <input type="checkbox" name="restore_cover" value="1" class="rounded border-muji-edge text-red-500 focus:ring-red-500">
-                                恢復預設
-                            </label>
+                            <button type="button" onclick="performRestoreCover(this)" class="px-3 py-1.5 bg-red-50 text-red-500 text-[10px] font-black rounded-lg border border-red-100 hover:bg-red-500 hover:text-white transition-all active:scale-95 uppercase tracking-widest">恢復系統預設圖</button>
+                            <input type="hidden" name="restore_cover" id="restore_cover_input" value="0">
+                            <script>
+                                function performRestoreCover(btn) {
+                                    if(confirm('確定要將旅程封面恢復為系統預設圖嗎？')) {
+                                        const form = btn.closest('form');
+                                        document.getElementById('restore_cover_input').value = "1";
+                                        
+                                        // Trigger the same AJAX submission mechanism
+                                        if (typeof handleAjaxSubmit === 'function') {
+                                            const event = new Event('submit', { cancelable: true, bubbles: true });
+                                            form.dispatchEvent(event);
+                                        } else {
+                                            form.submit();
+                                        }
+                                    }
+                                }
+                            </script>
                             @endif
                         </div>
                         <div class="bg-muji-base/30 p-4 rounded-xl border border-muji-edge">
@@ -1493,7 +1559,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 
         const dayOptions = {
             @foreach($itinerary as $index => $day)
-                '{{ $day->date->format('Y-m-d') }}': 'Day {{ $index + 1 }} ({{ $day->date->format('n/j') }})',
+                '{{ $day->date ? $day->date->format('Y-m-d') : "day-".$day->day_number }}': 'Day {{ $day->day_number }} {{ $day->date ? "(".$day->date->format('n/j').")" : "" }}',
             @endforeach
         };
 

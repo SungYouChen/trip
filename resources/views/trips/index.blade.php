@@ -54,7 +54,13 @@
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.6">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
-                                <span>{{ \Carbon\Carbon::parse($t->start_date)->format('Y/m/d') }} - {{ \Carbon\Carbon::parse($t->end_date)->format('Y/m/d') }}</span>
+                                <span>
+                                    @if($t->start_date && $t->end_date)
+                                        {{ \Carbon\Carbon::parse($t->start_date)->format('Y/m/d') }} - {{ \Carbon\Carbon::parse($t->end_date)->format('Y/m/d') }}
+                                    @else
+                                        日期未定 (共 {{ $t->estimated_days ?? $t->days->count() }} 天)
+                                    @endif
+                                </span>
                             </div>
                             <h3 class="text-2xl font-black text-white group-hover:text-muji-wheat transition-colors">
                                 {{ $t->name }}
@@ -163,15 +169,58 @@
                                     <input type="text" name="name" required placeholder="例如：2025 京阪神之旅" class="w-full px-4 py-3 muji-input">
                                 </div>
 
-                                <!-- 日期區塊：各佔一半 (3/6) -->
-                                <div class="col-span-full sm:col-span-3">
-                                    <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">開始日期</label>
-                                    <input type="date" name="start_date" required class="w-full h-[46px] px-4 muji-input">
+                                <!-- 未定日期切換 -->
+                                <div class="col-span-full border-b border-muji-edge pb-4 mb-2">
+                                    <label class="flex items-center gap-2 cursor-pointer mt-2 w-max">
+                                        <input type="checkbox" id="tbd_date_toggle_add" class="muji-checkbox" onchange="toggleTbdDateAdd(this)">
+                                        <span class="text-sm font-bold text-muji-ink">尚未決定具體日期</span>
+                                    </label>
                                 </div>
-                                <div class="col-span-full sm:col-span-3">
-                                    <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">結束日期</label>
-                                    <input type="date" name="end_date" required class="w-full h-[46px] px-4 muji-input">
+
+                                <!-- 確切日期區塊 -->
+                                <div id="exact_dates_add" class="col-span-full grid grid-cols-1 sm:grid-cols-6 gap-6 mt-[-1rem]">
+                                    <div class="col-span-full sm:col-span-3">
+                                        <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">開始日期</label>
+                                        <input type="date" name="start_date" id="start_date_add" required class="w-full h-[46px] px-4 muji-input">
+                                    </div>
+                                    <div class="col-span-full sm:col-span-3">
+                                        <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">結束日期</label>
+                                        <input type="date" name="end_date" id="end_date_add" required class="w-full h-[46px] px-4 muji-input">
+                                    </div>
                                 </div>
+
+                                <!-- 預估天數區塊 -->
+                                <div id="estimated_days_add" class="col-span-full sm:col-span-6 hidden mt-[-1rem]">
+                                    <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">預計天數</label>
+                                    <input type="number" name="estimated_days" id="estimated_days_input_add" min="1" placeholder="例如：5" class="w-full h-[46px] px-4 muji-input">
+                                </div>
+
+                                <script>
+                                    function toggleTbdDateAdd(checkbox) {
+                                        const exactDates = document.getElementById('exact_dates_add');
+                                        const estimatedDays = document.getElementById('estimated_days_add');
+                                        const startIn = document.getElementById('start_date_add');
+                                        const endIn = document.getElementById('end_date_add');
+                                        const estIn = document.getElementById('estimated_days_input_add');
+
+                                        if (checkbox.checked) {
+                                            exactDates.classList.add('hidden');
+                                            estimatedDays.classList.remove('hidden');
+                                            startIn.removeAttribute('required');
+                                            endIn.removeAttribute('required');
+                                            estIn.setAttribute('required', 'required');
+                                            startIn.value = '';
+                                            endIn.value = '';
+                                        } else {
+                                            exactDates.classList.remove('hidden');
+                                            estimatedDays.classList.add('hidden');
+                                            startIn.setAttribute('required', 'required');
+                                            endIn.setAttribute('required', 'required');
+                                            estIn.removeAttribute('required');
+                                            estIn.value = '';
+                                        }
+                                    }
+                                </script>
 
                                 <!-- 貨幣與匯率：各佔 1/3 (2/6) -->
                                 @php

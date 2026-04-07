@@ -14,6 +14,7 @@ class Trip extends Model
         'name',
         'start_date',
         'end_date',
+        'estimated_days',
         'cover_image',
         'flight_info',
         'user_id',

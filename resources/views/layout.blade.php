@@ -316,6 +316,56 @@
             font-size: 13px;
         }
 
+        /* MUJI Style Checkbox Customization */
+        .muji-checkbox {
+            width: 1.15rem;
+            height: 1.15rem;
+            border: 2px solid var(--muji-edge);
+            background-color: var(--muji-paper);
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            position: relative;
+            outline: none !important;
+            vertical-align: middle;
+            display: inline-block;
+        }
+
+        .muji-checkbox:checked {
+            border-color: var(--muji-oak);
+            background-color: var(--muji-oak);
+            transform: scale(1.05);
+        }
+
+        .muji-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2.5px 2.5px 0;
+            transform: translate(-50%, -60%) rotate(45deg);
+        }
+
+        .muji-checkbox:focus {
+            box-shadow: 0 0 0 4px rgba(156, 140, 124, 0.15);
+        }
+
+        .muji-checkbox:active {
+            transform: scale(0.9);
+        }
+
+        .muji-checkbox:disabled {
+            opacity: 0.4;
+            filter: grayscale(1);
+            cursor: not-allowed;
+            background-color: var(--muji-base);
+        }
+
         /* Essential Fix: Ensure Swal stays on top of all modals */
         .swal2-container {
             z-index: 10000 !important;

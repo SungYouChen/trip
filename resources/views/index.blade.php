@@ -120,7 +120,7 @@
                             @foreach($items as $item)
                                 <li class="flex items-start justify-between gap-2 text-sm text-muji-ash group">
                                     <div class="flex items-start gap-2">
-                                        <input type="checkbox" class="mt-1 rounded text-muji-oak focus:ring-muji-oak persist-chk disabled:opacity-50 disabled:cursor-not-allowed" data-key="chk_{{ $item->id }}" @if(!request()->cookie('admin_session')) disabled @endif>
+                                        <input type="checkbox" class="mt-1 muji-checkbox persist-chk" data-key="chk_{{ $item->id }}" @if(!request()->cookie('admin_session')) disabled @endif>
                                         <span class="@if(!request()->cookie('admin_session')) text-gray-400 @endif">{{ $item->name }}</span>
                                     </div>
                                     @if(request()->cookie('admin_session'))
@@ -182,7 +182,7 @@
                             @foreach($items as $item)
                                 <li class="flex items-start justify-between gap-2 text-sm text-muji-ash group">
                                     <div class="flex items-start gap-2">
-                                        <input type="checkbox" class="mt-1 rounded text-muji-oak focus:ring-muji-oak persist-chk disabled:opacity-50 disabled:cursor-not-allowed" data-key="chk_{{ $item->id }}" @if(!request()->cookie('admin_session')) disabled @endif>
+                                        <input type="checkbox" class="mt-1 muji-checkbox persist-chk" data-key="chk_{{ $item->id }}" @if(!request()->cookie('admin_session')) disabled @endif>
                                         <span class="@if(!request()->cookie('admin_session')) text-gray-400 @endif">{{ $item->name }}</span>
                                     </div>
                                     @if(request()->cookie('admin_session'))

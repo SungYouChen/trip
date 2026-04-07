@@ -99,8 +99,9 @@ class TripController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
+            'start_date' => 'nullable|date|required_without:estimated_days',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'estimated_days' => 'nullable|integer|min:1|required_without:start_date',
             'base_currency' => 'required|string|max:10',
             'target_currency' => 'required|string|max:10',
             'exchange_rate' => 'required|numeric|min:0.0001',
@@ -133,17 +134,32 @@ class TripController extends Controller
         $trip = Trip::create($validated);
 
         // Auto-generate days
-        $start = \Carbon\Carbon::parse($trip->start_date);
-        $end = \Carbon\Carbon::parse($trip->end_date);
+        if ($trip->start_date && $trip->end_date) {
+            $start = \Carbon\Carbon::parse($trip->start_date);
+            $end = \Carbon\Carbon::parse($trip->end_date);
+            $dayNum = 1;
 
-        while ($start <= $end) {
-            $trip->days()->create([
-                'date' => $start->toDateString(),
-                'summary' => '今日尚未安排摘要...',
-                'accommodation' => null,
-                'accommodation_details' => []
-            ]);
-            $start->addDay();
+            while ($start <= $end) {
+                $trip->days()->create([
+                    'date' => $start->toDateString(),
+                    'day_number' => $dayNum++,
+                    'summary' => '今日尚未安排摘要...',
+                    'accommodation' => null,
+                    'accommodation_details' => []
+                ]);
+                $start->addDay();
+            }
+        } else {
+            $daysCount = $trip->estimated_days ?? 1;
+            for ($i = 1; $i <= $daysCount; $i++) {
+                $trip->days()->create([
+                    'date' => null,
+                    'day_number' => $i,
+                    'summary' => '今日尚未安排摘要...',
+                    'accommodation' => null,
+                    'accommodation_details' => []
+                ]);
+            }
         }
 
         if (request()->ajax()) {
@@ -156,16 +172,22 @@ class TripController extends Controller
     }
     public function addDay(User $user, Trip $trip)
     {
-        $lastDay = $trip->days()->orderBy('date', 'desc')->first();
+        $lastDayNum = $trip->days()->max('day_number') ?? 0;
+        $nextDayNum = $lastDayNum + 1;
+        $newDate = null;
 
-        if ($lastDay) {
-            $newDate = \Carbon\Carbon::parse($lastDay->date)->addDay();
+        if ($trip->start_date) {
+            $newDate = \Carbon\Carbon::parse($trip->start_date)->addDays($nextDayNum - 1);
+            $trip->end_date = $newDate->toDateString();
+            $trip->save();
         } else {
-            $newDate = \Carbon\Carbon::parse($trip->start_date);
+            $trip->estimated_days = $nextDayNum;
+            $trip->save();
         }
 
         $trip->days()->create([
-            'date' => $newDate->toDateString(),
+            'date' => $newDate ? $newDate->toDateString() : null,
+            'day_number' => $nextDayNum,
             'summary' => '今日尚未安排摘要...',
             'accommodation' => null,
             'accommodation_details' => []
@@ -274,8 +296,9 @@ class TripController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
+            'start_date' => 'nullable|date|required_without:estimated_days',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'estimated_days' => 'nullable|integer|min:1|required_without:start_date',
             'base_currency' => 'required|string|max:10',
             'target_currency' => 'required|string|max:10',
             'exchange_rate' => 'required|numeric|min:0.0001',
@@ -301,16 +324,37 @@ class TripController extends Controller
         $flightInfo = $trip->flight_info;
         $flightInfo['transport_type'] = $request->transport_type ?? ($flightInfo['transport_type'] ?? 'flight');
 
+        $oldStartDate = $trip->start_date ? clone $trip->start_date : null;
+
         $trip->update([
             'name' => $validated['name'],
-            'start_date' => $validated['start_date'],
-            'end_date' => $validated['end_date'],
+            'start_date' => $validated['start_date'] ?? null,
+            'end_date' => $validated['end_date'] ?? null,
+            'estimated_days' => $validated['estimated_days'] ?? null,
             'base_currency' => $validated['base_currency'],
             'target_currency' => $validated['target_currency'],
             'exchange_rate' => $validated['exchange_rate'],
             'cover_image' => $trip->cover_image,
             'flight_info' => $flightInfo,
         ]);
+
+        // Auto-update itinerary days dates if the start_date changed
+        if ($trip->start_date && (!$oldStartDate || $trip->start_date->notEqualTo($oldStartDate))) {
+            $days = $trip->days()->orderBy('day_number')->get();
+            $start = \Carbon\Carbon::parse($trip->start_date);
+            foreach ($days as $day) {
+                // In case older data doesn't have day_number, skip or set. 
+                // We've backfilled it so it should be fine.
+                $dNum = $day->day_number ?: 1;
+                $day->update([
+                    'date' => (clone $start)->addDays($dNum - 1)->toDateString()
+                ]);
+            }
+            if ($days->count() > 0) {
+                $trip->end_date = (clone $start)->addDays($days->count() - 1)->toDateString();
+                $trip->save();
+            }
+        }
 
         if ($request->ajax()) {
             return response()->json(['message' => '旅程設定與封面已更新！']);

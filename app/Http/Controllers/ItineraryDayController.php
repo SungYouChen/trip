@@ -32,17 +32,24 @@ class ItineraryDayController extends Controller
         return view('show', $data);
     }
 
+    private function getItineraryDay(Trip $trip, $date)
+    {
+        if (str_starts_with($date, 'day-')) {
+            $dayNum = (int) str_replace('day-', '', $date);
+            return $trip->days()->where('day_number', $dayNum)->firstOrFail();
+        }
+
+        $parts = explode('-', $date);
+        return $trip->days()
+            ->whereMonth('date', (int)$parts[0])
+            ->whereDay('date', (int)$parts[1])
+            ->firstOrFail();
+    }
+
     private function getDayData(Trip $trip, $date)
     {
-        $parts = explode('-', $date);
-        $month = (int)$parts[0];
-        $dayNum = (int)$parts[1];
-
         /** @var ItineraryDay $day */
-        $day = $trip->days()
-            ->whereMonth('date', $month)
-            ->whereDay('date', $dayNum)
-            ->firstOrFail();
+        $day = $this->getItineraryDay($trip, $date);
 
         $day->load(['events' => function ($q) {
             $q->withTrashed()->orderBy('sort_order'); }, 'comments']);
@@ -55,8 +62,8 @@ class ItineraryDayController extends Controller
             'trip' => $trip,
             'day' => [
                 'id' => $day->id,
-                'date' => Carbon::parse($day->date)->format('n/j'),
-                'day' => Carbon::parse($day->date)->locale('zh_TW')->dayName,
+                'date' => $day->date ? Carbon::parse($day->date)->format('n/j') : 'Day ' . $day->day_number,
+                'day' => $day->date ? Carbon::parse($day->date)->locale('zh_TW')->dayName : '',
                 'title' => $day->title ?? $day->summary,
                 'summary' => $day->summary,
                 'location' => $day->location ?? '',
@@ -89,14 +96,13 @@ class ItineraryDayController extends Controller
                 })->toArray(),
             ],
             'expenses' => $expenses,
-            'currentDate' => $day->date,
+            'currentDate' => $date, // Using the raw $date parameter since $day->date might be null
         ];
     }
 
     public function updateDay(User $user, Trip $trip, $date, Request $request)
     {
-        $parts = explode('-', $date);
-        $day = $trip->days()->whereMonth('date', $parts[0])->whereDay('date', $parts[1])->firstOrFail();
+        $day = $this->getItineraryDay($trip, $date);
 
         $validated = $request->validate([
             'title' => 'nullable|string|max:255',
@@ -139,8 +145,7 @@ class ItineraryDayController extends Controller
 
     public function addEvent(User $user, Trip $trip, $date, Request $request)
     {
-        $parts = explode('-', $date);
-        $day = $trip->days()->whereMonth('date', $parts[0])->whereDay('date', $parts[1])->firstOrFail();
+        $day = $this->getItineraryDay($trip, $date);
 
         $validated = $request->validate([
             'time' => 'required|string',
@@ -230,14 +235,7 @@ class ItineraryDayController extends Controller
 
     public function deleteDay(User $user, Trip $trip, $date, Request $request)
     {
-        $parts = explode('-', $date);
-        $dayNum = (int)$parts[1];
-        $month = (int)$parts[0];
-
-        $day = $trip->days()
-            ->whereMonth('date', $month)
-            ->whereDay('date', $dayNum)
-            ->firstOrFail();
+        $day = $this->getItineraryDay($trip, $date);
 
         $day->delete(); // soft delete
 
