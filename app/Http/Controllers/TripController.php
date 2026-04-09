@@ -735,4 +735,46 @@ class TripController extends Controller
             return response()->json(['error' => 'API 連線失敗，請檢查網路狀態。'], 500);
         }
     }
+
+    public function convertCommentToItem(User $user, Trip $trip, Request $request)
+    {
+        $validated = $request->validate([
+            'content' => 'required|string',
+            'type' => 'required|in:shopping,spot',
+            'category' => 'nullable|string',
+        ]);
+
+        $category = $validated['category'] ?? ($validated['type'] === 'shopping' ? 'Must Buy' : 'Must Go');
+        
+        $item = $trip->checklistItems()->create([
+            'type' => $validated['type'],
+            'category' => $category,
+            'name' => $validated['content'],
+        ]);
+
+        return response()->json([
+            'message' => '已成功將留言轉入清單！',
+            'item' => $item
+        ]);
+    }
+
+    public function reorderChecklist(User $user, Trip $trip, Request $request)
+    {
+        $validated = $request->validate([
+            'item_id' => 'required|exists:checklist_items,id',
+            'category' => 'required|string',
+            'order' => 'required|array',
+        ]);
+
+        // Update category if changed
+        $item = $trip->checklistItems()->findOrFail($validated['item_id']);
+        $item->update(['category' => $validated['category']]);
+
+        // Update sort orders for all items in the new group if provided
+        foreach ($validated['order'] as $index => $id) {
+            $trip->checklistItems()->where('id', $id)->update(['sort_order' => $index]);
+        }
+
+        return response()->json(['message' => '清單順序及分類已同步']);
+    }
 }

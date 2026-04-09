@@ -47,26 +47,26 @@
                     <a href="{{ $isArchived ? '#' : route('trip.show', ['user' => auth()->user(), 'trip' => $t]) }}" class="block relative muji-card overflow-hidden transition-all duration-500 hover:shadow-muji {{ $isArchived ? 'border-2 border-dashed border-muji-ash grayscale opacity-60' : '' }}">
                         <div class="aspect-w-3 aspect-h-2 w-full overflow-hidden">
                             <img src="{{ $t->cover_image ? asset('storage/' . $t->cover_image) : asset('bg.jpg') }}" onerror="this.src='https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=2070&auto=format&fit=crop'" alt="{{ $t->name }}" class="h-64 w-full object-cover group-hover:scale-110 transition-transform duration-700">
-                            <div class="absolute inset-0 bg-gradient-to-t from-muji-ink/80 via-muji-ink/30 to-transparent"></div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                         </div>
-                        <div class="absolute bottom-0 p-6 w-full">
-                            <div class="flex items-center space-x-2 text-muji-base/80 text-[10px] font-bold mb-2">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.6">
+                        <div class="absolute bottom-0 p-6 w-full flex flex-col items-center text-center">
+                            <div class="flex items-center w-max px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white text-[10px] font-black mb-3 shadow-md">
+                                <svg class="h-3.5 w-3.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
-                                <span>
+                                <span class="tracking-widest">
                                     @if($t->start_date && $t->end_date)
-                                        {{ \Carbon\Carbon::parse($t->start_date)->format('Y/m/d') }} - {{ \Carbon\Carbon::parse($t->end_date)->format('Y/m/d') }}
+                                        {{ \Carbon\Carbon::parse($t->start_date)->format('Y/m/d') }} — {{ \Carbon\Carbon::parse($t->end_date)->format('Y/m/d') }}
                                     @else
-                                        日期未定 (共 {{ $t->estimated_days ?? $t->days->count() }} 天)
+                                        日期未定
                                     @endif
                                 </span>
                             </div>
-                            <h3 class="text-2xl font-black text-white group-hover:text-muji-wheat transition-colors">
+                            <h3 class="text-2xl font-black text-white group-hover:text-muji-wheat transition-colors drop-shadow-lg leading-tight">
                                 {{ $t->name }}
                             </h3>
-                            <div class="mt-4 flex items-center justify-between">
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold bg-white/10 text-muji-base/80 border border-white/10">
+                            <div class="mt-4">
+                                <span class="inline-flex items-center px-4 py-1.5 rounded-full text-[10px] font-bold bg-black/30 backdrop-blur-md text-white/90 border border-white/10 shadow-sm uppercase tracking-[0.2em]">
                                     {{ $isArchived ? '已封存' : $t->days->count() . ' 天行程' }}
                                 </span>
                             </div>

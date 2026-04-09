@@ -180,8 +180,28 @@
             --muji-glass-border: rgba(255, 255, 255, 0.1);
             --muji-wheat: #4b453d;
             /* Warmer dark wheat */
-            --text-main: #dcd3c1;
+        /* MUJI GLASS MODAL ENGINE V2 (Light/Dark Support) */
+        :root {
+            --muji-modal-bg: rgba(255, 255, 250, 0.7);
+            --muji-modal-border: rgba(255, 255, 255, 0.4);
         }
+        html.dark {
+            --muji-modal-bg: rgba(20, 20, 20, 0.6);
+            --muji-modal-border: rgba(255, 255, 255, 0.1);
+        }
+        .muji-glass-modal {
+            background: var(--muji-modal-bg) !important;
+            backdrop-filter: blur(25px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
+            border: 1px solid var(--muji-modal-border) !important;
+            box-shadow: 0 25px 70px -10px rgba(0, 0, 0, 0.3) !important;
+            color: var(--muji-ink) !important;
+        }
+        .swal2-backdrop-show {
+            backdrop-filter: blur(6px) !important;
+        }
+        /* Ensure specific elements inside modal are also transparent */
+        .swal2-html-container { background: transparent !important; }
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -1749,7 +1769,7 @@
     </div>
 
     <!-- PWA Install Prompt: Muji Minimalist -->
-    <div id="pwa-install-prompt" class="fixed bottom-0 left-0 w-full z-[8000] transform translate-y-full transition-transform duration-700 ease-out p-4 pointer-events-none md:p-6">
+    <div id="pwa-install-prompt" class="fixed bottom-0 left-0 w-full z-[8000] transform translate-y-full transition-transform duration-700 ease-out p-4 pointer-events-none md:p-6 hidden">
         <div class="max-w-md mx-auto bg-muji-paper/95 backdrop-blur-md border border-muji-edge rounded-[2.5rem] shadow-2xl p-6 pointer-events-auto flex items-center gap-4 group">
             <div class="w-12 h-12 bg-muji-base rounded-2xl flex-shrink-0 flex items-center justify-center text-muji-oak shadow-muji-sm group-hover:scale-105 transition-transform">
                 <img src="/icon_logo.png" class="w-8 h-8 object-contain">
@@ -1766,7 +1786,7 @@
     </div>
 
     <!-- iOS Install Hint (For Safari) -->
-    <div id="ios-install-hint" class="fixed bottom-0 left-0 w-full z-[8000] transform translate-y-full transition-transform duration-700 ease-out p-4 pointer-events-none">
+    <div id="ios-install-hint" class="fixed bottom-0 left-0 w-full z-[8000] transform translate-y-full transition-transform duration-700 ease-out p-4 pointer-events-none hidden">
         <div class="max-w-md mx-auto bg-muji-paper/95 backdrop-blur-md border border-muji-edge rounded-[2.5rem] shadow-2xl p-6 pointer-events-auto text-center">
             <div class="flex flex-col items-center gap-4">
                 <div class="w-14 h-14 bg-muji-base rounded-2xl flex items-center justify-center text-muji-oak shadow-muji-sm">
@@ -1916,6 +1936,7 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 </body>
 
 

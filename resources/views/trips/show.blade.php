@@ -97,7 +97,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 @if($trip->start_date && $trip->end_date)
                 {{ \Carbon\Carbon::parse($trip->start_date)->format('Y/m/d') }} - {{ \Carbon\Carbon::parse($trip->end_date)->format('Y/m/d') }}
                 @else
-                日期未定 (共 {{ $trip->estimated_days ?? $trip->days->count() }} 天)
+                日期未定
                 @endif
             </p>
         </div>
@@ -411,7 +411,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 </div>
 
                 <h3 class="text-xl font-black text-muji-ink mb-1 group-hover:text-muji-oak transition-colors truncate">
-                    {{ $day->title ?: 'Day ' . $loop->iteration }}
+                    {{ $day->title ?: ($day->summary ?: 'Day ' . $loop->iteration) }}
                 </h3>
                 @php 
                     if ($day->location) { $lastLoc = $day->location; }
@@ -436,9 +436,17 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                     @endif
                 </div>
 
+                @if($day->title && $day->summary && $day->title !== $day->summary)
                 <p class="text-xs text-muji-ash line-clamp-2">
                     {{ $day->summary }}
                 </p>
+                @elseif(!$day->title && $day->summary)
+                {{-- Summary is already used as title above, don't repeat here --}}
+                @else
+                <p class="text-xs text-muji-ash line-clamp-2">
+                    {{ $day->summary }}
+                </p>
+                @endif
             </div>
 
             <div class="px-6 py-3 bg-muji-base border-t border-muji-edge flex items-center justify-between text-[10px] font-black text-muji-ash group-hover:bg-muji-wheat/10 transition-colors flex-shrink-0">
@@ -528,7 +536,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
             @endphp
             @forelse($shoppingCategories as $category)
             @php
-            $allCategoryItems = $trip->checklistItems()->withTrashed()->where('type', 'shopping')->where('category', $category)->get();
+            $allCategoryItems = $trip->checklistItems()->withTrashed()->where('type', 'shopping')->where('category', $category)->orderBy('sort_order')->get();
             $items = $showArchived
             ? $allCategoryItems->filter(fn($i) => $i->trashed())
             : $allCategoryItems->filter(fn($i) => !$i->trashed());
@@ -536,11 +544,16 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
             @if($items->count() > 0)
             <div class="animate-in fade-in slide-in-from-left-4 duration-300">
                 <h4 class="font-black text-muji-ink text-sm mb-2 border-l-4 border-muji-wheat pl-2 uppercase tracking-wider">{{ $category }}</h4>
-                <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 sortable-list" data-type="shopping" data-category="{{ $category }}">
                     @foreach($items as $item)
                     @php $isItemArchived = $item->trashed(); @endphp
-                    <li class="flex items-start justify-between gap-2 text-sm text-muji-ash group {{ $isItemArchived ? 'border border-dashed border-red-200 rounded p-1 bg-red-50/20 grayscale opacity-60' : '' }}">
+                    <li data-id="{{ $item->id }}" class="flex items-start justify-between gap-2 text-sm text-muji-ash group {{ $isItemArchived ? 'border border-dashed border-red-200 rounded p-1 bg-red-50/20 grayscale opacity-60' : '' }}">
                         <div class="flex items-start gap-2">
+                            @if(!$isItemArchived)
+                            <div class="drag-handle cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity mt-1 text-muji-ash/20 hover:text-muji-oak">
+                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 8h16M4 16h16" /></svg>
+                            </div>
+                            @endif
                             @if($isItemArchived)
                             <span class="text-red-400 mt-0.5"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -612,11 +625,13 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 <input type="hidden" name="type" value="shopping">
                 <div class="flex gap-2 items-stretch h-[46px]">
                     <input type="text" name="category" placeholder="例如：藥妝" class="w-1/3 h-[46px] px-4 muji-input" required list="shop_categories" autocomplete="off">
-                    <datalist id="shop_categories">
-                        @foreach($shoppingCategories as $cat)
-                        <option value="{{ $cat }}">
-                        @endforeach
-                    </datalist>
+                    <div class="hidden">
+                        <datalist id="shop_categories">
+                            @foreach($shoppingCategories as $cat)
+                            <option value="{{ $cat }}">
+                            @endforeach
+                        </datalist>
+                    </div>
                     <input type="text" name="name" placeholder="例如：合利他命" class="w-2/3 h-[46px] px-4 muji-input" required>
                     <button type="submit" class="bg-muji-oak text-white w-[46px] flex items-center justify-center rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-muji-sm flex-shrink-0">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -648,7 +663,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
             
             @forelse($spotCategories as $category)
                 @php
-                $allSpotItems = $trip->checklistItems()->withTrashed()->where('type', 'spot')->where('category', $category)->get();
+                $allSpotItems = $trip->checklistItems()->withTrashed()->where('type', 'spot')->where('category', $category)->orderBy('sort_order')->get();
                 $items = $showArchived
                 ? $allSpotItems->filter(fn($i) => $i->trashed())
                 : $allSpotItems->filter(fn($i) => !$i->trashed());
@@ -656,11 +671,16 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 @if($items->count() > 0)
                 <div class="animate-in fade-in slide-in-from-right-4 duration-300">
                     <h4 class="font-black text-muji-ink text-sm mb-2 border-l-4 border-muji-wheat pl-2 uppercase tracking-wider">{{ $category }}</h4>
-                    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        @foreach($items as $item)
-                        @php $isItemArchived = $item->trashed(); @endphp
-                        <li class="flex items-start justify-between gap-2 text-sm text-muji-ash group {{ $isItemArchived ? 'border border-dashed border-red-200 rounded p-1 bg-red-50/20 grayscale opacity-60' : '' }}">
-                            <div class="flex items-start gap-2">
+                <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 sortable-list" data-type="spot" data-category="{{ $category }}">
+                    @foreach($items as $item)
+                    @php $isItemArchived = $item->trashed(); @endphp
+                    <li data-id="{{ $item->id }}" class="flex items-start justify-between gap-2 text-sm text-muji-ash group {{ $isItemArchived ? 'border border-dashed border-red-200 rounded p-1 bg-red-50/20 grayscale opacity-60' : '' }}">
+                        <div class="flex items-start gap-2">
+                            @if(!$isItemArchived)
+                            <div class="drag-handle cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity mt-1 text-muji-ash/20 hover:text-muji-oak">
+                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 8h16M4 16h16" /></svg>
+                            </div>
+                            @endif
                                 @if($isItemArchived)
                                     <span class="text-red-400 mt-0.5"><svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></span>
                                 @else
@@ -722,9 +742,11 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 <input type="hidden" name="type" value="spot">
                 <div class="flex gap-2 items-stretch h-[46px]">
                     <input type="text" name="category" placeholder="例如：河口湖" class="w-1/3 h-[46px] px-4 muji-input" required list="spot_categories" autocomplete="off">
-                    <datalist id="spot_categories">
-                        @foreach($spotCategories as $cat) <option value="{{ $cat }}"> @endforeach
-                    </datalist>
+                    <div class="hidden">
+                        <datalist id="spot_categories">
+                            @foreach($spotCategories as $cat) <option value="{{ $cat }}"> @endforeach
+                        </datalist>
+                    </div>
                     <input type="text" name="name" placeholder="例如：新倉山淺間公園" class="w-2/3 h-[46px] px-4 muji-input" required>
                     <button type="submit" class="bg-muji-oak text-white w-[46px] flex items-center justify-center rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-muji-sm flex-shrink-0">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
@@ -734,10 +756,9 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
             @endauth
             @endif
         </div>
-</div>
-</div>
-<!-- 旅程交流牆 (Central Discussion Board) -->
-    <div class="mt-6 border-muji-edge animate-in fade-in slide-in-from-bottom-4 duration-700 w-full">
+    </div>
+    <!-- 旅程交流牆 (Central Discussion Board) -->
+    <div class="mt-6 animate-in fade-in slide-in-from-bottom-4 duration-700 w-full">
         <div class="muji-card p-4 sm:p-6 border border-muji-edge shadow-muji shadow-muji-oak/5 rounded-[32px] w-full">
             <div class="mb-6 w-full">
             <h3 class="text-xl font-black text-muji-ink flex items-center gap-3">
@@ -748,7 +769,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
             </h3>
         </div>
             <!-- 留言列表 -->
-            <div class="space-y-6 mb-10 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+            <div class="space-y-6 mb-10 px-2 pb-10">
                 @forelse($globalComments as $comment)
                 <div class="flex items-start gap-4 group/comment relative animate-in fade-in slide-in-from-left-2 duration-300">
                     <div class="w-10 h-10 rounded-2xl bg-muji-wheat/20 flex-shrink-0 flex items-center justify-center text-xs font-black text-muji-oak border border-muji-edge shadow-sm">
@@ -760,25 +781,55 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                                 <span class="text-sm font-black text-muji-ink">{{ $comment['user_name'] }}</span>
                                 <span class="text-[10px] text-muji-ash/40 font-bold uppercase tracking-tighter">{{ $comment['time'] }}</span>
                             </div>
-                            
-                            @if($comment['can_delete'])
-                                @php $commDelId = 'del-global-comm-' . $comment['id']; @endphp
-                                <form id="{{ $commDelId }}" action="{{ route('trip.comment.destroy', ['id' => $comment['id']]) }}" method="POST" class="opacity-0 group-hover/comment:opacity-100 transition-opacity">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" onclick="confirmDelete('刪除此則留言？', '此動作無法復原！確定要永久刪除嗎？', '{{ $commDelId }}')" class="text-red-400 hover:text-red-600 transition-colors">
-                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            <div class="flex items-center gap-2">
+                                @if(auth()->check() && auth()->id() === $trip->user_id)
+                                <div class="relative">
+                                    <button onclick="event.stopPropagation(); this.nextElementSibling.classList.toggle('hidden')" class="text-muji-ash hover:text-muji-oak p-1 transition-all tooltip-bottom" data-tooltip="轉入清單">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                                         </svg>
                                     </button>
-                                </form>
-                            @endif
+                                    <div class="absolute right-0 top-full hidden bg-muji-paper border border-muji-edge shadow-2xl rounded-2xl p-1 z-[200] w-32 animate-in fade-in zoom-in-95 duration-200" onclick="event.stopPropagation()">
+                                        <button onclick="this.parentElement.classList.add('hidden'); convertComment('{{ addslashes($comment['content']) }}', 'spot')" class="w-full text-left px-3 py-2 text-[10px] font-black text-muji-ink hover:bg-muji-base hover:text-muji-oak rounded-xl transition-all flex items-center gap-2">
+                                            📍 轉入景點
+                                        </button>
+                                        <button onclick="this.parentElement.classList.add('hidden'); convertComment('{{ addslashes($comment['content']) }}', 'shopping')" class="w-full text-left px-3 py-2 text-[10px] font-black text-muji-ink hover:bg-muji-base hover:text-muji-oak rounded-xl transition-all flex items-center gap-2">
+                                            🛒 轉入必買
+                                        </button>
+                                    </div>
+                                </div>
+                                @endif
+
+                                @if($comment['can_delete'])
+                                    @php $commDelId = 'del-global-comm-' . $comment['id']; @endphp
+                                    <form id="{{ $commDelId }}" action="{{ route('trip.comment.destroy', ['id' => $comment['id']]) }}" method="POST" class="opacity-0 group-hover/comment:opacity-100 transition-opacity">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" onclick="confirmDelete('刪除此則留言？', '此動作無法復原！確定要永久刪除嗎？', '{{ $commDelId }}')" class="text-red-400 hover:text-red-600 transition-colors tooltip-bottom" data-tooltip="刪除留言">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
                         </div>
                         <div class="bg-muji-paper p-4 rounded-3xl rounded-tl-none border border-muji-edge/60 text-sm text-muji-ink leading-relaxed shadow-muji-sm hover:shadow-muji transition-all duration-300">
-                            {!! preg_replace('/(https?:\/\/[^\s]+)/', '<a href="$1" target="_blank" class="text-muji-oak hover:underline break-all underline decoration-dotted decoration-muji-wheat">$1</a>', e($comment['content'])) !!}
+                            @php
+                                $content = e($comment['content']);
+                                // Improved regex to handle capsules better
+                                $content = preg_replace_callback('/(https?:\/\/[^\s]+)/', function($m) {
+                                    $url = $m[1];
+                                    $isMaps = str_contains($url, 'google.com/maps') || str_contains($url, 'goo.gl/maps');
+                                    $label = $isMaps ? '📍 Google Maps' : '🔗 連結';
+                                    $style = $isMaps ? 'bg-muji-wheat/30 text-muji-oak border-muji-oak/30' : 'bg-muji-base text-muji-ash border-muji-edge';
+                                    // Use w-fit and inline-flex to ensure it doesn't stretch
+                                    return '<a href="'.$url.'" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1 my-1 rounded-full border '.$style.' transition-all hover:scale-105 active:scale-95 text-[11px] font-black shadow-sm no-underline w-fit">'.$label.'</a>';
+                                }, $content);
+                            @endphp
+                            <div class="whitespace-pre-wrap">{!! $content !!}</div>
                         </div>
                     </div>
-                </div>
                 @empty
                 <div class="py-16 flex flex-col items-center justify-center opacity-30 select-none">
                     <svg class="w-16 h-16 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.5">
@@ -813,10 +864,65 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                     </button>
                 </div>
             </form>
-        </div>
-    </div>
+        </div></div>
 
 @push('modals')
+    <!-- --- CONVERSION MODAL (1:1 SweetAlert Mirror) --- -->
+    <div id="convertCommentModal" class="fixed inset-0 z-[10000] hidden flex items-center justify-center bg-black/50 backdrop-blur-[6px] p-4 text-center">
+        <div class="muji-card w-full max-w-[420px] rounded-[32px] p-10 shadow-2xl transform transition-all border border-muji-edge/20 text-center" style="background-color: #f8f5f0;">
+            <!-- Iconic Top (Swal Style) -->
+            <div class="flex justify-center mb-6">
+                <div id="modalIconContainer" class="w-20 h-20 rounded-full border-4 border-muji-oak/20 flex items-center justify-center text-4xl bg-muji-oak/5">
+                    <span id="modalIcon">📍</span>
+                </div>
+            </div>
+
+            <h3 id="convertModalTitle" class="text-2xl font-black text-[#333333] mb-8 tracking-tighter">轉入清單</h3>
+            
+            <!-- Content Container -->
+            <div class="space-y-6 mb-10 text-left">
+                <div>
+                    <label class="block text-[10px] font-black text-muji-ash uppercase tracking-widest mb-3 ml-1">選擇分類</label>
+                    <input id="convertModalInput" 
+                           type="text"
+                           class="w-full h-[54px] px-6 muji-input text-sm border-2 border-muji-edge focus:border-muji-oak transition-all shadow-sm bg-white/50" 
+                           placeholder="搜尋或輸入標籤..."
+                           autocomplete="off"
+                           onkeydown="if(event.key==='Enter') submitConvertModal()"
+                           list="modal_all_categories">
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-black text-muji-ash uppercase tracking-widest mb-3 ml-1">內容修改</label>
+                    <textarea id="convertModalContent" 
+                              class="w-full min-h-[110px] p-5 muji-input text-sm border-2 border-muji-edge focus:border-muji-oak transition-all shadow-sm resize-none leading-relaxed bg-white/50" 
+                              placeholder="微調一下文字..."></textarea>
+                </div>
+                
+                <div class="hidden">
+                    <datalist id="modal_spot_list">
+                        @foreach($spotCategories as $sc) <option value="{{ $sc }}"> @endforeach
+                    </datalist>
+                    <datalist id="modal_shopping_list">
+                        @foreach($shoppingCategories as $sc) <option value="{{ $sc }}"> @endforeach
+                    </datalist>
+                    <datalist id="modal_all_categories">
+                        @foreach(array_unique(array_merge($spotCategories, $shoppingCategories)) as $sc) <option value="{{ $sc }}"> @endforeach
+                    </datalist>
+                </div>
+            </div>
+
+            <!-- Swal Standard Actions -->
+            <div class="flex justify-center gap-4">
+                <button onclick="submitConvertModal()" class="px-10 py-3.5 text-white text-[10px] font-black rounded-xl shadow-lg hover:opacity-90 active:scale-95 transition-all uppercase tracking-widest" style="background-color: #9c8c7c;">
+                    確認轉入
+                </button>
+                <button onclick="safeCloseModal('convertCommentModal')" class="px-10 py-3.5 text-muji-ash text-[10px] font-black rounded-xl border border-muji-edge hover:bg-white transition-all active:scale-95 uppercase tracking-widest" style="background-color: #dcd3c1;">
+                    取消
+                </button>
+            </div>
+        </div>
+    </div>
 @if(!$isShared)
 @auth
 <!-- Flight Edit Modal -->
@@ -1358,6 +1464,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 @endif
 @endpush
 
+
     @if(!$isShared)
     <script>
         // --- NEW: Universal AJAX Form Handler ---
@@ -1827,5 +1934,178 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 }, null, { enableHighAccuracy: true });
             }
         }
+
+        async function convertComment(content, type, category = null) {
+            if (!category) {
+                openConvertModal(content, type);
+                return;
+            }
+
+            try {
+                const res = await fetch('{{ route("comment.convert", ["user" => $trip->user, "trip" => $trip]) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ content, type, category })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    Swal.fire({
+                        ...getSwalConfig(),
+                        icon: 'success',
+                        title: '轉換成功！',
+                        text: data.message,
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    setTimeout(() => window.location.reload(), 1600);
+                } else {
+                    throw new Error(data.message || '轉換失敗');
+                }
+            } catch (err) {
+                Swal.fire({
+                    ...getSwalConfig(),
+                    icon: 'error',
+                    title: '錯誤',
+                    text: err.message
+                });
+            }
+        }
+
+        // --- NEW: Static Conversion Modal Logic ---
+        let currentConvertContent = '';
+        let currentConvertType = '';
+
+        function openConvertModal(content, type) {
+            currentConvertContent = content;
+            currentConvertType = type;
+            
+            // Update UI
+            document.getElementById('modalIcon').innerText = type === 'shopping' ? '🛒' : '📍';
+            document.getElementById('modalIconContainer').className = type === 'shopping' 
+                ? 'w-20 h-20 rounded-full border-4 border-muji-oak/20 flex items-center justify-center text-4xl bg-muji-oak/5'
+                : 'w-20 h-20 rounded-full border-4 border-muji-oak/20 flex items-center justify-center text-4xl bg-muji-oak/5';
+            
+            document.getElementById('convertModalTitle').innerText = type === 'shopping' ? '轉入必買' : '轉入景點';
+            
+            // Populate content for editing
+            document.getElementById('convertModalContent').value = content;
+            
+            const input = document.getElementById('convertModalInput');
+            // 關鍵：不要預填文字，瀏覽器才會跳出完整下拉
+            input.value = ''; 
+            input.placeholder = type === 'shopping' ? '預設：藥妝' : '預設：景點';
+            
+            // Link directly to modal-private datalists
+            input.setAttribute('list', type === 'shopping' ? 'modal_shopping_list' : 'modal_spot_list');
+            
+            safeOpenModal('convertCommentModal');
+            setTimeout(() => {
+                input.focus();
+            }, 100);
+        }
+
+        function submitConvertModal() {
+            let category = document.getElementById('convertModalInput').value;
+            const content = document.getElementById('convertModalContent').value;
+            
+            if (!content) {
+                showToast('內容不能為空', 'error');
+                return;
+            }
+
+            // 如果沒填分類，就用預設值
+            if (!category) {
+                category = currentConvertType === 'shopping' ? '藥妝' : '景點';
+            }
+            safeCloseModal('convertCommentModal');
+            convertComment(content, currentConvertType, category);
+        }
+
+        let draggedCommentContent = '';
+        function handleCommentDragStart(e, content) {
+            draggedCommentContent = content;
+            e.dataTransfer.setData('text/plain', content);
+            e.dataTransfer.effectAllowed = 'copy';
+            
+            // Highlight zones
+            document.querySelectorAll('.drop-target-zone').forEach(z => {
+                z.classList.add('ring-2', 'ring-muji-oak/30', 'bg-muji-wheat/5');
+            });
+        }
+
+        function handleCommentDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'copy';
+            const zone = e.currentTarget;
+            zone.classList.remove('ring-muji-oak/30');
+            zone.classList.add('border-muji-oak', 'bg-muji-wheat/20', 'shadow-2xl', 'scale-[1.02]');
+        }
+
+        function handleCommentDragLeave(e) {
+            const zone = e.currentTarget;
+            zone.classList.remove('border-muji-oak', 'bg-muji-wheat/20', 'shadow-2xl', 'scale-[1.02]');
+            zone.classList.add('ring-muji-oak/30');
+        }
+
+        function handleCommentDrop(e, type) {
+            e.preventDefault();
+            const zone = e.currentTarget;
+            zone.classList.remove('border-muji-oak', 'bg-muji-wheat/20', 'shadow-2xl', 'scale-[1.02]', 'ring-2', 'ring-muji-oak/30', 'bg-muji-wheat/5');
+            
+            // Un-highlight all
+            document.querySelectorAll('.drop-target-zone').forEach(z => {
+                z.classList.remove('ring-2', 'ring-muji-oak/30', 'bg-muji-wheat/5');
+            });
+
+            const content = e.dataTransfer.getData('text/plain') || draggedCommentContent;
+            if (content) {
+                convertComment(content, type);
+            }
+        }
+
+        // Initialize Internal Checklist Sorting
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof Sortable !== 'undefined') {
+                document.querySelectorAll('.sortable-list').forEach(el => {
+                    new Sortable(el, {
+                        group: 'checklist-' + el.dataset.type,
+                        handle: '.drag-handle',
+                        animation: 150,
+                        ghostClass: 'muji-ghost',
+                        fallbackOnBody: true,
+                        swapThreshold: 0.65,
+                        onEnd: function (evt) {
+                            const itemId = evt.item.dataset.id;
+                            const newCategory = evt.to.dataset.category;
+                            
+                            // Get all IDs in the new target list
+                            const orderedIds = Array.from(evt.to.children).map(li => li.dataset.id);
+
+                            fetch('{{ route("checklist.reorder", ["user" => $trip->user, "trip" => $trip]) }}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({
+                                    item_id: itemId,
+                                    category: newCategory,
+                                    order: orderedIds
+                                })
+                            })
+                            .then(res => res.json())
+                            .then(data => {
+                                // showToast(data.message, 'success');
+                            });
+                        }
+                    });
+                });
+            }
+        });
     </script>
 @endsection
