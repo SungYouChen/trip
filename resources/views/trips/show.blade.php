@@ -521,7 +521,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 <!-- Checklists Section (Standardized space-y-8 / gap-8) -->
 <div class="grid md:grid-cols-2 gap-6 mt-6">
     <!-- Must Buy List (p-8) -->
-    <div class="muji-card shadow-muji p-8 relative flex flex-col min-h-[400px]">
+    <div class="muji-card shadow-muji p-8 relative flex flex-col">
         <h3 class="text-xl font-black text-muji-ink mb-6 flex items-center gap-2">
             <span class="w-8 h-8 rounded-lg bg-muji-base flex items-center justify-center text-muji-oak shadow-muji-sm">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -646,7 +646,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
     </div>
 
     <!-- Must Go List -->
-    <div class="muji-card shadow-muji p-8 relative flex flex-col min-h-[400px]">
+    <div class="muji-card shadow-muji p-8 relative flex flex-col">
         <h3 class="text-xl font-black text-muji-ink mb-6 flex items-center gap-2">
             <span class="w-8 h-8 rounded-lg bg-muji-base flex items-center justify-center text-muji-oak shadow-muji-sm">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -757,19 +757,20 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
             @endif
         </div>
     </div>
-    <!-- 旅程交流牆 (Central Discussion Board) -->
-    <div class="mt-6 animate-in fade-in slide-in-from-bottom-4 duration-700 w-full">
+
+    <!-- 旅程交流牆 (Integrated into the same grid div) -->
+    <div class="md:col-span-2 animate-in fade-in slide-in-from-bottom-4 duration-700 w-full">
         <div class="muji-card p-4 sm:p-6 border border-muji-edge shadow-muji shadow-muji-oak/5 rounded-[32px] w-full">
             <div class="mb-6 w-full">
-            <h3 class="text-xl font-black text-muji-ink flex items-center gap-3">
-                <span class="w-10 h-10 rounded-2xl bg-muji-wheat/30 flex items-center justify-center text-muji-oak shadow-muji-sm">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
-                </span>
-                旅程交流牆
-            </h3>
-        </div>
+                <h3 class="text-xl font-black text-muji-ink flex items-center gap-3">
+                    <span class="w-10 h-10 rounded-2xl bg-muji-wheat/30 flex items-center justify-center text-muji-oak shadow-muji-sm">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                    </span>
+                    旅程交流牆
+                </h3>
+            </div>
             <!-- 留言列表 -->
-            <div class="space-y-6 mb-10 px-2 pb-10">
+            <div class="space-y-6 px-2">
                 @forelse($globalComments as $comment)
                 <div class="flex items-start gap-4 group/comment relative animate-in fade-in slide-in-from-left-2 duration-300">
                     <div class="w-10 h-10 rounded-2xl bg-muji-wheat/20 flex-shrink-0 flex items-center justify-center text-xs font-black text-muji-oak border border-muji-edge shadow-sm">
@@ -864,7 +865,9 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                     </button>
                 </div>
             </form>
-        </div></div>
+        </div>
+    </div>
+</div>
 
 @push('modals')
     <!-- --- CONVERSION MODAL (1:1 SweetAlert Mirror) --- -->
