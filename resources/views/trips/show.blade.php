@@ -81,7 +81,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 @section('header_title', '旅程計劃')
 
 @section('content')
-<div class="mb-12 relative max-w-4xl mx-auto group">
+<div class="mb-12 relative max-w-4xl mx-auto group overflow-hidden">
     <!-- Header Block: Flex Container for Perfect Alignment -->
     <div class="flex items-start justify-between min-h-[100px]">
         <!-- Left Side Spacer (for centering) -->
@@ -134,7 +134,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 
     <!-- Share Link Box (Balanced below title) -->
     @if(!$isShared && $trip->is_public)
-    <div class="bg-muji-base/80 backdrop-blur-sm p-1.5 rounded-xl flex items-center justify-between gap-3 border border-muji-edge max-w-md mx-auto overflow-hidden shadow-muji-sm">
+    <div class="bg-muji-base/80 backdrop-blur-sm p-1.5 rounded-xl flex items-center justify-between gap-3 border border-muji-edge w-full max-w-md mx-auto overflow-hidden shadow-muji-sm">
         <span id="shareLink" class="text-[10px] text-muji-oak font-mono truncate flex-1 font-black pl-3 tracking-wider">{{ route('trip.index_shared', ['token' => $trip->share_token]) }}</span>
         <button onclick="copyShareLink()" class="bg-muji-oak text-white text-[10px] h-[36px] px-6 flex items-center justify-center rounded-xl hover:opacity-80 transition-all font-black whitespace-nowrap active:scale-95 shadow-muji-sm">複製連結</button>
     </div>
@@ -159,7 +159,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 
 @if($hasFlight)
 <!-- Multi-modal Transport Card -->
-<div id="transportCard" class="relative muji-card shadow-muji border-muji-edge mb-4 group/transport zoom-in-on-load ticket-masked overflow-hidden">
+<div id="transportCard" class="relative muji-card shadow-muji border-muji-edge mb-4 group/transport zoom-in-on-load ticket-masked overflow-hidden w-full max-w-full">
     <div class="absolute inset-0 bg-gradient-to-br {{ $theme['gradient'] }} opacity-50 pointer-events-none"></div>
 
     <!-- Top Section: Header & Price -->
@@ -363,7 +363,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 @endif
 
 @php $showArchived = request('archived') == '1'; @endphp
-<div class="flex items-center justify-between mb-4">
+<div class="flex items-center justify-between mb-4 w-full min-w-0">
     <p class="text-sm text-muji-ash font-medium">
         @php $activeDaysCount = $itinerary->filter(fn($d) => !$d->trashed())->count(); @endphp
         共 {{ $activeDaysCount }} 天
