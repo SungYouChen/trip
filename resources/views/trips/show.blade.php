@@ -380,7 +380,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
     @endif
 </div>
 
-<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 w-full max-w-full">
     @php
     $daysToShow = $showArchived
     ? $itinerary->filter(fn($d) => $d->trashed())
@@ -396,8 +396,8 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
     $cardLink = (!$isArchived && $isShared)
     ? route('day.show_shared', ['token' => $trip->share_token, 'date' => $dateParam])
     : ((!$isArchived && !$isShared) ? route('day.show', ['user' => $trip->user, 'trip' => $trip, 'date' => $dateParam]) : null);
-    @endphp 123
-        <div class="relative group">
+    @endphp 
+        <div class="relative group min-w-0">
             <a href="{{ $cardLink }}" class="flex flex-col h-52 muji-card shadow-muji border-muji-edge hover:shadow-muji transition-all duration-300 transform hover:-translate-y-1 overflow-hidden {{ $isArchived ? 'border-2 border-dashed border-muji-ash grayscale opacity-60' : ($isToday ? 'bg-muji-wheat/10 ring-1 ring-muji-oak' : '') }}">
                 <div class="p-6 flex-1 overflow-hidden">
                     <div class="flex items-center justify-between mb-3">
@@ -417,7 +417,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         if ($day->location) { $lastLoc = $day->location; }
                         $loc = $lastLoc;
                     @endphp
-                    <div class="flex items-center gap-2 text-[10px] font-bold text-muji-oak mb-2 uppercase tracking-widest">
+                    <div class="flex items-center flex-wrap gap-2 text-[10px] font-bold text-muji-oak mb-2 uppercase tracking-widest min-w-0">
                         <div class="flex items-center gap-1 truncate max-w-[100px]">
                             <svg class="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
