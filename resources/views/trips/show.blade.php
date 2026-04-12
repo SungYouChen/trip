@@ -81,15 +81,15 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 @section('header_title', '旅程計劃')
 
 @section('content')
-<div class="mb-12 relative max-w-4xl mx-auto px-4 group">
+<div class="mb-12 relative max-w-4xl mx-auto group">
     <!-- Header Block: Flex Container for Perfect Alignment -->
     <div class="flex items-start justify-between min-h-[100px]">
         <!-- Left Side Spacer (for centering) -->
         <div class="hidden sm:flex w-24"></div>
 
         <!-- Center: Title Content -->
-        <div class="flex-1 text-center">
-            <h2 class="text-3xl sm:text-4xl font-black text-muji-ink leading-tight">
+        <div class="flex-1 text-center min-w-0">
+            <h2 class="text-3xl sm:text-4xl font-black text-muji-ink leading-tight break-words">
                 {{ $trip->name }}
             </h2>
             
@@ -103,7 +103,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
         </div>
 
         <!-- Right Side: Action Icons -->
-        <div class="flex items-center gap-2 pt-1">
+        <div class="flex items-center gap-2 pt-1 shrink-0">
             @if(!$isShared && auth()->check())
             <!-- Settings Gear -->
             <button onclick="safeOpenModal('tripSettingsModal')" class="p-1.5 text-muji-ash hover:text-muji-oak hover:bg-muji-base rounded-xl transition-all tooltip-bottom hover:scale-105 active:scale-95 group/btn" data-tooltip="編輯旅程設定">
@@ -396,106 +396,106 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
     $cardLink = (!$isArchived && $isShared)
     ? route('day.show_shared', ['token' => $trip->share_token, 'date' => $dateParam])
     : ((!$isArchived && !$isShared) ? route('day.show', ['user' => $trip->user, 'trip' => $trip, 'date' => $dateParam]) : null);
-    @endphp
-    <div class="relative group">
-        <a href="{{ $cardLink }}" class="flex flex-col h-52 muji-card shadow-muji border-muji-edge hover:shadow-muji transition-all duration-300 transform hover:-translate-y-1 overflow-hidden {{ $isArchived ? 'border-2 border-dashed border-muji-ash grayscale opacity-60' : ($isToday ? 'bg-muji-wheat/10 ring-1 ring-muji-oak' : '') }}">
-            <div class="p-6 flex-1 overflow-hidden">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="inline-flex items-center justify-center px-3 py-1 rounded-full text-[10px] font-bold bg-muji-base text-muji-oak border border-muji-edge">
-                        @if($dayDate)
-                        {{ $dayDate->format('n/j') }} ({{ $dayDate->locale('zh_TW')->dayName }})
-                        @else
-                        Day {{ $day->day_number }}
-                        @endif
-                    </span>
-                </div>
+    @endphp 123
+        <div class="relative group">
+            <a href="{{ $cardLink }}" class="flex flex-col h-52 muji-card shadow-muji border-muji-edge hover:shadow-muji transition-all duration-300 transform hover:-translate-y-1 overflow-hidden {{ $isArchived ? 'border-2 border-dashed border-muji-ash grayscale opacity-60' : ($isToday ? 'bg-muji-wheat/10 ring-1 ring-muji-oak' : '') }}">
+                <div class="p-6 flex-1 overflow-hidden">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="inline-flex items-center justify-center px-3 py-1 rounded-full text-[10px] font-bold bg-muji-base text-muji-oak border border-muji-edge">
+                            @if($dayDate)
+                            {{ $dayDate->format('n/j') }} ({{ $dayDate->locale('zh_TW')->dayName }})
+                            @else
+                            Day {{ $day->day_number }}
+                            @endif
+                        </span>
+                    </div>
 
-                <h3 class="text-xl font-black text-muji-ink mb-1 group-hover:text-muji-oak transition-colors truncate">
-                    {{ $day->title ?: ($day->summary ?: 'Day ' . $loop->iteration) }}
-                </h3>
-                @php 
-                    if ($day->location) { $lastLoc = $day->location; }
-                    $loc = $lastLoc;
-                @endphp
-                <div class="flex items-center gap-2 text-[10px] font-bold text-muji-oak mb-2 uppercase tracking-widest">
-                    <div class="flex items-center gap-1 truncate max-w-[100px]">
-                        <svg class="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        <span class="truncate">{{ $loc }}</span>
+                    <h3 class="text-xl font-black text-muji-ink mb-1 group-hover:text-muji-oak transition-colors truncate">
+                        {{ $day->title ?: ($day->summary ?: 'Day ' . $loop->iteration) }}
+                    </h3>
+                    @php 
+                        if ($day->location) { $lastLoc = $day->location; }
+                        $loc = $lastLoc;
+                    @endphp
+                    <div class="flex items-center gap-2 text-[10px] font-bold text-muji-oak mb-2 uppercase tracking-widest">
+                        <div class="flex items-center gap-1 truncate max-w-[100px]">
+                            <svg class="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span class="truncate">{{ $loc }}</span>
+                        </div>
+                        @if($dayDate && $dayDate->isBetween(now()->subDays(1), now()->addDays(15)))
+                        <div class="weather-indicator tooltip-bottom inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-black bg-muji-base border border-muji-edge shadow-muji-sm" 
+                            data-date="{{ $dayDate->format('Y-m-d') }}" 
+                            data-location="{{ $loc }}"
+                            data-tooltip="氣象同步中..">
+                            <div class="weather-icon flex items-center justify-center min-w-[12px]"><span class="animate-pulse">◌</span></div>
+                            <span class="weather-temp font-black text-muji-oak">-- / --°C</span>
+                        </div>
+                        @endif
                     </div>
-                    @if($dayDate && $dayDate->isBetween(now()->subDays(1), now()->addDays(15)))
-                    <div class="weather-indicator tooltip-bottom inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-black bg-muji-base border border-muji-edge shadow-muji-sm" 
-                         data-date="{{ $dayDate->format('Y-m-d') }}" 
-                         data-location="{{ $loc }}"
-                         data-tooltip="氣象同步中..">
-                        <div class="weather-icon flex items-center justify-center min-w-[12px]"><span class="animate-pulse">◌</span></div>
-                        <span class="weather-temp font-black text-muji-oak">-- / --°C</span>
-                    </div>
+
+                    @if($day->title && $day->summary && $day->title !== $day->summary)
+                    <p class="text-xs text-muji-ash line-clamp-2">
+                        {{ $day->summary }}
+                    </p>
+                    @elseif(!$day->title && $day->summary)
+                    {{-- Summary is already used as title above, don't repeat here --}}
+                    @else
+                    <p class="text-xs text-muji-ash line-clamp-2">
+                        {{ $day->summary }}
+                    </p>
                     @endif
                 </div>
 
-                @if($day->title && $day->summary && $day->title !== $day->summary)
-                <p class="text-xs text-muji-ash line-clamp-2">
-                    {{ $day->summary }}
-                </p>
-                @elseif(!$day->title && $day->summary)
-                {{-- Summary is already used as title above, don't repeat here --}}
-                @else
-                <p class="text-xs text-muji-ash line-clamp-2">
-                    {{ $day->summary }}
-                </p>
-                @endif
-            </div>
-
-            <div class="px-6 py-3 bg-muji-base border-t border-muji-edge flex items-center justify-between text-[10px] font-black text-muji-ash group-hover:bg-muji-wheat/10 transition-colors flex-shrink-0">
-                <span>查看詳情</span>
-                <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform text-muji-oak" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                </svg>
-            </div>
-        </a>
-
-        @if(!$isShared)
-        @auth
-        @if($isArchived)
-        {{-- Archived: Show Restore + Force Delete --}}
-        @php $restoreId = 'restore-day-' . $day->id; @endphp
-        @php $forceId = 'force-day-' . $day->id; @endphp
-        <div class="absolute top-3 right-3 z-10 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-            <form id="{{ $restoreId }}" action="{{ route('day.restore', ['user' => $trip->user, 'trip' => $trip, 'dayId' => $day->id]) }}" method="POST">
-                @csrf @method('PATCH')
-                <button type="submit" class="p-2 bg-green-50 text-green-600 rounded-xl hover:bg-green-100 shadow-sm transition-colors" data-tooltip="還原此天行程">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                <div class="px-6 py-3 bg-muji-base border-t border-muji-edge flex items-center justify-between text-[10px] font-black text-muji-ash group-hover:bg-muji-wheat/10 transition-colors flex-shrink-0">
+                    <span>查看詳情</span>
+                    <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform text-muji-oak" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
-                </button>
-            </form>
-            <form id="{{ $forceId }}" action="{{ route('day.forceDelete', ['user' => $trip->user, 'trip' => $trip, 'dayId' => $day->id]) }}" method="POST">
+                </div>
+            </a>
+
+            @if(!$isShared)
+            @auth
+            @if($isArchived)
+            {{-- Archived: Show Restore + Force Delete --}}
+            @php $restoreId = 'restore-day-' . $day->id; @endphp
+            @php $forceId = 'force-day-' . $day->id; @endphp
+            <div class="absolute top-3 right-3 z-10 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                <form id="{{ $restoreId }}" action="{{ route('day.restore', ['user' => $trip->user, 'trip' => $trip, 'dayId' => $day->id]) }}" method="POST">
+                    @csrf @method('PATCH')
+                    <button type="submit" class="p-2 bg-green-50 text-green-600 rounded-xl hover:bg-green-100 shadow-sm transition-colors" data-tooltip="還原此天行程">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                    </button>
+                </form>
+                <form id="{{ $forceId }}" action="{{ route('day.forceDelete', ['user' => $trip->user, 'trip' => $trip, 'dayId' => $day->id]) }}" method="POST">
+                    @csrf @method('DELETE')
+                    <button type="button" onclick="confirmDelete('永久刪除？', '此操作無法復原！', '{{ $forceId }}')" class="p-2 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 shadow-sm transition-colors" data-tooltip="永久刪除此天">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </button>
+                </form>
+            </div>
+            @else
+            {{-- Active: Soft delete (archive) --}}
+            @php $formId = 'delete-day-' . $day->id; @endphp
+            <form id="{{ $formId }}" action="{{ route('day.destroy', ['user' => $trip->user, 'trip' => $trip, 'date' => $dateParam]) }}" method="POST" class="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
                 @csrf @method('DELETE')
-                <button type="button" onclick="confirmDelete('永久刪除？', '此操作無法復原！', '{{ $forceId }}')" class="p-2 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 shadow-sm transition-colors" data-tooltip="永久刪除此天">
+                <button type="button" onclick="confirmDelete('封存此天行程？', '此天行程將被封存，可於「查看封存」中還原。', '{{ $formId }}')" class="p-2 bg-red-50 text-red-500 rounded-xl hover:bg-red-100 hover:text-red-600 shadow-sm transition-colors" data-tooltip="封存這一天">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2l1-12M10 12v4m4-4v4" />
                     </svg>
                 </button>
             </form>
+            @endif
+            @endauth
+            @endif
         </div>
-        @else
-        {{-- Active: Soft delete (archive) --}}
-        @php $formId = 'delete-day-' . $day->id; @endphp
-        <form id="{{ $formId }}" action="{{ route('day.destroy', ['user' => $trip->user, 'trip' => $trip, 'date' => $dateParam]) }}" method="POST" class="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-            @csrf @method('DELETE')
-            <button type="button" onclick="confirmDelete('封存此天行程？', '此天行程將被封存，可於「查看封存」中還原。', '{{ $formId }}')" class="p-2 bg-red-50 text-red-500 rounded-xl hover:bg-red-100 hover:text-red-600 shadow-sm transition-colors" data-tooltip="封存這一天">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2l1-12M10 12v4m4-4v4" />
-                </svg>
-            </button>
-        </form>
-        @endif
-        @endauth
-        @endif
-    </div>
     @endforeach
 
     @if(!$isShared)
