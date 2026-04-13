@@ -192,7 +192,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
     <div class="absolute inset-0 bg-gradient-to-br {{ $theme['gradient'] }} opacity-50 pointer-events-none"></div>
 
     <!-- Top Section: Header & Price -->
-    <div onclick="toggleTransportDetails()" class="relative px-8 py-5 border-b border-dashed border-muji-edge flex justify-between items-center bg-muji-paper/50 cursor-pointer hover:bg-muji-wheat/10 transition-colors">
+    <div onclick="toggleTransportDetails()" class="relative px-8 py-4 border-b border-dashed border-muji-edge flex justify-between items-center bg-muji-paper/50 cursor-pointer hover:bg-muji-wheat/10 transition-colors">
         <div class="flex items-center gap-3">
             <div class="w-12 h-12 rounded-2xl {{ $theme['bg_light'] }} flex items-center justify-center {{ $theme['text'] }} shadow-sm rotate-3 group-hover/transport:rotate-0 transition-transform duration-500">
                 @if($transportType == 'train')
@@ -273,8 +273,8 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 
 
                 <!-- Outbound -->
-                <div class="p-8 group/item hover:bg-muji-base/40 transition-all duration-300">
-                    <div class="flex justify-between items-start mb-6">
+                <div class="px-8 py-4 group/item hover:bg-muji-base/40 transition-all duration-300">
+                    <div class="flex justify-between items-start mb-4">
                         <span class="px-3 py-1.5 {{ $theme['bg_light'] }} {{ $theme['text'] }} rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm">
                             {{ $theme['label_out'] }}
                         </span>
@@ -304,7 +304,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         </div>
                     </div>
 
-                    <div class="mt-6 pt-4 border-t border-muji-edge flex items-center justify-between">
+                    <div class="mt-4 pt-4 border-t border-muji-edge flex items-center justify-between">
                         <div class="flex flex-col">
                             <span class="text-[10px] font-black text-muji-ash uppercase tracking-widest mb-1">
                                 {{ $transportType == 'car' ? '取車時間' : '出發 / 抵達時間' }}
@@ -324,8 +324,8 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 </div>
 
                 <!-- Inbound -->
-                <div class="p-8 group/item hover:bg-muji-paper/40 transition-all duration-300">
-                    <div class="flex justify-between items-start mb-6">
+                <div class="px-8 py-4 group/item hover:bg-muji-paper/40 transition-all duration-300">
+                    <div class="flex justify-between items-start mb-4">
                         <span class="px-3 py-1.5 bg-gray-100 text-gray-500 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm">
                             {{ $theme['label_in'] }}
                         </span>
@@ -355,7 +355,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                         </div>
                     </div>
 
-                    <div class="mt-6 pt-4 border-t border-muji-edge flex items-center justify-between">
+                    <div class="mt-4 pt-4 border-t border-muji-edge flex items-center justify-between">
                         <div class="flex flex-col">
                             <span class="text-[10px] font-black text-muji-ash uppercase tracking-widest mb-1">
                                 {{ $transportType == 'car' ? '還車時間' : '出發 / 抵達時間' }}
