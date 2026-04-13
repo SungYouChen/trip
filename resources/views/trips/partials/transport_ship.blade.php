@@ -39,7 +39,7 @@
             </div>
             <div class="text-right flex flex-col">
                 <span class="text-[9px] font-black text-muji-ash uppercase mb-0.5 leading-none">啟航時間 Time</span>
-                <span class="text-2xl font-black text-muji-ink font-mono leading-none">{{ $flightInfo['outbound']['time'] ?: 'TBA' }}</span>
+                <span class="text-2xl font-black text-muji-ink font-mono leading-none">{{ ($flightInfo['outbound']['time'] ?? ($flightInfo['outbound']['time_start'] ?? '')) ?: 'TBA' }}</span>
             </div>
         </div>
     </div>

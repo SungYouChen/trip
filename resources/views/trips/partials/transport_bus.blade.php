@@ -36,7 +36,7 @@
         <div class="flex justify-between items-end mt-4">
             <div>
                 <p class="text-[10px] font-black text-muji-ash uppercase mb-1 tracking-widest">發車時間 Time</p>
-                <p class="text-3xl font-mono font-black text-muji-ink leading-none">{{ $flightInfo['outbound']['time'] ?: 'TBA' }}</p>
+                <p class="text-3xl font-mono font-black text-muji-ink leading-none">{{ ($flightInfo['outbound']['time'] ?? ($flightInfo['outbound']['time_start'] ?? '')) ?: 'TBA' }}</p>
             </div>
             <div class="text-right">
                 <p class="text-[10px] font-black text-muji-ash uppercase mb-1 tracking-widest">行李 / 月台 Platform</p>

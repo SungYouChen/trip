@@ -306,8 +306,16 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 
                     <div class="mt-6 pt-4 border-t border-muji-edge flex items-center justify-between">
                         <div class="flex flex-col">
-                            <span class="text-[10px] font-black text-muji-ash uppercase tracking-widest mb-1">起飛時間</span>
-                            <span class="text-2xl font-mono font-black text-muji-ink tracking-tighter">{{ $flightInfo['outbound']['time'] ?: '待定' }}</span>
+                            <span class="text-[10px] font-black text-muji-ash uppercase tracking-widest mb-1">
+                                {{ $transportType == 'car' ? '取車時間' : '出發 / 抵達時間' }}
+                            </span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-2xl font-mono font-black text-muji-ink tracking-tighter">{{ ($flightInfo['outbound']['time_start'] ?? ($flightInfo['outbound']['time'] ?? '')) ?: '待定' }}</span>
+                                @if(!empty($flightInfo['outbound']['time_end']))
+                                <span class="text-muji-ash/40 font-black">➝</span>
+                                <span class="text-2xl font-mono font-black text-muji-ink tracking-tighter">{{ $flightInfo['outbound']['time_end'] }}</span>
+                                @endif
+                            </div>
                         </div>
                         <div class="w-10 h-10 rounded-full bg-muji-base flex items-center justify-center shadow-muji-sm">
                             <svg class="w-5 h-5 {{ $theme['text'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -349,8 +357,16 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 
                     <div class="mt-6 pt-4 border-t border-muji-edge flex items-center justify-between">
                         <div class="flex flex-col">
-                            <span class="text-[10px] font-black text-muji-ash uppercase tracking-widest mb-1">抵達時間</span>
-                            <span class="text-2xl font-mono font-black text-muji-ink tracking-tighter">{{ $flightInfo['inbound']['time'] ?: '待定' }}</span>
+                            <span class="text-[10px] font-black text-muji-ash uppercase tracking-widest mb-1">
+                                {{ $transportType == 'car' ? '還車時間' : '出發 / 抵達時間' }}
+                            </span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-2xl font-mono font-black text-muji-ink tracking-tighter">{{ ($flightInfo['inbound']['time_start'] ?? ($flightInfo['inbound']['time'] ?? '')) ?: '待定' }}</span>
+                                @if(!empty($flightInfo['inbound']['time_end']))
+                                <span class="text-muji-ash/40 font-black">➝</span>
+                                <span class="text-2xl font-mono font-black text-muji-ink tracking-tighter">{{ $flightInfo['inbound']['time_end'] }}</span>
+                                @endif
+                            </div>
                         </div>
                         <div class="w-10 h-10 rounded-full bg-muji-base flex items-center justify-center shadow-muji-sm">
                             <svg class="w-5 h-5 {{ $theme['text'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -1025,10 +1041,10 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                             基本資訊
                         </h4>
                         
-                        <!-- Flight Specific Fields -->
-                        <div id="fields-flight" class="mode-fields {{ ($transportType ?? 'flight') == 'flight' ? '' : 'hidden' }} grid grid-cols-1 gap-6">
+                        <!-- Primary Identifier (Consolidated for Flight, Bus, Ship) -->
+                        <div id="fields-common" class="mode-fields {{ in_array(($transportType ?? 'flight'), ['flight', 'bus', 'ship']) ? '' : 'hidden' }} grid grid-cols-1 gap-6">
                             <div>
-                                <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">航空公司 / 航班編號</label>
+                                <label id="mode-label-airline" class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">航空公司 / 航班編號</label>
                                 <input type="text" name="airline" value="{{ $flightInfo['airline'] ?? '' }}" class="w-full px-4 py-3 muji-input" placeholder="例如：星宇航空 JX800">
                             </div>
                         </div>
@@ -1055,21 +1071,9 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                             </div>
                         </div>
 
-                        <!-- Bus Specific Fields -->
-                        <div id="fields-bus" class="mode-fields {{ ($transportType ?? '') == 'bus' ? '' : 'hidden' }} grid grid-cols-1 gap-6">
-                            <div>
-                                <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">客運公司 / 路線名稱</label>
-                                <input type="text" name="airline" value="{{ $flightInfo['airline'] ?? '' }}" class="w-full h-[46px] px-4 muji-input" placeholder="例如：國光客運 / 京都市巴士 205路">
-                            </div>
-                        </div>
 
-                        <!-- Ship Specific Fields -->
-                        <div id="fields-ship" class="mode-fields {{ ($transportType ?? '') == 'ship' ? '' : 'hidden' }} grid grid-cols-1 gap-6">
-                            <div>
-                                <label class="block w-full text-left text-sm font-bold text-muji-ash mb-2 ml-1">船名 / 航次名稱</label>
-                                <input type="text" name="airline" value="{{ $flightInfo['airline'] ?? '' }}" class="w-full h-[46px] px-4 muji-input" placeholder="例如：麗星郵輪 / 櫻島渡輪">
-                            </div>
-                        </div>
+
+
 
                         <!-- Shared: Price & Notes (Always Visible but Labeled) -->
                         <div class="grid grid-cols-2 gap-4">
@@ -1707,6 +1711,22 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
             if (elements.helpRoute) elements.helpRoute.innerText = config.helpRoute;
             if (elements.modalTitle) elements.modalTitle.innerText = config.modalTitle;
             if (elements.basicsTitle) elements.basicsTitle.innerText = config.basicsTitle || '基本資訊';
+
+            // New: Update consolidated airline label
+            const airlineLabel = document.getElementById('mode-label-airline');
+            if (airlineLabel) {
+                airlineLabel.innerText = config.modalTitle.replace('編輯', '').replace('資訊', '').replace('行程', '').replace('票務', '').replace('合約', '') + (mode === 'flight' ? '航空公司 / 航班編號' : '名稱 / 班次');
+            }
+
+            // Update visibility of consolidated common group
+            const commonGroup = document.getElementById('fields-common');
+            if (commonGroup) {
+                if (['flight', 'bus', 'ship'].includes(mode)) {
+                    commonGroup.classList.remove('hidden');
+                } else {
+                    commonGroup.classList.add('hidden');
+                }
+            }
         }
 
         function initTransportMode() {

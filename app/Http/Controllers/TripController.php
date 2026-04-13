@@ -127,8 +127,8 @@ class TripController extends Controller
             'airline' => '',
             'price' => '',
             'baggage' => '',
-            'outbound' => ['date' => '', 'time' => '', 'route' => ''],
-            'inbound' => ['date' => '', 'time' => '', 'route' => '']
+            'outbound' => ['date' => '', 'time' => '', 'time_start' => '', 'time_end' => '', 'route' => ''],
+            'inbound' => ['date' => '', 'time' => '', 'time_start' => '', 'time_end' => '', 'route' => '']
         ];
 
         $trip = Trip::create($validated);
@@ -271,12 +271,14 @@ class TripController extends Controller
             'baggage' => $validated['baggage'] ?? '',
             'outbound' => [
                 'date' => $validated['outbound_date'] ?? '',
+                'time' => $validated['outbound_time_start'] ?? '',
                 'time_start' => $validated['outbound_time_start'] ?? '',
                 'time_end' => $validated['outbound_time_end'] ?? '',
                 'route' => $validated['outbound_route'] ?? ''
             ],
             'inbound' => [
                 'date' => $validated['inbound_date'] ?? '',
+                'time' => $validated['inbound_time_start'] ?? '',
                 'time_start' => $validated['inbound_time_start'] ?? '',
                 'time_end' => $validated['inbound_time_end'] ?? '',
                 'route' => $validated['inbound_route'] ?? ''
