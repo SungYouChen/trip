@@ -81,7 +81,13 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 @section('header_title', '旅程計劃')
 
 @section('content')
-<div class="mb-12 relative max-w-4xl mx-auto group overflow-hidden">
+<div class="mb-12 relative max-w-4xl mx-auto group">
+    <!-- Decorative Elements (Clipped to container to prevent mobile horizontal scroll) -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none -z-10 rounded-[40px]">
+        <div class="absolute top-[130px] right-0 translate-x-1/2 translate-y-1/2 w-48 h-48 bg-muji-oak/5 rounded-full blur-3xl group-hover:bg-muji-oak/10 transition-colors duration-1000"></div>
+        <div class="absolute -top-10 -left-10 w-40 h-40 bg-muji-wheat/10 rounded-full blur-3xl group-hover:bg-muji-wheat/20 transition-colors duration-1000 animate-pulse"></div>
+        <div class="absolute top-1/2 left-0 -translate-x-full -translate-y-1/2 w-32 h-32 bg-muji-wheat/5 rounded-full blur-2xl group-hover:bg-muji-wheat/10 transition-colors duration-1000"></div>
+    </div>
     <!-- Header Block: Flex Container for Perfect Alignment -->
     <div class="flex items-start justify-between min-h-[100px]">
         <!-- Left Side Spacer (for centering) -->
@@ -102,39 +108,58 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
             </p>
         </div>
 
-        <!-- Right Side: Action Icons -->
-        <div class="flex items-center gap-2 pt-1 shrink-0">
+        <!-- Multi-Action Menu -->
+        <div class="relative shrink-0" id="tripActionsContainer">
             @if(!$isShared && auth()->check())
-            <!-- Settings Gear -->
-            <button onclick="safeOpenModal('tripSettingsModal')" class="p-1.5 text-muji-ash hover:text-muji-oak hover:bg-muji-base rounded-xl transition-all tooltip-bottom hover:scale-105 active:scale-95 group/btn" data-tooltip="編輯旅程設定">
-                <svg class="w-6 h-6 transition-transform group-hover/btn:rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <button onclick="toggleTripActions(event)" class="w-10 h-10 flex items-center justify-center text-muji-ash hover:text-muji-oak hover:bg-muji-base rounded-xl transition-all shadow-muji-sm bg-white/50 backdrop-blur-sm border border-muji-edge/50 active:scale-95 group/more" id="tripActionsBtn">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                 </svg>
             </button>
-
-                <button type="button" onclick="openMapViewModal()" class="p-1.5 text-muji-ash hover:text-muji-oak hover:bg-muji-base rounded-xl transition-all tooltip-bottom hover:scale-105 active:scale-95 group/btn" data-tooltip="查看完整地圖規劃">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                    </svg>
+            
+            <div id="tripActionsMenu" class="absolute top-full right-0 mt-3 w-56 bg-white/95 backdrop-blur-md rounded-[24px] shadow-2xl border border-muji-edge/50 py-3 hidden origin-top-right z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                <!-- 1. Settings -->
+                <button onclick="toggleTripActions(event); safeOpenModal('tripSettingsModal')" class="w-full flex items-center gap-3 px-5 py-3 text-left text-xs font-black text-muji-ash hover:text-muji-ink hover:bg-muji-base transition-all border-0 bg-transparent cursor-pointer group/item">
+                    <div class="p-2 rounded-lg bg-muji-base text-muji-ash group-hover/item:text-muji-oak group-hover/item:bg-muji-wheat/20 transition-colors">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </div>
+                    <span>編輯旅程設定</span>
                 </button>
 
-                <!-- Privacy Toggle -->
-                <form action="{{ route('trip.toggle_share', ['user' => $trip->user, 'trip' => $trip]) }}" method="POST" class="inline m-0">
-                    @csrf
-                    <button type="submit" class="p-1.5 transition-all rounded-xl hover:bg-muji-base tooltip-bottom hover:scale-105 active:scale-95 {{ $trip->is_public ? 'text-muji-oak' : 'text-muji-ash opacity-60' }}" data-tooltip="{{ $trip->is_public ? '已分享 (點擊隱私)' : '未分享 (點擊公開)' }}">
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                <!-- 2. Map -->
+                <button onclick="toggleTripActions(event); openMapViewModal()" class="w-full flex items-center gap-3 px-5 py-3 text-left text-xs font-black text-muji-ash hover:text-muji-ink hover:bg-muji-base transition-all border-0 bg-transparent cursor-pointer group/item">
+                    <div class="p-2 rounded-lg bg-muji-base text-muji-ash group-hover/item:text-muji-oak group-hover/item:bg-muji-wheat/20 transition-colors">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                         </svg>
+                    </div>
+                    <span>查看完整地圖規劃</span>
+                </button>
+
+                <div class="mx-5 my-1 border-t border-muji-edge/30"></div>
+
+                <!-- 3. Toggle Sharing -->
+                <form action="{{ route('trip.toggle_share', ['user' => $trip->user, 'trip' => $trip]) }}" method="POST" class="m-0">
+                    @csrf
+                    <button type="submit" class="w-full flex items-center gap-3 px-5 py-3 text-left text-xs font-black group/item transition-all border-0 bg-transparent cursor-pointer {{ $trip->is_public ? 'text-muji-oak bg-muji-wheat/5 hover:bg-muji-base' : 'text-muji-ash hover:text-muji-ink hover:bg-muji-base' }}">
+                        <div class="p-2 rounded-lg {{ $trip->is_public ? 'bg-muji-oak/10 text-muji-oak' : 'bg-muji-base text-muji-ash group-hover/item:text-muji-oak' }} transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                            </svg>
+                        </div>
+                        <span>{{ $trip->is_public ? '切換為私有模式' : '開啟公開分享' }}</span>
                     </button>
                 </form>
+            </div>
             @endif
         </div>
     </div>
 
     <!-- Share Link Box (Balanced below title) -->
     @if(!$isShared && $trip->is_public)
-    <div class="bg-muji-base/80 backdrop-blur-sm p-1.5 rounded-xl flex items-center justify-between gap-3 border border-muji-edge w-full max-w-md mx-auto overflow-hidden shadow-muji-sm">
+    <div class="bg-muji-base/80 backdrop-blur-sm p-1.5 rounded-xl flex items-center justify-between gap-3 border border-muji-edge w-full max-w-md mx-auto overflow-hidden shadow-muji-sm mt-4 sm:mt-0">
         <span id="shareLink" class="text-[10px] text-muji-oak font-mono truncate flex-1 font-black pl-3 tracking-wider">{{ route('trip.index_shared', ['token' => $trip->share_token]) }}</span>
         <button onclick="copyShareLink()" class="bg-muji-oak text-white text-[10px] h-[36px] px-6 flex items-center justify-center rounded-xl hover:opacity-80 transition-all font-black whitespace-nowrap active:scale-95 shadow-muji-sm">複製連結</button>
     </div>
@@ -1470,6 +1495,35 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 
     @if(!$isShared)
     <script>
+        // --- NEW: Trip Actions Dropdown Handler ---
+        window.toggleTripActions = function(event) {
+            event.stopPropagation();
+            const menu = document.getElementById('tripActionsMenu');
+            if (menu) {
+                const isHidden = menu.classList.contains('hidden');
+                // Close all other dropdowns first if any
+                document.querySelectorAll('.action-menu-active').forEach(m => m.classList.add('hidden'));
+                
+                if (isHidden) {
+                    menu.classList.remove('hidden');
+                    menu.classList.add('action-menu-active');
+                } else {
+                    menu.classList.add('hidden');
+                    menu.classList.remove('action-menu-active');
+                }
+            }
+        };
+
+        // Global click to close trip actions menu
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('tripActionsMenu');
+            const btn = document.getElementById('tripActionsBtn');
+            if (menu && !menu.contains(event.target) && btn && !btn.contains(event.target)) {
+                menu.classList.add('hidden');
+                menu.classList.remove('action-menu-active');
+            }
+        });
+
         // --- NEW: Universal AJAX Form Handler ---
         async function handleAjaxSubmit(event, form, modalId) {
             event.preventDefault();
@@ -1825,6 +1879,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
         });
     </script>
 
+    @push('modals')
     <!-- Full Trip Map Modal -->
     <div id="mapViewModal" class="fixed inset-0 z-[3000] hidden" role="dialog" aria-modal="true">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-md" onclick="safeCloseModal('mapViewModal')"></div>
@@ -1849,6 +1904,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
             </div>
         </div>
     </div>
+    @endpush
 
     <!-- Leaflet Map Integration (Free & No Token Required) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
