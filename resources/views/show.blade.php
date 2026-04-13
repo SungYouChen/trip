@@ -625,7 +625,12 @@
                                             <label class="block text-sm font-bold text-muji-ash mb-2 ml-1">活動地點</label>
                                             <div class="flex gap-2">
                                                 <input type="text" name="activity" id="event_activity" required class="flex-1 px-4 py-3 muji-input" onblur="tryGeocode(this.value)">
-                                                <button type="button" onclick="toggleLocationPicker()" class="p-3 bg-muji-base text-muji-oak border border-muji-edge rounded-xl hover:bg-muji-wheat/30"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg></button>
+                                                <button type="button" onclick="tryGeocode(document.getElementById('event_activity').value, true)" class="p-3 bg-muji-base text-muji-oak border border-muji-edge rounded-xl hover:bg-muji-wheat/30 tooltip" data-tooltip="重新搜尋地點">
+                                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    </svg>
+                                                </button>
                                             </div>
                                         </div>
                                         <div id="locationPicker" class="hidden h-48 rounded-2xl border border-muji-edge overflow-hidden mb-4"><div id="pickerMap" class="w-full h-full"></div></div>
@@ -779,10 +784,13 @@
             pickerMap.on('move', () => { const c = pickerMap.getCenter(); pickerMarker.setLatLng(c); document.getElementById('event_lat').value = c.lat.toFixed(6); document.getElementById('event_lng').value = c.lng.toFixed(6); });
         }
         function updatePickerPosition(lat, lng) { const c = [lat, lng]; if (pickerMap) { pickerMap.setView(c, 14); pickerMarker.setLatLng(c); } }
-        async function tryGeocode(q) {
+        async function tryGeocode(q, force = false) {
             if (!q || q.length < 2) return;
             const la = document.getElementById('event_lat'), lo = document.getElementById('event_lng');
-            if (la.value) return;
+            
+            // If not forced and already has value, don't overwrite
+            if (!force && la.value) return;
+
             const input = document.getElementById('event_activity');
             input.classList.add('animate-pulse');
             try {
@@ -792,7 +800,10 @@
                     la.value = parseFloat(d[0].lat).toFixed(6); lo.value = parseFloat(d[0].lon).toFixed(6);
                     document.getElementById('event_address').value = d[0].display_name;
                     input.classList.remove('animate-pulse');
+                    
+                    // Show map if it's hidden
                     if (document.getElementById('locationPicker').classList.contains('hidden')) toggleLocationPicker();
+                    
                     setTimeout(() => updatePickerPosition(la.value, lo.value), 400);
                 }
             } catch (e) { input.classList.remove('animate-pulse'); }

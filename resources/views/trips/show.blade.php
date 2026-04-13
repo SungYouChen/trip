@@ -111,13 +111,13 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
         <!-- Multi-Action Menu -->
         <div class="relative shrink-0" id="tripActionsContainer">
             @if(!$isShared && auth()->check())
-            <button onclick="toggleTripActions(event)" class="w-10 h-10 flex items-center justify-center text-muji-ash hover:text-muji-oak hover:bg-muji-base rounded-xl transition-all shadow-muji-sm bg-white/50 backdrop-blur-sm border border-muji-edge/50 active:scale-95 group/more" id="tripActionsBtn">
-                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+            <button onclick="toggleTripActions(event)" class="w-10 h-10 flex items-center justify-center text-muji-ash dark:text-white hover:text-muji-oak hover:bg-muji-base rounded-xl transition-all shadow-muji-sm bg-muji-base/80 dark:bg-white/10 backdrop-blur-md active:scale-95 group/more" id="tripActionsBtn">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                 </svg>
             </button>
             
-            <div id="tripActionsMenu" class="absolute top-full right-0 mt-3 w-56 bg-white/95 backdrop-blur-md rounded-[24px] shadow-2xl border border-muji-edge/50 py-3 hidden origin-top-right z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div id="tripActionsMenu" class="absolute top-full right-0 mt-3 w-56 bg-muji-paper/95 dark:bg-muji-paper/80 backdrop-blur-md rounded-[24px] shadow-2xl border border-muji-edge/50 py-3 hidden origin-top-right z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                 <!-- 1. Settings -->
                 <button onclick="toggleTripActions(event); safeOpenModal('tripSettingsModal')" class="w-full flex items-center gap-3 px-5 py-3 text-left text-xs font-black text-muji-ash hover:text-muji-ink hover:bg-muji-base transition-all border-0 bg-transparent cursor-pointer group/item">
                     <div class="p-1 text-muji-ash group-hover/item:text-muji-oak transition-colors">

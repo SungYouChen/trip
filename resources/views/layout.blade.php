@@ -161,25 +161,17 @@
 
 
 
-        /* Muji Aesthetic Map Filter */
-        #itineraryMap, #pickerMap, #tripFullMap, .leaflet-container {
-            filter: grayscale(100%) brightness(1.05) contrast(0.9) sepia(15%);
-            transition: filter 0.4s ease;
-        }
-        #itineraryMap:hover, #pickerMap:hover, #tripFullMap:hover, .leaflet-container:hover {
-            filter: grayscale(40%) brightness(1.02) contrast(0.95) sepia(5%);
-        }
 
         html.dark {
-            --muji-base: #1a1a1a;
-            --muji-paper: #2b2a27;
-            --muji-ink: #f8f5f0;
-            --muji-ash: #a1a1aa;
-            --muji-edge: #3f3f46;
-            --muji-glass: rgba(0, 0, 0, 0.4);
-            --muji-glass-border: rgba(255, 255, 255, 0.1);
-            --muji-wheat: #4b453d;
-            /* Warmer dark wheat */
+            --muji-base: #181716; /* Deeper base */
+            --muji-paper: #262422; /* Warmer dark paper */
+            --muji-ink: #e5e1d8; /* Softened off-white - no more stark white */
+            --muji-ash: #8e8d88; /* Muted ash */
+            --muji-edge: #383531; /* Subtle dark edge */
+            --muji-glass: rgba(0, 0, 0, 0.5);
+            --muji-glass-border: rgba(255, 255, 255, 0.08);
+            --muji-wheat: #3d3832; /* Deep warm wheat */
+        }
         /* MUJI GLASS MODAL ENGINE V2 (Light/Dark Support) */
         :root {
             --muji-modal-bg: rgba(255, 255, 250, 0.7);
@@ -318,9 +310,55 @@
                 if (!m) return;
                 m.classList.add('hidden');
                 m.style.removeProperty('display');
+                
+                // Clear Modal State
+                sessionStorage.removeItem('pwa_active_modal');
+                
                 if (typeof unlockScroll === 'function') unlockScroll();
             } catch (e) { console.error('Modal Close Execution Error:', e); }
         }
+
+        // --- PWA STATE PERSISTENCE ENGINE (Fix for iOS Background Reloads) ---
+        (function() {
+            const PWA_SCROLL_KEY = 'pwa_scroll_pos_' + window.location.pathname;
+            const PWA_MODAL_KEY = 'pwa_active_modal';
+
+            // 1. Save State on Scroll & Interaction
+            window.addEventListener('scroll', () => {
+                sessionStorage.setItem(PWA_SCROLL_KEY, window.scrollY);
+            }, { passive: true });
+
+            // 2. Restore State on Load
+            document.addEventListener('DOMContentLoaded', () => {
+                // Restore Scroll
+                const savedScroll = sessionStorage.getItem(PWA_SCROLL_KEY);
+                if (savedScroll) {
+                    setTimeout(() => {
+                        window.scrollTo({ top: parseInt(savedScroll), behavior: 'instant' });
+                    }, 100);
+                }
+
+                // Restore Modal
+                const savedModalId = sessionStorage.getItem(PWA_MODAL_KEY);
+                if (savedModalId) {
+                    // Slight delay to ensure DOM is ready and potential AJAX content is loading
+                    setTimeout(() => safeOpenModal(savedModalId), 300);
+                }
+            });
+
+            // Hijack Modal Open to save state
+            const originalOpenModal = window.safeOpenModal;
+            window.safeOpenModal = function(id) {
+                sessionStorage.setItem(PWA_MODAL_KEY, id);
+                return originalOpenModal(id);
+            };
+
+            // Clear state on intentional navigation (Form Sumit)
+            window.addEventListener('submit', () => {
+                // We keep scroll but we might want to clear modal if it's a "Success" submit
+                // But generally, let's keep it robust.
+            });
+        })();
     </script>
     <style>
         .custom-scrollbar::-webkit-scrollbar {
