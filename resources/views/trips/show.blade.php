@@ -120,8 +120,8 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
             <div id="tripActionsMenu" class="absolute top-full right-0 mt-3 w-56 bg-white/95 backdrop-blur-md rounded-[24px] shadow-2xl border border-muji-edge/50 py-3 hidden origin-top-right z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                 <!-- 1. Settings -->
                 <button onclick="toggleTripActions(event); safeOpenModal('tripSettingsModal')" class="w-full flex items-center gap-3 px-5 py-3 text-left text-xs font-black text-muji-ash hover:text-muji-ink hover:bg-muji-base transition-all border-0 bg-transparent cursor-pointer group/item">
-                    <div class="p-2 rounded-lg bg-muji-base text-muji-ash group-hover/item:text-muji-oak group-hover/item:bg-muji-wheat/20 transition-colors">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div class="p-1 text-muji-ash group-hover/item:text-muji-oak transition-colors">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                     </div>
@@ -130,8 +130,8 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 
                 <!-- 2. Map -->
                 <button onclick="toggleTripActions(event); openMapViewModal()" class="w-full flex items-center gap-3 px-5 py-3 text-left text-xs font-black text-muji-ash hover:text-muji-ink hover:bg-muji-base transition-all border-0 bg-transparent cursor-pointer group/item">
-                    <div class="p-2 rounded-lg bg-muji-base text-muji-ash group-hover/item:text-muji-oak group-hover/item:bg-muji-wheat/20 transition-colors">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div class="p-1 text-muji-ash group-hover/item:text-muji-oak transition-colors">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                         </svg>
                     </div>
@@ -144,8 +144,8 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 <form action="{{ route('trip.toggle_share', ['user' => $trip->user, 'trip' => $trip]) }}" method="POST" class="m-0">
                     @csrf
                     <button type="submit" class="w-full flex items-center gap-3 px-5 py-3 text-left text-xs font-black group/item transition-all border-0 bg-transparent cursor-pointer {{ $trip->is_public ? 'text-muji-oak bg-muji-wheat/5 hover:bg-muji-base' : 'text-muji-ash hover:text-muji-ink hover:bg-muji-base' }}">
-                        <div class="p-2 rounded-lg {{ $trip->is_public ? 'bg-muji-oak/10 text-muji-oak' : 'bg-muji-base text-muji-ash group-hover/item:text-muji-oak' }} transition-colors">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <div class="p-1 {{ $trip->is_public ? 'text-muji-oak' : 'text-muji-ash group-hover/item:text-muji-oak' }} transition-colors">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                             </svg>
                         </div>
@@ -161,7 +161,11 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
     @if(!$isShared && $trip->is_public)
     <div class="bg-muji-base/80 backdrop-blur-sm p-1.5 rounded-xl flex items-center justify-between gap-3 border border-muji-edge w-full max-w-md mx-auto overflow-hidden shadow-muji-sm mt-4 sm:mt-0">
         <span id="shareLink" class="text-[10px] text-muji-oak font-mono truncate flex-1 font-black pl-3 tracking-wider">{{ route('trip.index_shared', ['token' => $trip->share_token]) }}</span>
-        <button onclick="copyShareLink()" class="bg-muji-oak text-white text-[10px] h-[36px] px-6 flex items-center justify-center rounded-xl hover:opacity-80 transition-all font-black whitespace-nowrap active:scale-95 shadow-muji-sm">複製連結</button>
+        <button onclick="copyShareLink()" class="bg-muji-oak text-white w-[36px] h-[36px] flex items-center justify-center rounded-xl hover:opacity-80 transition-all font-black active:scale-95 shadow-muji-sm flex-shrink-0 tooltip tooltip-left" data-tooltip="複製分享連結">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+            </svg>
+        </button>
     </div>
     <script>
         function copyShareLink() {
@@ -226,6 +230,15 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 <p class="text-[10px] font-black text-muji-ash uppercase tracking-widest mb-1">預計費用</p>
                 <p class="text-2xl font-mono font-black {{ $theme['text'] }} leading-none">{{ $flightInfo['price'] }}</p>
             </div>
+            @if(!$isShared)
+            @auth
+            <button onclick="event.stopPropagation(); openFlightEditModal()" class="w-10 h-10 flex items-center justify-center {{ $theme['bg_light'] }} {{ $theme['text'] }} rounded-xl border {{ $theme['border'] }} hover:shadow-lg transition-all active:scale-95 tooltip tooltip-left" data-tooltip="編輯交通資訊">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                </svg>
+            </button>
+            @endauth
+            @endif
             <div id="transportChevron" class="transition-transform duration-300 transform {{ $shouldOpenTransport ? 'rotate-180' : 'rotate-0' }}">
                 <svg class="w-6 h-6 text-muji-ash" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
@@ -350,7 +363,7 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
 
 
     <!-- Footer -->
-    <div onclick="toggleTransportDetails()" class="relative px-8 py-4 bg-muji-base/30 flex flex-wrap justify-between items-center gap-4 border-t border-muji-edge cursor-pointer hover:bg-muji-wheat/10 transition-colors font-black">
+    <div onclick="toggleTransportDetails()" class="relative px-8 py-4 bg-muji-base/30 flex justify-between items-center border-t border-muji-edge cursor-pointer hover:bg-muji-wheat/10 transition-colors font-black">
         <div class="flex items-center gap-3">
             <div class="flex items-center gap-2 px-4 h-[46px] bg-muji-paper rounded-xl shadow-muji-sm border border-muji-edge">
                 <svg class="w-4 h-4 {{ $theme['text'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -361,16 +374,6 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
                 </span>
             </div>
         </div>
-        @if(!$isShared)
-        @auth
-        <button onclick="event.stopPropagation(); openFlightEditModal()" class="flex items-center justify-center gap-2 px-6 h-[46px] {{ $theme['bg_light'] }} {{ $theme['text'] }} rounded-2xl font-black text-xs hover:shadow-lg transition-all active:scale-95 border {{ $theme['border'] }}">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-            </svg>
-            編輯交通
-        </button>
-        @endauth
-        @endif
     </div>
 </div>
 @elseif(!$isShared)
@@ -395,11 +398,12 @@ $shouldOpenTransport = $isNearStart || $isNearEnd;
     </p>
     @if(!$isShared)
     @auth
-    <a href="{{ request()->fullUrlWithQuery(['archived' => $showArchived ? '0' : '1']) }}" class="flex items-center gap-2 text-xs font-black px-3 py-1.5 rounded-full border border-muji-edge transition-all {{ $showArchived ? 'bg-muji-base text-muji-oak' : 'bg-muji-base text-muji-ash hover:bg-muji-wheat/20' }}">
-        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <a href="{{ request()->fullUrlWithQuery(['archived' => $showArchived ? '0' : '1']) }}" 
+       class="flex items-center justify-center w-[36px] h-[36px] rounded-full border border-muji-edge transition-all tooltip tooltip-left {{ $showArchived ? 'bg-muji-oak text-white shadow-muji-oak/20' : 'bg-muji-base text-muji-ash hover:bg-muji-wheat/20' }}"
+       data-tooltip="{{ $showArchived ? '隱藏封存項目' : '查看封存項目' }}">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2l1-12M10 12v4m4-4v4" />
         </svg>
-        {{ $showArchived ? '隱藏封存' : '查看封存' }}
     </a>
     @endauth
     @endif

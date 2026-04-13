@@ -27,11 +27,12 @@
 
         @if(!$isShared)
             @auth
-                <a href="{{ request()->fullUrlWithQuery(['archived' => $showArchived ? '0' : '1']) }}" class="flex items-center gap-2 text-xs font-black px-3 py-1.5 rounded-full border border-muji-edge transition-all {{ $showArchived ? 'bg-muji-base text-muji-oak' : 'bg-muji-base/50 text-muji-ash hover:bg-muji-wheat/20' }}">
-                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <a href="{{ request()->fullUrlWithQuery(['archived' => $showArchived ? '0' : '1']) }}" 
+                   class="flex items-center justify-center w-[36px] h-[36px] rounded-full border border-muji-edge transition-all tooltip tooltip-bottom {{ $showArchived ? 'bg-muji-oak text-white shadow-muji-oak/20' : 'bg-muji-base text-muji-ash hover:bg-muji-wheat/20' }}"
+                   data-tooltip="{{ $showArchived ? '隱藏封存' : '查看封存' }}">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2l1-12M10 12v4m4-4v4" />
                     </svg>
-                    {{ $showArchived ? '隱藏封存' : '查看封存' }}
                 </a>
             @endauth
         @endif

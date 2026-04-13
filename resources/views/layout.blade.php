@@ -323,53 +323,6 @@
         }
     </script>
     <style>
-        .tooltip {
-            position: relative;
-            display: inline-flex;
-        }
-
-        .tooltip::after {
-            content: attr(data-tip);
-            position: absolute;
-            bottom: 120%;
-            left: 50%;
-            transform: translateX(-50%) scale(0.9);
-            padding: 5px 10px;
-            background: rgba(31, 41, 55, 0.9);
-            color: white;
-            font-size: 11px;
-            font-weight: 600;
-            border-radius: 6px;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            pointer-events: none;
-            z-index: 1000;
-        }
-
-        .tooltip:hover::after,
-        .tooltip:focus::after,
-        .tooltip:focus-within::after {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(-50%) scale(1);
-        }
-
-        .tooltip-bottom::after {
-            bottom: auto;
-            top: 120%;
-        }
-
-        /* Mobile: Tooltips usually don't work well on touch, so we can hide or adjust */
-        @media (max-width: 640px) {
-            .tooltip::after {
-                display: none;
-            }
-        }
-    </style>
-    <style>
         .custom-scrollbar::-webkit-scrollbar {
             width: 4px;
         }

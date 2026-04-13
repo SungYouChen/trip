@@ -6,30 +6,31 @@
 
 @section('content')
     <div class=""> <!-- max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8" -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-10">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
             <div>
                 <h1 class="text-4xl font-black text-muji-ink tracking-tight sm:text-5xl">
                     旅程 <span class="text-muji-oak underline decoration-muji-wheat/50 underline-offset-8">足跡</span>
                 </h1>
                 <p class="mt-4 text-lg text-muji-ash">規劃下一次的冒險，或是重溫美好的回憶。</p>
             </div>
-            @auth
-                <button onclick="safeOpenModal('add-trip-modal')" class="inline-flex items-center px-8 py-3 bg-muji-oak text-white font-black rounded-2xl shadow-muji hover:opacity-90 transition-all duration-300 transform active:scale-95 whitespace-nowrap">
-                    <svg class="-ml-1 mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    新增旅程
-                </button>
-            @endauth
         </div>
+
         @php $showArchived = request('archived') == '1'; @endphp
         @auth
-            <div class="flex justify-end mb-4">
-                <a href="{{ request()->fullUrlWithQuery(['archived' => $showArchived ? '0' : '1']) }}" class="flex items-center gap-2 text-[10px] font-black tracking-widest uppercase px-3 py-1.5 rounded-full border border-muji-edge transition-all {{ $showArchived ? 'bg-muji-base text-muji-oak' : 'bg-muji-base/50 text-muji-ash hover:bg-muji-wheat/20' }}">
-                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="flex justify-end mb-6 gap-3">
+                <button onclick="safeOpenModal('add-trip-modal')" 
+                        class="flex items-center justify-center w-[36px] h-[36px] rounded-full bg-muji-oak text-white shadow-muji hover:opacity-90 transition-all active:scale-95 tooltip tooltip-left"
+                        data-tooltip="開啟新旅程">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+                    </svg>
+                </button>
+                <a href="{{ request()->fullUrlWithQuery(['archived' => $showArchived ? '0' : '1']) }}" 
+                   class="flex items-center justify-center w-[36px] h-[36px] rounded-full border border-muji-edge transition-all tooltip tooltip-left {{ $showArchived ? 'bg-muji-oak text-white shadow-muji-oak/20' : 'bg-muji-base/90 text-muji-ash hover:bg-muji-wheat/20' }}"
+                   data-tooltip="{{ $showArchived ? '隱藏封存旅程' : '查看封存旅程' }}">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2l1-12M10 12v4m4-4v4" />
                     </svg>
-                    {{ $showArchived ? '隱藏封存' : '查看封存' }}
                 </a>
             </div>
         @endauth
