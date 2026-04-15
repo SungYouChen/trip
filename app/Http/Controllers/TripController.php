@@ -22,6 +22,7 @@ class TripController extends Controller
                 $q->where('user_id', $user->id)
                     ->orWhereHas('collaborators', fn ($cq) => $cq->where('user_id', $user->id));
             })
+            ->orderBy('is_pinned', 'desc')
             ->orderBy('start_date', 'desc')
             ->get();
 
@@ -216,6 +217,21 @@ class TripController extends Controller
         $trip->restore();
         if (request()->ajax()) return response()->json(['message' => '旅程已還原！']);
         return redirect()->route('home', ['user' => $user])->with('success', '旅程已還原！');
+    }
+
+    public function togglePin(User $user, Trip $trip)
+    {
+        $trip->is_pinned = !$trip->is_pinned;
+        $trip->save();
+
+        if (request()->ajax()) {
+            return response()->json([
+                'message' => $trip->is_pinned ? '已釘選旅程！' : '已取消釘選。',
+                'is_pinned' => $trip->is_pinned
+            ]);
+        }
+
+        return back();
     }
 
     public function forceDelete(User $user, $tripId)

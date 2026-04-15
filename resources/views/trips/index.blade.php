@@ -45,9 +45,9 @@
             @forelse($tripsToShow as $t)
                 @php $isArchived = $t->trashed(); @endphp
                 <div class="relative group hover:-translate-y-2 transition-all duration-500">
-                    <a href="{{ $isArchived ? '#' : route('trip.show', ['user' => auth()->user(), 'trip' => $t]) }}" class="block relative muji-card overflow-hidden transition-all duration-500 hover:shadow-muji {{ $isArchived ? 'border-2 border-dashed border-muji-ash grayscale opacity-60' : '' }}">
-                        <div class="aspect-w-3 aspect-h-2 w-full overflow-hidden">
-                            <img src="{{ $t->cover_image ? asset('storage/' . $t->cover_image) : asset('bg.jpg') }}" onerror="this.src='https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=2070&auto=format&fit=crop'" alt="{{ $t->name }}" class="h-64 w-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    <a href="{{ $isArchived ? '#' : route('trip.show', ['user' => auth()->user(), 'trip' => $t]) }}" class="block relative muji-card overflow-hidden transition-all duration-500 hover:shadow-muji rounded-[32px] {{ $isArchived ? 'border-2 border-dashed border-muji-ash grayscale opacity-60' : '' }}">
+                        <div class="aspect-w-3 aspect-h-2 w-full overflow-hidden rounded-[32px]">
+                            <img src="{{ $t->cover_image ? asset('storage/' . $t->cover_image) : asset('bg.jpg') }}" onerror="this.src='https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=2070&auto=format&fit=crop'" alt="{{ $t->name }}" class="h-64 w-full object-cover group-hover:scale-110 transition-transform duration-700 rounded-[32px]">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                         </div>
                         <div class="absolute bottom-0 p-6 w-full flex flex-col items-center text-center">
@@ -73,16 +73,41 @@
                             </div>
                         </div>
 
-                        @if(auth()->check() && $t->user_id !== auth()->id())
-                            <div class="absolute top-4 left-4 z-20">
-                                <span class="inline-flex items-center px-3 py-1.5 rounded-2xl text-[10px] font-black bg-muji-oak/70 text-white border border-muji-wheat/20 backdrop-blur-md shadow-2xl">
-                                    <svg class="w-3.5 h-3.5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                    </svg>
-                                    好友分享
-                                </span>
+                        <!-- Pinned Status Indicator/Toggle -->
+                        @auth
+                            <div class="absolute top-3 left-3 z-30 flex flex-col gap-2">
+                                <form action="{{ route('trips.toggle_pin', ['user' => auth()->user(), 'trip' => $t]) }}" method="POST" onsubmit="handleAjaxSubmit(event, this, null)" data-no-loading>
+                                    @csrf
+                                    <button type="submit" 
+                                            class="w-8 h-8 flex items-center justify-center rounded-xl backdrop-blur-md border transition-all duration-300 {{ $t->is_pinned ? 'bg-muji-oak text-white border-white/20 shadow-lg' : 'bg-black/20 text-white/50 border-white/10 opacity-0 group-hover:opacity-100 hover:bg-black/40 hover:text-white' }}"
+                                            data-tooltip="{{ $t->is_pinned ? '取消釘選' : '釘選此旅程' }}">
+                                        <svg class="w-4 h-4 {{ $t->is_pinned ? 'rotate-[30deg]' : '' }} transition-transform" fill="{{ $t->is_pinned ? 'currentColor' : 'none' }}" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17v5M5 17h14v-1.76a2 2 0 00-1.11-1.79l-1.78-.9a2 2 0 01-1.11-1.79V6a3 3 0 00-3-3 3 3 0 00-3 3v4.76a2 2 0 01-1.11 1.79l-1.78.9A2 2 0 005 15.24V17z" />
+                                        </svg>
+                                    </button>
+                                </form>
+
+                                @if($t->user_id !== auth()->id())
+                                    <span class="inline-flex items-center px-3 py-1.5 rounded-2xl text-[10px] font-black bg-muji-oak/70 text-white border border-muji-wheat/20 backdrop-blur-md shadow-2xl">
+                                        <svg class="w-3.5 h-3.5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                        </svg>
+                                        好友分享
+                                    </span>
+                                @endif
                             </div>
-                        @endif
+                        @else
+                            @if($t->is_pinned)
+                                <div class="absolute top-3 left-3 z-30">
+                                    <div class="w-8 h-8 flex items-center justify-center rounded-xl bg-muji-oak text-white border border-white/20 shadow-lg backdrop-blur-md">
+                                        <svg class="w-4 h-4 rotate-[30deg]" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17v5M5 17h14v-1.76a2 2 0 00-1.11-1.79l-1.78-.9a2 2 0 01-1.11-1.79V6a3 3 0 00-3-3 3 3 0 00-3 3v4.76a2 2 0 01-1.11 1.79l-1.78.9A2 2 0 005 15.24V17z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            @endif
+                        @endauth
+
                     </a>
 
                     @auth
